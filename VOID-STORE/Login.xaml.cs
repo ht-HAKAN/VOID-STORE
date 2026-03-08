@@ -40,6 +40,9 @@ namespace VOID_STORE
         private void ForgotPassword_Click(object sender, RoutedEventArgs e)
         {
             // Şifre sıfırlama ekranına yönlendirilecek
+            ForgotPassword forgotScreen = new ForgotPassword();
+            forgotScreen.Show();
+            this.Close();
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)

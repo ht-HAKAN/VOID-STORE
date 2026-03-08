@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Input;
 
 namespace VOID_STORE
 {
-    public partial class Login : Window
+    public partial class Register : Window
     {
-        public Login()
+        public Register()
         {
             InitializeComponent();
         }
@@ -32,27 +32,17 @@ namespace VOID_STORE
             Application.Current.Shutdown();
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            // Veritabanı bağlantısı eklenecek
-        }
-
-        private void ForgotPassword_Click(object sender, RoutedEventArgs e)
-        {
-            // Şifre sıfırlama ekranına yönlendirilecek
-        }
-
-        private void Register_Click(object sender, RoutedEventArgs e)
-        {
-            // Kayıt ekranına yönlendirilecek
-            Register registerScreen = new Register();
-            registerScreen.Show();
+            // Giriş ekranına geri dönüş
+            Login loginScreen = new Login();
+            loginScreen.Show();
             this.Close();
         }
 
-        private void GuestLogin_Click(object sender, RoutedEventArgs e)
+        private void RegisterAction_Click(object sender, RoutedEventArgs e)
         {
-            // Misafir giriş paneline yönlendirilecek
+            // Kayıt olma özelliği eklenecek.
         }
     }
 }

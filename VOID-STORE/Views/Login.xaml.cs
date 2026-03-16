@@ -1,22 +1,25 @@
-﻿using System;
+using VOID_STORE.Models;
+using System;
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.Data.SqlClient;
-using System.Data;
+using VOID_STORE.Controllers;
 
-namespace VOID_STORE
+namespace VOID_STORE.Views
 {
     public partial class Login : Window
     {
+        private readonly LoginController _loginController;
+
         public Login()
         {
-            // Login formu yüklendiğinde içerisindeki görsel bileşenleri başlat.
+            // login formu yuklendiginde icerisindeki gorsel bilesenleri baslat
             InitializeComponent();
+            _loginController = new LoginController();
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Pencereyi sürükleyebilmek için
+            // pencereyi suruklemek icin
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();
@@ -25,51 +28,37 @@ namespace VOID_STORE
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
-            // Login penceresinin ekrandaki durumunu simge durumuna küçült.
+            // login penceresinin ekrandaki durumunu simge durumuna kucult
             WindowState = WindowState.Minimized;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            //  Kapatma butonuna bastığında uygulamayı kapat
+            // kapatma butonuna bastiginda uygulamayi kapat
             Application.Current.Shutdown();
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            // Kullanıcı adı veya E-posta (Login için iki seçenek de geçerli)
+            // kullanici adi veya eposta login icin iki secenek de gecerli
             string usernameOrEmail = txtUsername.Text.Trim();
             string password = txtPassword.Password;
 
-            // BOŞ ALAN KONTROLÜ: Kullanıcı adı (veya e-posta) ile şifrenin eksiksiz girildiğini denetle.
+            // bos alan kontrolu bilgilerin eksiksiz girildigini denetle
             if (string.IsNullOrEmpty(usernameOrEmail) || string.IsNullOrEmpty(password))
             {
-                // Bilgiler eksikse ekranda özel bir hata penceresi (CustomError) göster ve işlemi durdur (return).
+                // bilgiler eksikse ekranda ozel bir hata penceresi goster ve islemi durdur
                 CustomError.ShowDialog("Lütfen kullanıcı adı ve şifrenizi girin.", "GİRİŞ HATASI");
                 return;
             }
 
             try
             {
-                // Doğrulama için girilen şifreyi Hashle.
-                string hashedPassword = SecurityManager.HashPassword(password);
+                // controllera bilgileri yolla ve dogrulama sonucunu al
+                bool isValidUser = _loginController.ValidateUser(usernameOrEmail, password, out bool isEmailVerified, out bool isAdmin);
 
-                // Veritabanında eşleşen kullanıcıyı bulma sorgusu (Username veya Email aynı anda kontrol ediliyor)
-                string loginQuery = "SELECT UserId, IsAdmin, IsEmailVerified FROM Users WHERE (Username = @User OR Email = @User) AND PasswordHash = @Password";
-                SqlParameter[] loginParams = new SqlParameter[]
+                if (isValidUser)
                 {
-                    new SqlParameter("@User", usernameOrEmail),
-                    new SqlParameter("@Password", hashedPassword)
-                };
-
-                DataTable dt = DatabaseManager.ExecuteQuery(loginQuery, loginParams);
-
-                if (dt.Rows.Count > 0)
-                {
-                    // Dönen veri tablosunun 0 indeksli ilk satırından belirtilen sütun adlarına göre verileri oku ve değişkene ata.
-                    bool isEmailVerified = Convert.ToBoolean(dt.Rows[0]["IsEmailVerified"]);
-                    bool isAdmin = Convert.ToBoolean(dt.Rows[0]["IsAdmin"]);
-
                     if (!isEmailVerified)
                     {
                         CustomError.ShowDialog("Lütfen e-posta adresinize gönderilen kod ile hesabınızı doğrulayın.", "DOĞRULANMAMIŞ HESAP");
@@ -82,16 +71,16 @@ namespace VOID_STORE
                         
                         if (result == MessageBoxResult.Yes)
                         {
-                            // ADMİN PANELİNE GEÇİŞ EKLENECEK
+                            // admin paneline gecisi buraya ekle
                             CustomError.ShowDialog("Admin paneli henüz yapım aşamasında, mağazaya yönlendiriliyorsunuz.", "BİLGİ");
                         }
                     }
 
-                    // Başarılı girişte ana uygulama ekranı
+                    // basarili giriste ana uygulama ekrani
                     MainAppWindow mainWindow = new MainAppWindow();
-                    // Ana ekranı görünür kıl.
+                    // ana ekrani gorunur kil
                     mainWindow.Show();
-                    // İşlemi biten mevcut Login ekranını kapat.
+                    // islemi biten mevcut login ekranini kapat
                     this.Close();
                 }
                 else
@@ -107,22 +96,22 @@ namespace VOID_STORE
 
         private void ForgotPassword_Click(object sender, RoutedEventArgs e)
         {
-            // Şifresini unutan kullanıcılar için Şifremi Unuttum penceresini oluştur.
+            // sifresini unutan kullanicilar icin sifremi unuttum penceresini olustur
             ForgotPassword forgotScreen = new ForgotPassword();
             
-            // Pencerenin sürükleme sırasında bulunduğu ekrandaki koordinatını yeni pencereye aktar.
+            // pencerenin surukleme sirasinda bulundugu ekrandaki koordinatini yeni pencereye aktar
             forgotScreen.Left = this.Left;
             forgotScreen.Top = this.Top;
             forgotScreen.WindowStartupLocation = WindowStartupLocation.Manual;
             
-            // İlgili pencereyi aç ve mevcut Login ekranını kapat.
+            // ilgili pencereyi ac ve mevcut login ekranini kapat
             forgotScreen.Show();
             this.Close();
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)
         {
-            // Kayıt numarasına geçiş yap.
+            // kayit numarasina gecis yap
             Register registerScreen = new Register();
             registerScreen.Left = this.Left;
             registerScreen.Top = this.Top;
@@ -133,10 +122,11 @@ namespace VOID_STORE
 
         private void GuestLogin_Click(object sender, RoutedEventArgs e)
         {
-            // Misafir girişi, doğrudan ana sayfaya atar
+            // misafir girisi dogrudan ana sayfaya atar
             MainAppWindow mainWindow = new MainAppWindow();
             mainWindow.Show();
-            this.Close(); // Mevcut login formunu kapat
+            this.Close(); // mevcut login formunu kapat
         }
     }
 }
+

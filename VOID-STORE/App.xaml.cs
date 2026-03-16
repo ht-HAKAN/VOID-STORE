@@ -1,6 +1,9 @@
-﻿using System.Configuration;
+using System.Configuration;
 using System.Data;
 using System.Windows;
+
+using VOID_STORE.Models;
+using VOID_STORE.Views;
 
 namespace VOID_STORE
 {

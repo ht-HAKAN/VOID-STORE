@@ -1,17 +1,15 @@
-<Window x:Class="VOID_STORE.Register"
+<Window x:Class="VOID_STORE.Views.CodeVerification"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VOID_STORE"
+        xmlns:local="clr-namespace:VOID_STORE.Views"
         mc:Ignorable="d"
         Title="VOID STORE" Height="700" Width="450"
         WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen" Background="#0A0A0C">
 
-    <!-- Styles -->
     <Window.Resources>
-        <!-- Kullanıcı adı giriş metin kutusunun stili -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
             <Setter Property="Background" Value="#121215"/>
             <Setter Property="Foreground" Value="White"/>
@@ -34,30 +32,17 @@
             </Setter>
         </Style>
 
-        <!-- Şifre giriş kutusunun gizlilik stili -->
-        <Style x:Key="ModernPasswordBox" TargetType="PasswordBox">
-            <Setter Property="Background" Value="#121215"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#333333"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="10,0"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="PasswordBox">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5">
-                            <ScrollViewer x:Name="PART_ContentHost"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+        <Style x:Key="CodeTextBox" TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+            <Setter Property="Width" Value="45"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="0,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="MaxLength" Value="1"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
         </Style>
 
-        <!-- Alt kısımdaki tıklanabilir metinlerin genel stili -->
         <Style x:Key="LinkButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#AAAAAA"/>
@@ -80,7 +65,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Ana buton özel stili -->
         <Style x:Key="MainButton" TargetType="Button">
             <Setter Property="Background" Value="#18181D"/>
             <Setter Property="Foreground" Value="White"/>
@@ -189,25 +173,26 @@
             </Button>
 
             <!-- Void Store Logosu -->
-            <Image Source="voidstoreimages/VOIDSTORE_NOBG_LOGO.png" Height="330" VerticalAlignment="Top" Margin="0,-32,0,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+            <Image Source="../voidstoreimages/VOIDSTORE_NOBG_LOGO.png" Height="325" VerticalAlignment="Top" Margin="0,19,0,0" RenderOptions.BitmapScalingMode="HighQuality"/>
 
             <!-- Form Elemanları -->
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Width="300" Margin="0,225,0,0">
-                <TextBlock Text="Hesap Oluştur" Foreground="White" FontSize="26" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Width="320" Margin="0,290,0,0">
+                <TextBlock Text="KOD DOĞRULAMA" Foreground="White" FontSize="20" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,15"/>
 
-                <TextBlock Text="E-posta adresi" Foreground="#CCCCCC" FontSize="12" Margin="0,0,0,5"/>
-                <TextBox x:Name="txtEmail" Style="{StaticResource ModernTextBox}" Height="35" Margin="0,0,0,10"/>
+                <TextBlock TextWrapping="Wrap" Foreground="#AAAAAA" FontSize="13" Margin="0,0,0,25" LineHeight="20">
+                    E-posta adresinize gelen 6 haneli kodu giriniz.
+                </TextBlock>
 
-                <TextBlock Text="Kullanıcı adı" Foreground="#CCCCCC" FontSize="12" Margin="0,0,0,5"/>
-                <TextBox x:Name="txtUsername" Style="{StaticResource ModernTextBox}" Height="35" Margin="0,0,0,10"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,30">
+                    <TextBox x:Name="txtCode1" Style="{StaticResource CodeTextBox}" TextChanged="CodeTextBox_TextChanged"/>
+                    <TextBox x:Name="txtCode2" Style="{StaticResource CodeTextBox}" TextChanged="CodeTextBox_TextChanged"/>
+                    <TextBox x:Name="txtCode3" Style="{StaticResource CodeTextBox}" TextChanged="CodeTextBox_TextChanged"/>
+                    <TextBox x:Name="txtCode4" Style="{StaticResource CodeTextBox}" TextChanged="CodeTextBox_TextChanged"/>
+                    <TextBox x:Name="txtCode5" Style="{StaticResource CodeTextBox}" TextChanged="CodeTextBox_TextChanged"/>
+                    <TextBox x:Name="txtCode6" Style="{StaticResource CodeTextBox}" Margin="0" TextChanged="CodeTextBox_TextChanged"/>
+                </StackPanel>
 
-                <TextBlock Text="Şifre" Foreground="#CCCCCC" FontSize="12" Margin="0,0,0,5"/>
-                <PasswordBox x:Name="txtPassword" Style="{StaticResource ModernPasswordBox}" Height="35" Margin="0,0,0,10"/>
-
-                <TextBlock Text="Şifre (Tekrar)" Foreground="#CCCCCC" FontSize="12" Margin="0,0,0,5"/>
-                <PasswordBox x:Name="txtConfirmPassword" Style="{StaticResource ModernPasswordBox}" Height="35" Margin="0,0,0,20"/>
-
-                <Button Content="Kayıt Ol" Style="{StaticResource MainButton}" Height="40" Margin="0,0,0,30" Click="RegisterAction_Click"/>
+                <Button Content="KODU DOĞRULA" Style="{StaticResource MainButton}" Height="40" Margin="0,0,0,0" Click="VerifyCode_Click"/>
             </StackPanel>
         </Grid>
     </Grid>

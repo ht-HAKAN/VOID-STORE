@@ -2,13 +2,18 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 
-namespace VOID_STORE
+using VOID_STORE.Controllers;
+
+namespace VOID_STORE.Views
 {
     public partial class ForgotPassword : Window
     {
+        private ForgotPasswordController _controller;
+
         public ForgotPassword()
         {
             InitializeComponent();
+            _controller = new ForgotPasswordController();
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -42,12 +47,31 @@ namespace VOID_STORE
 
         private void SendCode_Click(object sender, RoutedEventArgs e)
         {
-            CodeVerification verifyScreen = new CodeVerification();
-            verifyScreen.Left = this.Left;
-            verifyScreen.Top = this.Top;
-            verifyScreen.WindowStartupLocation = WindowStartupLocation.Manual;
-            verifyScreen.Show();
-            this.Close();
+            string email = txtEmail.Text.Trim();
+
+            if (string.IsNullOrEmpty(email))
+            {
+                CustomError.ShowDialog("Lütfen kayıtlı e-posta adresinizi girin.", "EKSİK BİLGİ");
+                return;
+            }
+
+            // Controller üzerinden şifre sıfırlama kodu gönder
+            bool isSuccess = _controller.SendResetCode(email, out string errorMessage);
+
+            if (isSuccess)
+            {
+                // Başarılıysa, CodeVerification ekranına şifre sıfırlama türüyle ve e-postayla geç
+                CodeVerification verifyScreen = new CodeVerification(email, VerificationType.PasswordReset);
+                verifyScreen.Left = this.Left;
+                verifyScreen.Top = this.Top;
+                verifyScreen.WindowStartupLocation = WindowStartupLocation.Manual;
+                verifyScreen.Show();
+                this.Close();
+            }
+            else
+            {
+                CustomError.ShowDialog(errorMessage, "HATA");
+            }
         }
     }
 }

@@ -2,7 +2,10 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 
-namespace VOID_STORE
+using VOID_STORE.Models;
+
+
+namespace VOID_STORE.Views
 {
     public partial class MainAppWindow : Window
     {

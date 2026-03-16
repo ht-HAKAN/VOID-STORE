@@ -4,7 +4,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Data.SqlClient;
 
-namespace VOID_STORE
+using VOID_STORE.Models;
+using VOID_STORE.Controllers;
+
+namespace VOID_STORE.Views
 {
     public enum VerificationType
     {
@@ -16,6 +19,7 @@ namespace VOID_STORE
     {
         private string _email;
         private VerificationType _verificationType;
+        private ForgotPasswordController _forgotPasswordController;
 
         public CodeVerification(string email = "", VerificationType type = VerificationType.Registration)
         {
@@ -24,6 +28,7 @@ namespace VOID_STORE
             _email = email;
             // İşlemin Kayıt Olma mı yoksa Şifre Sıfırlama mı olduğunu tut.
             _verificationType = type;
+            _forgotPasswordController = new ForgotPasswordController();
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -83,26 +88,26 @@ namespace VOID_STORE
 
             try
             {
-                // Veritabanı üzerinden kod doğrulama sorgusu (Mail adresi, kod, daha önce kullanılmamış olması ve süresinin dolmamış olması gerekiyor)
-                string checkCodeQuery = "SELECT CodeId FROM VerificationCodes WHERE Email = @Email AND Code = @Code AND IsUsed = 0 AND ExpirationDate > GETDATE()";
-                SqlParameter[] checkParams = new SqlParameter[]
+                // İşlem türü KAYIT ONAYI (Registration) ise (Şimdilik doğrudan model ile çalışıyor, sonra RegisterController'a taşınabilir)
+                if (_verificationType == VerificationType.Registration)
                 {
-                    new SqlParameter("@Email", _email),
-                    new SqlParameter("@Code", enteredCode)
-                };
-
-                object result = DatabaseManager.ExecuteScalar(checkCodeQuery, checkParams);
-
-                if (result != null)
-                {
-                    // Doğrulanan kodu artık kullanılmış olarak (IsUsed = 1) işaretle.
-                    int codeId = Convert.ToInt32(result);
-                    string updateCodeQuery = "UPDATE VerificationCodes SET IsUsed = 1 WHERE CodeId = @CodeId";
-                    DatabaseManager.ExecuteNonQuery(updateCodeQuery, new SqlParameter("@CodeId", codeId));
-
-                    // İşlem türü KAYIT ONAYI (Registration) ise çalışacak blok.
-                    if (_verificationType == VerificationType.Registration)
+                   // Veritabanı üzerinden kod doğrulama sorgusu (Mail adresi, kod, daha önce kullanılmamış olması ve süresinin dolmamış olması gerekiyor)
+                    string checkCodeQuery = "SELECT CodeId FROM VerificationCodes WHERE Email = @Email AND Code = @Code AND IsUsed = 0 AND ExpirationDate > GETDATE()";
+                    SqlParameter[] checkParams = new SqlParameter[]
                     {
+                        new SqlParameter("@Email", _email),
+                        new SqlParameter("@Code", enteredCode)
+                    };
+
+                    object result = DatabaseManager.ExecuteScalar(checkCodeQuery, checkParams);
+
+                    if (result != null)
+                    {
+                        // Doğrulanan kodu artık kullanılmış olarak (IsUsed = 1) işaretle.
+                        int codeId = Convert.ToInt32(result);
+                        string updateCodeQuery = "UPDATE VerificationCodes SET IsUsed = 1 WHERE CodeId = @CodeId";
+                        DatabaseManager.ExecuteNonQuery(updateCodeQuery, new SqlParameter("@CodeId", codeId));
+
                         // Kullanıcının e-posta onay durumunu (IsEmailVerified) 1 olarak güncelleyen SQL sorgusu
                         string verifyUserQuery = "UPDATE Users SET IsEmailVerified = 1 WHERE Email = @Email";
                         // Sorguyu veritabanına ilet ve kalıcı olarak güncelle.
@@ -115,20 +120,31 @@ namespace VOID_STORE
                         loginScreen.Left = this.Left;
                         loginScreen.Top = this.Top;
                         loginScreen.Show();
+                        this.Close();
                     }
                     else
                     {
+                        CustomError.ShowDialog("Girdiğiniz doğrulama kodu hatalı veya süresi dolmuş.", "GEÇERSİZ KOD");
+                    }
+                }
+                else // ŞİFRE SIFIRLAMA (PasswordReset) işlemi ise Controller kullan
+                {
+                    bool isCodeValid = _forgotPasswordController.VerifyCode(_email, enteredCode, out string errorMessage);
+
+                    if (isCodeValid)
+                    {
                         // Enum kontrolü ile şifre sıfırlama sayfasına geçiş
-                        ResetPassword resetScreen = new ResetPassword(); // Geçici değişken aktarımı
+                        ResetPassword resetScreen = new ResetPassword(_email); 
                         resetScreen.Left = this.Left;
                         resetScreen.Top = this.Top;
+                        resetScreen.WindowStartupLocation = WindowStartupLocation.Manual;
                         resetScreen.Show();
+                        this.Close();
                     }
-                    this.Close();
-                }
-                else
-                {
-                    CustomError.ShowDialog("Girdiğiniz doğrulama kodu hatalı veya süresi dolmuş.", "GEÇERSİZ KOD");
+                    else
+                    {
+                        CustomError.ShowDialog(errorMessage, "GEÇERSİZ KOD");
+                    }
                 }
             }
             catch (Exception ex)

@@ -2,50 +2,50 @@ using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace VOID_STORE
+namespace VOID_STORE.Models
 {
     public static class DatabaseManager
     {
-        // Local MSSQL bağlantı dizesi
+        // local mssql baglanti dizesi
         private static readonly string ConnectionString = "Server=.;Database=VOID_STORE_DB;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public static SqlConnection GetConnection()
         {
-            // Veritabanı bağlantı (SqlConnection) nesnesini oluştur.
-            // Bu nesne, uygulamanın SQL Server ile iletişim kurmasını sağlar.
+            // veritabani baglanti (sqlconnection) nesnesini olustur
+            // bu nesne uygulamanin sql server ile iletisim kurmasini saglar
             return new SqlConnection(ConnectionString);
         }
 
-        // Sorguyu çalıştır ve veritabanına veri ekle, güncelle veya sil. 
+        // sorguyu calistir ve veritabanina veri ekle guncelle veya sil 
         public static void ExecuteNonQuery(string query, params SqlParameter[] parameters)
         {
-            // using bloğu bağlantı nesnesinin işlem bitiminde bellekte yer tutmaması için otomatik olarak kapat.
+            // using blogu baglanti nesnesinin islem bitiminde bellekte yer tutmamasi icin otomatik olarak kapat
             using (SqlConnection conn = GetConnection())
             {
-                // Veritabanına gönderilecek olan SQL komutunu oluştur.
+                // veritabanina gonderilecek olan sql komutunu olustur
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    // null değilse, işlem sırasında SQL Injection'u engellemek için parametreleri komuta ekle
+                    // null degilse islem sirasinda sql injectionu engellemek icin parametreleri komuta ekle
                     if (parameters != null)
                     {
                         cmd.Parameters.AddRange(parameters);
                     }
                     
-                    // Veritabanı bağlantısını aktif hale getir.
+                    // veritabani baglantisini aktif hale getir
                     conn.Open();
-                    // Hazırlanan SQL komutunu veritabanı üzerinde çalıştır. 
+                    // hazirlanan sql komutunu veritabani uzerinde calistir
                     cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        // Sorguyu çalıştır ve veritabanından dönen satır ile sütunları bir veri tablosu formatında döndür.
+        // sorguyu calistir ve veritabanindan donen satir ile sutunlari bir veri tablosu formatinda dondur
         public static DataTable ExecuteQuery(string query, params SqlParameter[] parameters)
         {
-            // Veritabanı bağlantısını aç ve işlem bitince kapat.
+            // veritabani baglantisini ac ve islem bitince kapat
             using (SqlConnection conn = GetConnection())
             {
-                // Gelen sorgu ve bağlantı nesnesi ile yeni bir SQL komutu oluştur.
+                // gelen sorgu ve baglanti nesnesi ile yeni bir sql komutu olustur
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     if (parameters != null)
@@ -53,33 +53,33 @@ namespace VOID_STORE
                         cmd.Parameters.AddRange(parameters);
                     }
                     
-                    // Veritabanından dönen satırları ve sütunları hafızadaki bir C# tablosuna eşle ve doldur
+                    // veritabanindan donen satirlari ve sutunlari hafizadaki bir c# tablosuna esle ve doldur
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
-                        DataTable dt = new DataTable(); // Verilerin tutulacağı sanal tablo
-                        adapter.Fill(dt); // Tabloyu veritabanından gelen verilerle doldur
-                        return dt; // Tabloyu döndür
+                        DataTable dt = new DataTable(); // verilerin tutulacagi sanal tablo
+                        adapter.Fill(dt); // tabloyu veritabanindan gelen verilerle doldur
+                        return dt; // tabloyu dondur
                     }
                 }
             }
         }
         
-        // Sorguyu çalıştır ve sorgu sonucundaki ilk satırın ilk sütununu tek bir nesne (obje) olarak döndür.
+        // sorguyu calistir ve sorgu sonucundaki ilk satirin ilk sutununu tek bir nesne obje olarak dondur
         public static object ExecuteScalar(string query, params SqlParameter[] parameters)
         {
-            // Bağlantı nesnesini oluştur.
+            // baglanti nesnesini olustur
             using (SqlConnection conn = GetConnection())
             {
-                // SQL komutunu oluştur.
+                // sql komutunu olustur
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     if (parameters != null)
                     {
                         cmd.Parameters.AddRange(parameters);
                     }
-                    // Veritabanı bağlantısını aktif hale getir.
+                    // veritabani baglantisini aktif hale getir
                     conn.Open();
-                    // Sorgu sonucundaki ilk satırın ilk sütununu oku ve obje olarak döndür.
+                    // sorgu sonucundaki ilk satirin ilk sutununu oku ve obje olarak dondur
                     return cmd.ExecuteScalar();
                 }
             }

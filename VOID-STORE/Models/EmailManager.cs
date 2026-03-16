@@ -43,7 +43,7 @@ namespace VOID_STORE.Models
                             <h2 style='color: #FFFFFF; border-bottom: 1px solid #333; padding-bottom: 15px; margin-top: 0;'>Hoşgeldiniz!</h2>
                             <p style='color: #CCCCCC; font-size: 14px;'>Hesabınızı başarıyla oluşturmak için doğrulama kodunuz aşağıdadır:</p>
                             <div style='background-color: #18181D; padding: 20px; text-align: center; border-radius: 5px; margin: 20px 0;'>
-                                <span style='font-size: 32px; font-weight: bold; color: #10B981; letter-spacing: 5px;'>{code}</span>
+                                <span style='font-size: 32px; font-weight: bold; color: #00CC00; letter-spacing: 5px;'>{code}</span>
                             </div>
                             <p style='color: #888888; font-size: 12px; text-align: center;'>Bu kod 10 dakika boyunca geçerlidir. Lütfen kimseyle paylaşmayın.</p>
                         </div>";
@@ -94,7 +94,7 @@ namespace VOID_STORE.Models
                             <h2 style='color: #FFFFFF; border-bottom: 1px solid #333; padding-bottom: 15px; margin-top: 0;'>Şifre Sıfırlama</h2>
                             <p style='color: #CCCCCC; font-size: 14px;'>Hesabınızın şifresini sıfırlamak için doğrulama kodunuz aşağıdadır:</p>
                             <div style='background-color: #18181D; padding: 20px; text-align: center; border-radius: 5px; margin: 20px 0;'>
-                                <span style='font-size: 32px; font-weight: bold; color: #10B981; letter-spacing: 5px;'>{code}</span>
+                                <span style='font-size: 32px; font-weight: bold; color: #00CC00; letter-spacing: 5px;'>{code}</span>
                             </div>
                             <p style='color: #888888; font-size: 12px; text-align: center;'>Bu kod 10 dakika boyunca geçerlidir. Eğer bu işlemi siz talep etmediyseniz, lütfen bu mesaja itibar etmeyiniz.</p>
                         </div>";

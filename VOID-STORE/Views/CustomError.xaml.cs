@@ -20,7 +20,7 @@ namespace VOID_STORE.Views
             // Eğer başarılı bir işlemse, yazıları ve butonları yeşil yap
             if (isSuccess)
             {
-                var greenBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#10B981")); // Güzel bir yeşil
+                var greenBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#00CC00")); // Canlı Yeşil
                 txtTitle.Foreground = greenBrush;
                 btnOk.Background = greenBrush;
             }

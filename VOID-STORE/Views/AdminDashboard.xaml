@@ -118,7 +118,7 @@
                            Margin="16,0,0,0"/>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="-" Width="30" Foreground="White" Background="Transparent" BorderThickness="0" Click="MinimizeButton_Click" Cursor="Hand">
+                    <Button Content="_" Width="30" Foreground="White" Background="Transparent" BorderThickness="0" Click="MinimizeButton_Click" Cursor="Hand">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Template">

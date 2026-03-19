@@ -73,7 +73,7 @@
 
         <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Panel.ZIndex="1">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="_" Width="30" Foreground="White" Background="Transparent" BorderThickness="0" Click="MinimizeButton_Click" Cursor="Hand">
+                <Button Content="—" Width="30" Foreground="White" Background="Transparent" BorderThickness="0" Click="MinimizeButton_Click" Cursor="Hand">
                     <Button.Style>
                         <Style TargetType="Button">
                             <Setter Property="Template">
@@ -85,6 +85,7 @@
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="border" Property="Background" Value="#222228"/>
+                                                <Setter Property="Foreground" Value="White"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>

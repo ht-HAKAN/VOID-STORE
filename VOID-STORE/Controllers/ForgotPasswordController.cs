@@ -1,5 +1,5 @@
 using System;
-using Microsoft.Data.SqlClient;
+using SqlParameter = MySql.Data.MySqlClient.MySqlParameter;
 using VOID_STORE.Models;
 
 namespace VOID_STORE.Controllers
@@ -30,7 +30,7 @@ namespace VOID_STORE.Controllers
                 // Kodu veritabanına kaydet (Geçerlilik süresi: 10 dakika)
                 string insertCodeQuery = @"
                     INSERT INTO VerificationCodes (Email, Code, ExpirationDate, IsUsed)
-                    VALUES (@Email, @Code, DATEADD(MINUTE, 10, GETDATE()), 0)";
+                    VALUES (@Email, @Code, DATE_ADD(NOW(), INTERVAL 10 MINUTE), 0)";
 
                 SqlParameter[] insertParams = new SqlParameter[]
                 {
@@ -66,7 +66,7 @@ namespace VOID_STORE.Controllers
             try
             {
                 // Girilen kodun doğruluğunu ve süresini kontrol et
-                string checkCodeQuery = "SELECT CodeId FROM VerificationCodes WHERE Email = @Email AND Code = @Code AND IsUsed = 0 AND ExpirationDate > GETDATE()";
+                string checkCodeQuery = "SELECT CodeId FROM VerificationCodes WHERE Email = @Email AND Code = @Code AND IsUsed = 0 AND ExpirationDate > NOW()";
                 SqlParameter[] checkParams = new SqlParameter[]
                 {
                     new SqlParameter("@Email", email),

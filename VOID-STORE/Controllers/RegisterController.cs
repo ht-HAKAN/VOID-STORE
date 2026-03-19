@@ -1,7 +1,7 @@
 using System;
 using System.Data;
 using System.Text.RegularExpressions;
-using Microsoft.Data.SqlClient;
+using SqlParameter = MySql.Data.MySqlClient.MySqlParameter;
 using VOID_STORE.Models;
 
 namespace VOID_STORE.Controllers
@@ -62,7 +62,7 @@ namespace VOID_STORE.Controllers
             string code = rnd.Next(100000, 999999).ToString();
 
             // kodu veritabanina 10 dk suresiyle kaydet
-            string insertCodeQuery = "INSERT INTO VerificationCodes (Email, Code, ExpirationDate, IsUsed) VALUES (@Email, @Code, DATEADD(minute, 10, GETDATE()), 0)";
+            string insertCodeQuery = "INSERT INTO VerificationCodes (Email, Code, ExpirationDate, IsUsed) VALUES (@Email, @Code, DATE_ADD(NOW(), INTERVAL 10 MINUTE), 0)";
             SqlParameter[] codeParams = new SqlParameter[]
             {
                 new SqlParameter("@Email", email),

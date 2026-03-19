@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Microsoft.Data.SqlClient;
+using SqlParameter = MySql.Data.MySqlClient.MySqlParameter;
 
 using VOID_STORE.Models;
 using VOID_STORE.Controllers;
@@ -92,7 +92,7 @@ namespace VOID_STORE.Views
                 if (_verificationType == VerificationType.Registration)
                 {
                    // Veritabanı üzerinden kod doğrulama sorgusu (Mail adresi, kod, daha önce kullanılmamış olması ve süresinin dolmamış olması gerekiyor)
-                    string checkCodeQuery = "SELECT CodeId FROM VerificationCodes WHERE Email = @Email AND Code = @Code AND IsUsed = 0 AND ExpirationDate > GETDATE()";
+                    string checkCodeQuery = "SELECT CodeId FROM VerificationCodes WHERE Email = @Email AND Code = @Code AND IsUsed = 0 AND ExpirationDate > NOW()";
                     SqlParameter[] checkParams = new SqlParameter[]
                     {
                         new SqlParameter("@Email", _email),

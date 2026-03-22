@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # VOID STORE Configuration
 appsettings.json
+VOID_STORE_DB.sql
+VOID_STORE_DB_mysql.sql

@@ -72,13 +72,13 @@ namespace VOID_STORE.Views
                     // yonetici hesabini ayir
                     if (isAdmin)
                     {
-                        // secim ekranini ac
+                        // admin secim ekranina gec
                         AdminRoleSelection adminRoleSelection = new AdminRoleSelection();
-                        adminRoleSelection.Left = Left;
-                        adminRoleSelection.Top = Top;
+                        adminRoleSelection.Left = this.Left;
+                        adminRoleSelection.Top = this.Top;
                         adminRoleSelection.WindowStartupLocation = WindowStartupLocation.Manual;
                         adminRoleSelection.Show();
-                        Close();
+                        this.Close();
                         return;
                     }
 

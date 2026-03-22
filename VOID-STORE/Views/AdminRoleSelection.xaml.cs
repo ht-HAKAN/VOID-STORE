@@ -7,7 +7,7 @@ namespace VOID_STORE.Views
     {
         public AdminRoleSelection()
         {
-            // secim ekranini baslat
+            // ekrani baslat
             InitializeComponent();
         }
 
@@ -34,11 +34,8 @@ namespace VOID_STORE.Views
 
         private void AdminPanelButton_Click(object sender, RoutedEventArgs e)
         {
-            // yonetim panelini ac
+            // panele gec
             AdminDashboard adminDashboard = new AdminDashboard();
-            adminDashboard.Left = Left;
-            adminDashboard.Top = Top;
-            adminDashboard.WindowStartupLocation = WindowStartupLocation.Manual;
             adminDashboard.Show();
             Close();
         }
@@ -47,9 +44,6 @@ namespace VOID_STORE.Views
         {
             // magazaya gec
             MainAppWindow mainWindow = new MainAppWindow();
-            mainWindow.Left = Left;
-            mainWindow.Top = Top;
-            mainWindow.WindowStartupLocation = WindowStartupLocation.Manual;
             mainWindow.Show();
             Close();
         }

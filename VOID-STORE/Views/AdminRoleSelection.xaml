@@ -127,21 +127,21 @@
                         VerticalAlignment="Top"
                         Width="310"
                         Margin="0,255,0,0">
-                <TextBlock Text="Yönetici Girişi"
+                <TextBlock Text="Yönetici Hesabı"
                            Foreground="White"
                            FontSize="26"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
                            Margin="0,0,0,18"/>
 
-                <TextBlock Text="Yönetici hesabı ile giriş yapıldı."
+                <TextBlock Text="Yönetici yetkisine sahip bir hesapla oturum açtınız."
                            Foreground="#E6E6E6"
                            FontSize="15"
                            FontWeight="SemiBold"
                            TextAlignment="Center"
                            TextWrapping="Wrap"/>
 
-                <TextBlock Text="Yönetim paneline geçebilir veya kullanıcı olarak mağazaya devam edebilirsiniz."
+                <TextBlock Text="Yönetim paneline geçebilir veya mağazaya kullanıcı görünümünde devam edebilirsiniz."
                            Foreground="#A7A7AC"
                            FontSize="13"
                            Margin="0,10,0,28"

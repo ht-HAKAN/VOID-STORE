@@ -9,39 +9,59 @@ namespace VOID_STORE.Views
     {
         public AdminDashboard()
         {
-            // ekrani baslat
+            // acilis verilerini hazirla
             InitializeComponent();
+
+            try
+            {
+                AdminGameSchemaManager.EnsureSchema();
+            }
+            catch
+            {
+            }
+
+            LoadDashboardStats();
+        }
+
+        public void RefreshDashboardStats()
+        {
+        // ekrandaki sayilari yenile
             LoadDashboardStats();
         }
 
         private void LoadDashboardStats()
         {
-            // sayilari doldur
+        // kart sayilarini doldur
             try
             {
                 txtTotalGamesValue.Text = GetCount("SELECT COUNT(*) FROM Games").ToString();
-                txtActiveGamesValue.Text = GetCount("SELECT COUNT(*) FROM Games WHERE IsActive = 1").ToString();
-                txtPassiveGamesValue.Text = GetCount("SELECT COUNT(*) FROM Games WHERE IsActive = 0").ToString();
+                txtActiveGamesValue.Text = GetCount("SELECT COUNT(*) FROM Games WHERE ApprovalStatus = 'approved' AND IsActive = 1").ToString();
+                txtPassiveGamesValue.Text = GetCount("SELECT COUNT(*) FROM Games WHERE ApprovalStatus = 'approved' AND IsActive = 0").ToString();
+                txtPendingGamesValue.Text = (
+                    GetCount("SELECT COUNT(*) FROM Games WHERE ApprovalStatus = 'pending'") +
+                    GetCount("SELECT COUNT(*) FROM GameDrafts WHERE DraftStatus = 'pending'"))
+                    .ToString();
             }
             catch
             {
-                // sayilari sifirla
+        // kart sayilarini sifirla
                 txtTotalGamesValue.Text = "0";
                 txtActiveGamesValue.Text = "0";
                 txtPassiveGamesValue.Text = "0";
+                txtPendingGamesValue.Text = "0";
             }
         }
 
         private int GetCount(string query)
         {
-            // sayi sorgusu don
+        // istenen sayi degerini getir
             object result = DatabaseManager.ExecuteScalar(query);
             return result == null || result == DBNull.Value ? 0 : Convert.ToInt32(result);
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // pencereyi surukle
+        // baslik alanindan pencereyi surukle
             if (e.ClickCount == 2)
             {
                 ToggleWindowState();
@@ -56,7 +76,7 @@ namespace VOID_STORE.Views
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
-            // pencereyi kucult
+        // pencereyi alt sekmeye al
             WindowState = WindowState.Minimized;
         }
 
@@ -74,61 +94,125 @@ namespace VOID_STORE.Views
 
         private void StoreButton_Click(object sender, RoutedEventArgs e)
         {
-            // magazaya don
+        // magazaya kullanici olarak don
             ProfileMenuToggle.IsChecked = false;
-            MainAppWindow mainWindow = new MainAppWindow();
-            mainWindow.Left = Left;
-            mainWindow.Top = Top;
-            mainWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            MainAppWindow mainWindow = new MainAppWindow
+            {
+                Left = Left,
+                Top = Top,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+
             mainWindow.Show();
             Close();
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            // girise don
+        // oturumu kapatip giris ekranina don
             ProfileMenuToggle.IsChecked = false;
-            Login loginWindow = new Login();
-            loginWindow.Left = Left;
-            loginWindow.Top = Top;
-            loginWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            Login loginWindow = new Login
+            {
+                Left = Left,
+                Top = Top,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+
             loginWindow.Show();
             Close();
         }
 
         private void GamesSectionButton_Click(object sender, RoutedEventArgs e)
         {
-            // sonraki adim bilgisi
+            // hazir olmayan alani bildir
             CustomError.ShowDialog("Oyun yönetimi ekranı bir sonraki adımda hazırlanacak.", "BİLGİ");
         }
 
         private void OpenCreateViewButton_Click(object sender, RoutedEventArgs e)
         {
-            // sonraki adim bilgisi
-            CustomError.ShowDialog("Oyun ekleme ekranı bir sonraki adımda hazırlanacak.", "BİLGİ");
+            // oyun ekleme ekranini ac
+            try
+            {
+                AdminCreateGame createWindow = new AdminCreateGame
+                {
+                    Owner = this,
+                    Left = Left,
+                    Top = Top,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Width = Width,
+                    Height = Height,
+                    WindowState = WindowState
+                };
+
+                createWindow.ShowDialog();
+                LoadDashboardStats();
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog("Oyun ekleme ekranı açılamadı: " + ex.Message, "SİSTEM HATASI");
+            }
         }
 
         private void OpenEditViewButton_Click(object sender, RoutedEventArgs e)
         {
-            // sonraki adim bilgisi
-            CustomError.ShowDialog("Oyun güncelleme ekranı bir sonraki adımda hazırlanacak.", "BİLGİ");
+            // oyun guncelleme ekranini ac
+            try
+            {
+                AdminEditGame editWindow = new AdminEditGame
+                {
+                    Owner = this,
+                    Left = Left,
+                    Top = Top,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Width = Width,
+                    Height = Height,
+                    WindowState = WindowState
+                };
+
+                editWindow.ShowDialog();
+                LoadDashboardStats();
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog("Oyun güncelleme ekranı açılamadı: " + ex.Message, "SİSTEM HATASI");
+            }
         }
 
         private void OpenDeleteViewButton_Click(object sender, RoutedEventArgs e)
         {
-            // sonraki adim bilgisi
-            CustomError.ShowDialog("Silme ve durum yönetimi ekranı bir sonraki adımda hazırlanacak.", "BİLGİ");
+            // oyun yonetimi ekranini ac
+            try
+            {
+                AdminManageGames manageWindow = new AdminManageGames
+                {
+                    Owner = this,
+                    Left = Left,
+                    Top = Top,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Width = Width,
+                    Height = Height,
+                    WindowState = WindowState
+                };
+
+                manageWindow.ShowDialog();
+                LoadDashboardStats();
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog("Oyun yönetimi ekranı açılamadı: " + ex.Message, "SİSTEM HATASI");
+            }
         }
 
         private void ProfileEditButton_Click(object sender, RoutedEventArgs e)
         {
-            // profil duzenleme sonraki adim
+            // profil duzenleme alani hazir degil
             ProfileMenuToggle.IsChecked = false;
             CustomError.ShowDialog("Profil düzenleme alanı bir sonraki adımda hazırlanacak.", "BİLGİ");
         }
+
         private void ToggleWindowState()
         {
-            // pencereyi buyut ya da eski haline don
+            // pencere boyutunu buyut ya da geri al
             WindowState = WindowState == WindowState.Maximized
                 ? WindowState.Normal
                 : WindowState.Maximized;

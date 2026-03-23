@@ -7,13 +7,13 @@ namespace VOID_STORE.Views
     {
         public AdminRoleSelection()
         {
-            // ekrani baslat
+        // acilis verilerini hazirla
             InitializeComponent();
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // pencereyi surukle
+        // baslik alanindan pencereyi surukle
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();
@@ -22,7 +22,7 @@ namespace VOID_STORE.Views
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
-            // pencereyi kucult
+        // pencereyi alt sekmeye al
             WindowState = WindowState.Minimized;
         }
 
@@ -34,7 +34,7 @@ namespace VOID_STORE.Views
 
         private void AdminPanelButton_Click(object sender, RoutedEventArgs e)
         {
-            // panele gec
+            // yonetim panelini ac
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.Show();
             Close();
@@ -42,7 +42,7 @@ namespace VOID_STORE.Views
 
         private void StoreButton_Click(object sender, RoutedEventArgs e)
         {
-            // magazaya gec
+            // magazaya kullanici olarak gec
             MainAppWindow mainWindow = new MainAppWindow();
             mainWindow.Show();
             Close();

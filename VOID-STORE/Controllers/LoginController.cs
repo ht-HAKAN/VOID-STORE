@@ -42,5 +42,18 @@ namespace VOID_STORE.Controllers
                 throw; // hatayi view katmaninda yakala
             }
         }
+
+        public string GetDisplayUsername(string usernameOrEmail)
+        {
+            // oturumda gosterilecek kullanici adini getir
+            object? result = DatabaseManager.ExecuteScalar(
+                @"SELECT Username
+                  FROM Users
+                  WHERE Username = @User OR Email = @User
+                  LIMIT 1;",
+                new SqlParameter("@User", usernameOrEmail));
+
+            return result?.ToString() ?? usernameOrEmail.Trim();
+        }
     }
 }

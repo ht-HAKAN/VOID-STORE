@@ -12,7 +12,7 @@ namespace VOID_STORE.Models
         public string Developer { get; set; } = string.Empty;
         public string Publisher { get; set; } = string.Empty;
         public string ReleaseDateText { get; set; } = string.Empty;
-        public string TrailerUrl { get; set; } = string.Empty;
+        public string TrailerVideoSourcePath { get; set; } = string.Empty;
         public string MinimumRequirements { get; set; } = string.Empty;
         public string RecommendedRequirements { get; set; } = string.Empty;
         public string SupportedLanguages { get; set; } = string.Empty;

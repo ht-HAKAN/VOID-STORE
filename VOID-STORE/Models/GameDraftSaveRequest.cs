@@ -21,7 +21,7 @@ namespace VOID_STORE.Models
 
         public string ReleaseDateText { get; set; } = string.Empty;
 
-        public string TrailerUrl { get; set; } = string.Empty;
+        public string TrailerVideoSourcePath { get; set; } = string.Empty;
 
         public string MinimumRequirements { get; set; } = string.Empty;
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +6,7 @@ namespace VOID_STORE.Models
 {
     public static class GameFeatureCatalog
     {
-        // secilebilir oyun ozellikleri
+        // seçilebilir oyun özellikleri
         public static IReadOnlyList<string> All { get; } = new List<string>
         {
             "Tek Oyunculu",
@@ -21,7 +21,7 @@ namespace VOID_STORE.Models
 
         public static List<string> NormalizeMany(IEnumerable<string>? values)
         {
-        // secimi gecerli listeye uyarla
+            // seçimi geçerli listeye uyarla
             if (values == null)
             {
                 return new List<string>();

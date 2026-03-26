@@ -70,16 +70,40 @@ namespace VOID_STORE.Models
                 .ToList();
         }
 
-        public static string SaveGameAssets(int gameId, string coverSourcePath, IReadOnlyList<string> gallerySourcePaths)
+        public static string GetTrailerVideoPath(int gameId, bool useDraftFolder)
         {
-        // yayindaki dosyalari ilgili klasore kopyala
-            return SaveAssets(gameId, coverSourcePath, gallerySourcePaths, false);
+        // fragman videosunu bul
+            string targetFolder = useDraftFolder ? GetDraftGameFolder(gameId) : GetGameFolder(gameId);
+
+            if (!Directory.Exists(targetFolder))
+            {
+                return string.Empty;
+            }
+
+            return Directory
+                .GetFiles(targetFolder, "trailer.*", SearchOption.TopDirectoryOnly)
+                .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                .FirstOrDefault() ?? string.Empty;
         }
 
-        public static string SaveDraftAssets(int gameId, string coverSourcePath, IReadOnlyList<string> gallerySourcePaths)
+        public static (string CoverRelativePath, string TrailerRelativePath) SaveGameAssets(
+            int gameId,
+            string coverSourcePath,
+            string trailerSourcePath,
+            IReadOnlyList<string> gallerySourcePaths)
+        {
+        // yayindaki dosyalari ilgili klasore kopyala
+            return SaveAssets(gameId, coverSourcePath, trailerSourcePath, gallerySourcePaths, false);
+        }
+
+        public static (string CoverRelativePath, string TrailerRelativePath) SaveDraftAssets(
+            int gameId,
+            string coverSourcePath,
+            string trailerSourcePath,
+            IReadOnlyList<string> gallerySourcePaths)
         {
         // bekleyen surum dosyalarini ilgili klasore kopyala
-            return SaveAssets(gameId, coverSourcePath, gallerySourcePaths, true);
+            return SaveAssets(gameId, coverSourcePath, trailerSourcePath, gallerySourcePaths, true);
         }
 
         public static void DeleteGameFolder(int gameId)
@@ -116,6 +140,20 @@ namespace VOID_STORE.Models
             string livePrefix = $"voidstoregames/{gameId}/";
 
             return draftCoverPath.Replace(draftPrefix, livePrefix, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static string GetPromotedTrailerPath(int gameId, string draftTrailerPath)
+        {
+        // bekleyen fragman yolunu yayin yoluna uyarla
+            if (string.IsNullOrWhiteSpace(draftTrailerPath))
+            {
+                return string.Empty;
+            }
+
+            string draftPrefix = $"voidstoregames/drafts/{gameId}/";
+            string livePrefix = $"voidstoregames/{gameId}/";
+
+            return draftTrailerPath.Replace(draftPrefix, livePrefix, StringComparison.OrdinalIgnoreCase);
         }
 
         public static void PromoteDraftAssets(int gameId)
@@ -202,7 +240,12 @@ namespace VOID_STORE.Models
             return string.Empty;
         }
 
-        private static string SaveAssets(int gameId, string coverSourcePath, IReadOnlyList<string> gallerySourcePaths, bool useDraftFolder)
+        private static (string CoverRelativePath, string TrailerRelativePath) SaveAssets(
+            int gameId,
+            string coverSourcePath,
+            string trailerSourcePath,
+            IReadOnlyList<string> gallerySourcePaths,
+            bool useDraftFolder)
         {
         // secilen gorselleri hedef klasore yerlestir
             string targetFolder = useDraftFolder ? GetDraftGameFolder(gameId) : GetGameFolder(gameId);
@@ -219,6 +262,12 @@ namespace VOID_STORE.Models
             try
             {
                 string coverRelativePath = CopyAsset(coverSourcePath, tempFolder, "cover", relativeFolder);
+                string trailerRelativePath = string.Empty;
+
+                if (!string.IsNullOrWhiteSpace(trailerSourcePath))
+                {
+                    trailerRelativePath = CopyAsset(trailerSourcePath, tempFolder, "trailer", relativeFolder);
+                }
 
                 for (int i = 0; i < gallerySourcePaths.Count; i++)
                 {
@@ -231,7 +280,7 @@ namespace VOID_STORE.Models
                 }
 
                 Directory.Move(tempFolder, targetFolder);
-                return coverRelativePath;
+                return (coverRelativePath, trailerRelativePath);
             }
             catch
             {

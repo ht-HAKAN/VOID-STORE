@@ -439,7 +439,9 @@ namespace VOID_STORE.Views
             string developerText = string.IsNullOrWhiteSpace(state.Developer) ? "-" : state.Developer;
             string publisherText = string.IsNullOrWhiteSpace(state.Publisher) ? "-" : state.Publisher;
             string releaseText = string.IsNullOrWhiteSpace(state.ReleaseDateText) ? "-" : state.ReleaseDateText;
-            string trailerText = string.IsNullOrWhiteSpace(state.TrailerUrl) ? "Fragman eklenmedi" : state.TrailerUrl;
+            string trailerText = string.IsNullOrWhiteSpace(state.TrailerVideoPath)
+                ? "Fragman eklenmedi"
+                : Path.GetFileName(state.TrailerVideoPath);
             string minimumText = string.IsNullOrWhiteSpace(state.MinimumRequirements) ? "Belirtilmedi" : state.MinimumRequirements.Trim();
             string recommendedText = string.IsNullOrWhiteSpace(state.RecommendedRequirements) ? "Belirtilmedi" : state.RecommendedRequirements.Trim();
             string languagesText = string.IsNullOrWhiteSpace(state.SupportedLanguages) ? "Belirtilmedi" : state.SupportedLanguages.Trim();

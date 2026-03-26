@@ -69,6 +69,9 @@ namespace VOID_STORE.Views
                         return;
                     }
 
+                    string displayUsername = _loginController.GetDisplayUsername(usernameOrEmail);
+                    UserSession.SetAuthenticated(displayUsername);
+
                     // yonetici hesabini ayir
                     if (isAdmin)
                     {
@@ -130,6 +133,7 @@ namespace VOID_STORE.Views
         private void GuestLogin_Click(object sender, RoutedEventArgs e)
         {
             // misafir olarak devam et
+            UserSession.SetGuest();
             MainAppWindow mainWindow = new MainAppWindow();
             mainWindow.Show();
             Close();

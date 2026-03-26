@@ -36,7 +36,7 @@ namespace VOID_STORE.Controllers
                 request.Publisher,
                 request.Platforms,
                 request.ReleaseDateText,
-                request.TrailerUrl,
+                request.TrailerVideoSourcePath,
                 request.MinimumRequirements,
                 request.RecommendedRequirements,
                 request.SupportedLanguages,
@@ -67,9 +67,9 @@ namespace VOID_STORE.Controllers
             {
                 using MySqlCommand insertGameCommand = new MySqlCommand(
                     @"INSERT INTO Games
-                        (Title, Category, Description, Price, CoverImagePath, Developer, Publisher, ReleaseDate, IsActive, ApprovalStatus, TrailerUrl, MinimumRequirements, RecommendedRequirements, SupportedLanguages, GameFeatures)
+                        (Title, Category, Description, Price, CoverImagePath, Developer, Publisher, ReleaseDate, IsActive, ApprovalStatus, TrailerUrl, TrailerVideoPath, MinimumRequirements, RecommendedRequirements, SupportedLanguages, GameFeatures)
                       VALUES
-                        (@Title, @Category, @Description, @Price, NULL, @Developer, @Publisher, @ReleaseDate, 1, 'pending', @TrailerUrl, @MinimumRequirements, @RecommendedRequirements, @SupportedLanguages, @GameFeatures);",
+                        (@Title, @Category, @Description, @Price, NULL, @Developer, @Publisher, @ReleaseDate, 1, 'pending', NULL, NULL, @MinimumRequirements, @RecommendedRequirements, @SupportedLanguages, @GameFeatures);",
                     connection,
                     transaction);
 
@@ -80,9 +80,6 @@ namespace VOID_STORE.Controllers
                 insertGameCommand.Parameters.AddWithValue("@Developer", request.Developer.Trim());
                 insertGameCommand.Parameters.AddWithValue("@Publisher", request.Publisher.Trim());
                 insertGameCommand.Parameters.AddWithValue("@ReleaseDate", releaseDate);
-                insertGameCommand.Parameters.AddWithValue(
-                    "@TrailerUrl",
-                    string.IsNullOrWhiteSpace(request.TrailerUrl) ? DBNull.Value : request.TrailerUrl.Trim());
                 insertGameCommand.Parameters.AddWithValue("@MinimumRequirements", request.MinimumRequirements.Trim());
                 insertGameCommand.Parameters.AddWithValue("@RecommendedRequirements", request.RecommendedRequirements.Trim());
                 insertGameCommand.Parameters.AddWithValue("@SupportedLanguages", request.SupportedLanguages.Trim());
@@ -91,19 +88,23 @@ namespace VOID_STORE.Controllers
                 insertGameCommand.ExecuteNonQuery();
                 createdGameId = Convert.ToInt32(insertGameCommand.LastInsertedId);
 
-                string coverRelativePath = GameAssetManager.SaveGameAssets(
+                (string coverRelativePath, string trailerRelativePath) = GameAssetManager.SaveGameAssets(
                     createdGameId,
                     request.CoverImageSourcePath,
+                    request.TrailerVideoSourcePath,
                     request.GalleryImageSourcePaths);
 
                 InsertPlatforms(connection, transaction, createdGameId, request.Platforms);
 
                 using MySqlCommand updateCoverCommand = new MySqlCommand(
-                    "UPDATE Games SET CoverImagePath = @CoverImagePath WHERE GameId = @GameId;",
+                    "UPDATE Games SET CoverImagePath = @CoverImagePath, TrailerVideoPath = @TrailerVideoPath WHERE GameId = @GameId;",
                     connection,
                     transaction);
 
                 updateCoverCommand.Parameters.AddWithValue("@CoverImagePath", coverRelativePath);
+                updateCoverCommand.Parameters.AddWithValue(
+                    "@TrailerVideoPath",
+                    string.IsNullOrWhiteSpace(trailerRelativePath) ? DBNull.Value : trailerRelativePath);
                 updateCoverCommand.Parameters.AddWithValue("@GameId", createdGameId);
                 updateCoverCommand.ExecuteNonQuery();
 
@@ -354,7 +355,7 @@ namespace VOID_STORE.Controllers
                     Developer,
                     Publisher,
                     ReleaseDate,
-                    TrailerUrl,
+                    TrailerVideoPath,
                     MinimumRequirements,
                     RecommendedRequirements,
                     SupportedLanguages,
@@ -381,7 +382,8 @@ namespace VOID_STORE.Controllers
                     Developer = draftRow["Developer"]?.ToString() ?? string.Empty,
                     Publisher = draftRow["Publisher"]?.ToString() ?? string.Empty,
                     ReleaseDateText = FormatReleaseDate(draftRow["ReleaseDate"]),
-                    TrailerUrl = draftRow["TrailerUrl"] == DBNull.Value ? string.Empty : draftRow["TrailerUrl"]?.ToString() ?? string.Empty,
+                    TrailerVideoPath = draftRow["TrailerVideoPath"] == DBNull.Value ? string.Empty : draftRow["TrailerVideoPath"]?.ToString() ?? string.Empty,
+                    TrailerVideoSourcePath = GameAssetManager.GetAbsoluteAssetPath(draftRow["TrailerVideoPath"] == DBNull.Value ? string.Empty : draftRow["TrailerVideoPath"]?.ToString() ?? string.Empty),
                     MinimumRequirements = draftRow["MinimumRequirements"] == DBNull.Value ? string.Empty : draftRow["MinimumRequirements"]?.ToString() ?? string.Empty,
                     RecommendedRequirements = draftRow["RecommendedRequirements"] == DBNull.Value ? string.Empty : draftRow["RecommendedRequirements"]?.ToString() ?? string.Empty,
                     SupportedLanguages = draftRow["SupportedLanguages"] == DBNull.Value ? string.Empty : draftRow["SupportedLanguages"]?.ToString() ?? string.Empty,
@@ -405,7 +407,7 @@ namespace VOID_STORE.Controllers
                     Developer,
                     Publisher,
                     ReleaseDate,
-                    TrailerUrl,
+                    TrailerVideoPath,
                     MinimumRequirements,
                     RecommendedRequirements,
                     SupportedLanguages,
@@ -433,7 +435,8 @@ namespace VOID_STORE.Controllers
                 Developer = gameRow["Developer"]?.ToString() ?? string.Empty,
                 Publisher = gameRow["Publisher"]?.ToString() ?? string.Empty,
                 ReleaseDateText = FormatReleaseDate(gameRow["ReleaseDate"]),
-                TrailerUrl = gameRow["TrailerUrl"] == DBNull.Value ? string.Empty : gameRow["TrailerUrl"]?.ToString() ?? string.Empty,
+                TrailerVideoPath = gameRow["TrailerVideoPath"] == DBNull.Value ? string.Empty : gameRow["TrailerVideoPath"]?.ToString() ?? string.Empty,
+                TrailerVideoSourcePath = GameAssetManager.GetAbsoluteAssetPath(gameRow["TrailerVideoPath"] == DBNull.Value ? string.Empty : gameRow["TrailerVideoPath"]?.ToString() ?? string.Empty),
                 MinimumRequirements = gameRow["MinimumRequirements"] == DBNull.Value ? string.Empty : gameRow["MinimumRequirements"]?.ToString() ?? string.Empty,
                 RecommendedRequirements = gameRow["RecommendedRequirements"] == DBNull.Value ? string.Empty : gameRow["RecommendedRequirements"]?.ToString() ?? string.Empty,
                 SupportedLanguages = gameRow["SupportedLanguages"] == DBNull.Value ? string.Empty : gameRow["SupportedLanguages"]?.ToString() ?? string.Empty,
@@ -458,7 +461,7 @@ namespace VOID_STORE.Controllers
                 request.Publisher,
                 request.Platforms,
                 request.ReleaseDateText,
-                request.TrailerUrl,
+                request.TrailerVideoSourcePath,
                 request.MinimumRequirements,
                 request.RecommendedRequirements,
                 request.SupportedLanguages,
@@ -483,9 +486,10 @@ namespace VOID_STORE.Controllers
                 "dd.MM.yyyy",
                 CultureInfo.InvariantCulture);
 
-            string coverRelativePath = GameAssetManager.SaveDraftAssets(
+            (string coverRelativePath, string trailerRelativePath) = GameAssetManager.SaveDraftAssets(
                 request.GameId,
                 request.CoverImageSourcePath,
+                request.TrailerVideoSourcePath,
                 request.GalleryImageSourcePaths);
 
             int gameDraftId = GetPendingDraftId(request.GameId);
@@ -509,7 +513,8 @@ namespace VOID_STORE.Controllers
                               Developer = @Developer,
                               Publisher = @Publisher,
                               ReleaseDate = @ReleaseDate,
-                              TrailerUrl = @TrailerUrl,
+                              TrailerUrl = NULL,
+                              TrailerVideoPath = @TrailerVideoPath,
                               MinimumRequirements = @MinimumRequirements,
                               RecommendedRequirements = @RecommendedRequirements,
                               SupportedLanguages = @SupportedLanguages,
@@ -528,8 +533,8 @@ namespace VOID_STORE.Controllers
                     updateDraftCommand.Parameters.AddWithValue("@Publisher", request.Publisher.Trim());
                     updateDraftCommand.Parameters.AddWithValue("@ReleaseDate", releaseDate);
                     updateDraftCommand.Parameters.AddWithValue(
-                        "@TrailerUrl",
-                        string.IsNullOrWhiteSpace(request.TrailerUrl) ? DBNull.Value : request.TrailerUrl.Trim());
+                        "@TrailerVideoPath",
+                        string.IsNullOrWhiteSpace(trailerRelativePath) ? DBNull.Value : trailerRelativePath);
                     updateDraftCommand.Parameters.AddWithValue("@MinimumRequirements", request.MinimumRequirements.Trim());
                     updateDraftCommand.Parameters.AddWithValue("@RecommendedRequirements", request.RecommendedRequirements.Trim());
                     updateDraftCommand.Parameters.AddWithValue("@SupportedLanguages", request.SupportedLanguages.Trim());
@@ -541,9 +546,9 @@ namespace VOID_STORE.Controllers
                 {
                     using MySqlCommand insertDraftCommand = new MySqlCommand(
                         @"INSERT INTO GameDrafts
-                            (GameId, Title, Category, Description, Price, CoverImagePath, Developer, Publisher, ReleaseDate, TrailerUrl, MinimumRequirements, RecommendedRequirements, SupportedLanguages, GameFeatures, DraftStatus)
+                            (GameId, Title, Category, Description, Price, CoverImagePath, Developer, Publisher, ReleaseDate, TrailerUrl, TrailerVideoPath, MinimumRequirements, RecommendedRequirements, SupportedLanguages, GameFeatures, DraftStatus)
                           VALUES
-                            (@GameId, @Title, @Category, @Description, @Price, @CoverImagePath, @Developer, @Publisher, @ReleaseDate, @TrailerUrl, @MinimumRequirements, @RecommendedRequirements, @SupportedLanguages, @GameFeatures, 'pending');",
+                            (@GameId, @Title, @Category, @Description, @Price, @CoverImagePath, @Developer, @Publisher, @ReleaseDate, NULL, @TrailerVideoPath, @MinimumRequirements, @RecommendedRequirements, @SupportedLanguages, @GameFeatures, 'pending');",
                         connection,
                         transaction);
 
@@ -557,8 +562,8 @@ namespace VOID_STORE.Controllers
                     insertDraftCommand.Parameters.AddWithValue("@Publisher", request.Publisher.Trim());
                     insertDraftCommand.Parameters.AddWithValue("@ReleaseDate", releaseDate);
                     insertDraftCommand.Parameters.AddWithValue(
-                        "@TrailerUrl",
-                        string.IsNullOrWhiteSpace(request.TrailerUrl) ? DBNull.Value : request.TrailerUrl.Trim());
+                        "@TrailerVideoPath",
+                        string.IsNullOrWhiteSpace(trailerRelativePath) ? DBNull.Value : trailerRelativePath);
                     insertDraftCommand.Parameters.AddWithValue("@MinimumRequirements", request.MinimumRequirements.Trim());
                     insertDraftCommand.Parameters.AddWithValue("@RecommendedRequirements", request.RecommendedRequirements.Trim());
                     insertDraftCommand.Parameters.AddWithValue("@SupportedLanguages", request.SupportedLanguages.Trim());
@@ -737,7 +742,7 @@ namespace VOID_STORE.Controllers
                     Developer,
                     Publisher,
                     ReleaseDate,
-                    TrailerUrl,
+                    TrailerVideoPath,
                     MinimumRequirements,
                     RecommendedRequirements,
                     SupportedLanguages,
@@ -758,6 +763,8 @@ namespace VOID_STORE.Controllers
             List<string> platforms = GetDraftPlatforms(draftId);
             string draftCoverPath = draftRow["CoverImagePath"] == DBNull.Value ? string.Empty : draftRow["CoverImagePath"]?.ToString() ?? string.Empty;
             string liveCoverPath = GameAssetManager.GetPromotedCoverPath(gameId, draftCoverPath);
+            string draftTrailerPath = draftRow["TrailerVideoPath"] == DBNull.Value ? string.Empty : draftRow["TrailerVideoPath"]?.ToString() ?? string.Empty;
+            string liveTrailerPath = GameAssetManager.GetPromotedTrailerPath(gameId, draftTrailerPath);
 
             using MySqlConnection connection = DatabaseManager.GetConnection();
             connection.Open();
@@ -776,7 +783,8 @@ namespace VOID_STORE.Controllers
                           Developer = @Developer,
                           Publisher = @Publisher,
                           ReleaseDate = @ReleaseDate,
-                          TrailerUrl = @TrailerUrl,
+                          TrailerUrl = NULL,
+                          TrailerVideoPath = @TrailerVideoPath,
                           MinimumRequirements = @MinimumRequirements,
                           RecommendedRequirements = @RecommendedRequirements,
                           SupportedLanguages = @SupportedLanguages,
@@ -795,7 +803,7 @@ namespace VOID_STORE.Controllers
                 updateGameCommand.Parameters.AddWithValue("@Developer", draftRow["Developer"] == DBNull.Value ? DBNull.Value : draftRow["Developer"]?.ToString() ?? string.Empty);
                 updateGameCommand.Parameters.AddWithValue("@Publisher", draftRow["Publisher"] == DBNull.Value ? DBNull.Value : draftRow["Publisher"]?.ToString() ?? string.Empty);
                 updateGameCommand.Parameters.AddWithValue("@ReleaseDate", draftRow["ReleaseDate"] == DBNull.Value ? DBNull.Value : Convert.ToDateTime(draftRow["ReleaseDate"], CultureInfo.InvariantCulture));
-                updateGameCommand.Parameters.AddWithValue("@TrailerUrl", draftRow["TrailerUrl"] == DBNull.Value ? DBNull.Value : draftRow["TrailerUrl"]?.ToString() ?? string.Empty);
+                updateGameCommand.Parameters.AddWithValue("@TrailerVideoPath", string.IsNullOrWhiteSpace(liveTrailerPath) ? DBNull.Value : liveTrailerPath);
                 updateGameCommand.Parameters.AddWithValue("@MinimumRequirements", draftRow["MinimumRequirements"] == DBNull.Value ? DBNull.Value : draftRow["MinimumRequirements"]?.ToString() ?? string.Empty);
                 updateGameCommand.Parameters.AddWithValue("@RecommendedRequirements", draftRow["RecommendedRequirements"] == DBNull.Value ? DBNull.Value : draftRow["RecommendedRequirements"]?.ToString() ?? string.Empty);
                 updateGameCommand.Parameters.AddWithValue("@SupportedLanguages", draftRow["SupportedLanguages"] == DBNull.Value ? DBNull.Value : draftRow["SupportedLanguages"]?.ToString() ?? string.Empty);
@@ -867,7 +875,7 @@ namespace VOID_STORE.Controllers
             string publisher,
             IReadOnlyCollection<string> platforms,
             string releaseDateText,
-            string trailerUrl,
+            string trailerVideoSourcePath,
             string minimumRequirements,
             string recommendedRequirements,
             string supportedLanguages,
@@ -978,12 +986,13 @@ namespace VOID_STORE.Controllers
                 return "Seçilen oyun görsellerinden bazıları bulunamadı.";
             }
 
-            if (!string.IsNullOrWhiteSpace(trailerUrl))
+            if (!string.IsNullOrWhiteSpace(trailerVideoSourcePath))
             {
-                if (!Uri.TryCreate(trailerUrl.Trim(), UriKind.Absolute, out Uri? uriResult) ||
-                    (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
+                string absoluteTrailerPath = GameAssetManager.GetAbsoluteAssetPath(trailerVideoSourcePath);
+
+                if (!File.Exists(absoluteTrailerPath))
                 {
-                    return "Fragman bağlantısı geçerli bir adres olmalıdır.";
+                    return "Seçilen fragman videosu bulunamadı.";
                 }
             }
 
@@ -1110,7 +1119,7 @@ namespace VOID_STORE.Controllers
                     Developer,
                     Publisher,
                     ReleaseDate,
-                    TrailerUrl,
+                    TrailerVideoPath,
                     MinimumRequirements,
                     RecommendedRequirements,
                     SupportedLanguages,
@@ -1149,7 +1158,7 @@ namespace VOID_STORE.Controllers
                     Developer,
                     Publisher,
                     ReleaseDate,
-                    TrailerUrl,
+                    TrailerVideoPath,
                     MinimumRequirements,
                     RecommendedRequirements,
                     SupportedLanguages,
@@ -1189,7 +1198,7 @@ namespace VOID_STORE.Controllers
                     Developer,
                     Publisher,
                     ReleaseDate,
-                    TrailerUrl,
+                    TrailerVideoPath,
                     MinimumRequirements,
                     RecommendedRequirements,
                     SupportedLanguages,
@@ -1299,7 +1308,8 @@ namespace VOID_STORE.Controllers
                 Developer = row["Developer"] == DBNull.Value ? string.Empty : row["Developer"]?.ToString() ?? string.Empty,
                 Publisher = row["Publisher"] == DBNull.Value ? string.Empty : row["Publisher"]?.ToString() ?? string.Empty,
                 ReleaseDateText = FormatReleaseDate(row["ReleaseDate"]),
-                TrailerUrl = row["TrailerUrl"] == DBNull.Value ? string.Empty : row["TrailerUrl"]?.ToString() ?? string.Empty,
+                TrailerVideoPath = row["TrailerVideoPath"] == DBNull.Value ? string.Empty : row["TrailerVideoPath"]?.ToString() ?? string.Empty,
+                TrailerVideoSourcePath = GameAssetManager.GetAbsoluteAssetPath(row["TrailerVideoPath"] == DBNull.Value ? string.Empty : row["TrailerVideoPath"]?.ToString() ?? string.Empty),
                 MinimumRequirements = row["MinimumRequirements"] == DBNull.Value ? string.Empty : row["MinimumRequirements"]?.ToString() ?? string.Empty,
                 RecommendedRequirements = row["RecommendedRequirements"] == DBNull.Value ? string.Empty : row["RecommendedRequirements"]?.ToString() ?? string.Empty,
                 SupportedLanguages = row["SupportedLanguages"] == DBNull.Value ? string.Empty : row["SupportedLanguages"]?.ToString() ?? string.Empty,

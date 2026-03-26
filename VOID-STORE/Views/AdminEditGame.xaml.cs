@@ -19,6 +19,7 @@ namespace VOID_STORE.Views
         private List<AdminGameListItem> _games = new();
         private int _selectedGameId;
         private string _selectedCoverPath = string.Empty;
+        private string _selectedTrailerPath = string.Empty;
         private List<string> _selectedGalleryPaths = new();
 
         public AdminEditGame()
@@ -187,6 +188,37 @@ namespace VOID_STORE.Views
 
             _selectedGalleryPaths.RemoveAt(lstGalleryFiles.SelectedIndex);
             UpdateGalleryState();
+        }
+
+        private void SelectTrailerButton_Click(object sender, RoutedEventArgs e)
+        {
+        // yeni fragman videosunu sec
+            if (_selectedGameId == 0)
+            {
+                return;
+            }
+
+            OpenFileDialog dialog = CreateVideoDialog();
+
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            _selectedTrailerPath = dialog.FileName;
+            UpdateTrailerState();
+        }
+
+        private void ClearTrailerButton_Click(object sender, RoutedEventArgs e)
+        {
+        // secili fragman videosunu kaldir
+            if (_selectedGameId == 0)
+            {
+                return;
+            }
+
+            _selectedTrailerPath = string.Empty;
+            UpdateTrailerState();
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -370,7 +402,6 @@ namespace VOID_STORE.Views
             txtDeveloper.Text = state.Developer;
             txtPublisher.Text = state.Publisher;
             txtReleaseDate.Text = state.ReleaseDateText;
-            txtTrailerUrl.Text = state.TrailerUrl;
             txtMinimumRequirements.Text = state.MinimumRequirements;
             txtRecommendedRequirements.Text = state.RecommendedRequirements;
             txtSupportedLanguages.Text = state.SupportedLanguages;
@@ -386,6 +417,7 @@ namespace VOID_STORE.Views
             }
 
             _selectedCoverPath = state.CoverImageSourcePath;
+            _selectedTrailerPath = state.TrailerVideoSourcePath;
             _selectedGalleryPaths = state.GalleryImageSourcePaths.ToList();
 
             if (state.HasPendingDraft)
@@ -400,6 +432,7 @@ namespace VOID_STORE.Views
             }
 
             UpdateCoverPreview();
+            UpdateTrailerState();
             UpdateGalleryState();
         }
 
@@ -435,6 +468,14 @@ namespace VOID_STORE.Views
                 .ToList();
         }
 
+        private void UpdateTrailerState()
+        {
+        // fragman durumunu yenile
+            txtTrailerStatus.Text = string.IsNullOrWhiteSpace(_selectedTrailerPath)
+                ? "Fragman seçilmedi"
+                : System.IO.Path.GetFileName(_selectedTrailerPath);
+        }
+
         private void ShowEditor(bool isVisible)
         {
         // duzenleme alanini ac ya da gizle
@@ -455,7 +496,7 @@ namespace VOID_STORE.Views
                 Developer = txtDeveloper.Text.Trim(),
                 Publisher = txtPublisher.Text.Trim(),
                 ReleaseDateText = txtReleaseDate.Text.Trim(),
-                TrailerUrl = txtTrailerUrl.Text.Trim(),
+                TrailerVideoSourcePath = _selectedTrailerPath,
                 MinimumRequirements = txtMinimumRequirements.Text.Trim(),
                 RecommendedRequirements = txtRecommendedRequirements.Text.Trim(),
                 SupportedLanguages = txtSupportedLanguages.Text.Trim(),
@@ -505,6 +546,17 @@ namespace VOID_STORE.Views
                 Filter = "Görsel Dosyaları|*.png;*.jpg;*.jpeg;*.webp;*.bmp",
                 Multiselect = allowMultiple,
                 Title = allowMultiple ? "Oyun görsellerini seçin" : "Kapak görselini seçin"
+            };
+        }
+
+        private OpenFileDialog CreateVideoDialog()
+        {
+        // video secim penceresini hazirla
+            return new OpenFileDialog
+            {
+                Filter = "Video Dosyaları|*.mp4;*.webm;*.mov;*.m4v",
+                Multiselect = false,
+                Title = "Oyun fragmanını seçin"
             };
         }
 

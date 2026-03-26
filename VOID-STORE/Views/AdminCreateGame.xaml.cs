@@ -16,6 +16,7 @@ namespace VOID_STORE.Views
         private static readonly Regex PriceInputRegex = new(@"^(?:|0|[1-9]\d{0,3})(?:[.,]\d{0,2})?$");
         private readonly AdminGameController _adminGameController;
         private string _selectedCoverPath = string.Empty;
+        private string _selectedTrailerPath = string.Empty;
         private List<string> _selectedGalleryPaths = new();
 
         public AdminCreateGame()
@@ -148,6 +149,27 @@ namespace VOID_STORE.Views
             UpdateGalleryState();
         }
 
+        private void SelectTrailerButton_Click(object sender, RoutedEventArgs e)
+        {
+        // fragman videosunu sec
+            OpenFileDialog dialog = CreateVideoDialog();
+
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            _selectedTrailerPath = dialog.FileName;
+            UpdateTrailerState();
+        }
+
+        private void ClearTrailerButton_Click(object sender, RoutedEventArgs e)
+        {
+        // secili fragman videosunu temizle
+            _selectedTrailerPath = string.Empty;
+            UpdateTrailerState();
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
         // oyunu onay bekleyen kayit olarak ekle
@@ -272,7 +294,7 @@ namespace VOID_STORE.Views
                 Developer = txtDeveloper.Text.Trim(),
                 Publisher = txtPublisher.Text.Trim(),
                 ReleaseDateText = txtReleaseDate.Text.Trim(),
-                TrailerUrl = txtTrailerUrl.Text.Trim(),
+                TrailerVideoSourcePath = _selectedTrailerPath,
                 MinimumRequirements = txtMinimumRequirements.Text.Trim(),
                 RecommendedRequirements = txtRecommendedRequirements.Text.Trim(),
                 SupportedLanguages = txtSupportedLanguages.Text.Trim(),
@@ -323,7 +345,6 @@ namespace VOID_STORE.Views
             txtDeveloper.Clear();
             txtPublisher.Clear();
             txtReleaseDate.Clear();
-            txtTrailerUrl.Clear();
             txtMinimumRequirements.Clear();
             txtRecommendedRequirements.Clear();
             txtSupportedLanguages.Clear();
@@ -335,9 +356,11 @@ namespace VOID_STORE.Views
             tglLinux.IsChecked = false;
 
             _selectedCoverPath = string.Empty;
+            _selectedTrailerPath = string.Empty;
             _selectedGalleryPaths.Clear();
 
             UpdateCoverPreview();
+            UpdateTrailerState();
             UpdateGalleryState();
         }
 
@@ -363,6 +386,14 @@ namespace VOID_STORE.Views
             CoverPlaceholder.Visibility = Visibility.Collapsed;
         }
 
+        private void UpdateTrailerState()
+        {
+        // fragman durumunu yenile
+            txtTrailerStatus.Text = string.IsNullOrWhiteSpace(_selectedTrailerPath)
+                ? "Fragman seçilmedi"
+                : System.IO.Path.GetFileName(_selectedTrailerPath);
+        }
+
         private void UpdateGalleryState()
         {
         // galeri bilgisini yenile
@@ -381,6 +412,17 @@ namespace VOID_STORE.Views
                 Filter = "Görsel Dosyaları|*.png;*.jpg;*.jpeg;*.webp;*.bmp",
                 Multiselect = allowMultiple,
                 Title = allowMultiple ? "Oyun görsellerini seçin" : "Ana görseli seçin"
+            };
+        }
+
+        private OpenFileDialog CreateVideoDialog()
+        {
+        // video secim penceresini hazirla
+            return new OpenFileDialog
+            {
+                Filter = "Video Dosyaları|*.mp4;*.webm;*.mov;*.m4v",
+                Multiselect = false,
+                Title = "Oyun fragmanını seçin"
             };
         }
 

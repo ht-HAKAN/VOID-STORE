@@ -502,9 +502,20 @@
                                         <TextBlock Text="GG.AA.YYYY biçimini kullanın" Style="{StaticResource FieldHint}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2">
-                                        <TextBlock Text="Fragman Bağlantısı" Style="{StaticResource InputLabel}"/>
-                                        <TextBox x:Name="txtTrailerUrl" Style="{StaticResource InputTextBox}"/>
-                                        <TextBlock Text="Oyun Fragmanının bağlantı linki. Bu alan opsiyoneldir" Style="{StaticResource FieldHint}"/>
+                                        <TextBlock Text="Oyun Fragmanı" Style="{StaticResource InputLabel}"/>
+                                        <Border Background="#101014"
+                                                BorderBrush="#1D1D22"
+                                                BorderThickness="1"
+                                                CornerRadius="14"
+                                                Padding="16,14">
+                                            <TextBlock x:Name="txtTrailerStatus"
+                                                       Text="Fragman seçilmedi"
+                                                       Foreground="White"
+                                                       FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       TextWrapping="Wrap"/>
+                                        </Border>
+                                        <TextBlock Text="İsterseniz oyun fragmanı için video dosyası seçebilirsiniz" Style="{StaticResource FieldHint}"/>
                                     </StackPanel>
                                 </Grid>
 
@@ -618,11 +629,13 @@
                                     </Grid.ColumnDefinitions>
                                     <Button Grid.Column="0" Content="Ana Görsel Seç" Style="{StaticResource GhostButton}" Click="SelectCoverButton_Click"/>
                                     <Button Grid.Column="2" Content="Galeri Görselleri Seç" Style="{StaticResource GhostButton}" Click="SelectGalleryButton_Click"/>
-                                    <Button Grid.Column="4" Content="Seçimleri Temizle" Style="{StaticResource GhostButton}" Click="ClearGalleryButton_Click"/>
+                                    <Button Grid.Column="4" Content="Fragman Videosu Seç" Style="{StaticResource GhostButton}" Click="SelectTrailerButton_Click"/>
                                 </Grid>
 
                                 <Grid Grid.Row="6">
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="14"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="14"/>
                                         <ColumnDefinition Width="*"/>
@@ -641,6 +654,19 @@
                                     </Border>
 
                                     <Border Grid.Column="2"
+                                            Background="#0D0D10"
+                                            BorderBrush="#1D1D22"
+                                            BorderThickness="1"
+                                            CornerRadius="18"
+                                            Padding="18">
+                                        <StackPanel>
+                                            <TextBlock Text="Fragman" Foreground="#8F98A5" FontSize="11"/>
+                                            <TextBlock Text="{Binding ElementName=txtTrailerStatus, Path=Text}" Foreground="White" FontSize="14" FontWeight="SemiBold" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Bu alan opsiyoneldir" Style="{StaticResource FieldHint}"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Grid.Column="4"
                                             Background="#0D0D10"
                                             BorderBrush="#1D1D22"
                                             BorderThickness="1"

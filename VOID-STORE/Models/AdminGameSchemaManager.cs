@@ -11,6 +11,7 @@ namespace VOID_STORE.Models
             EnsureCategoryColumn();
             EnsurePublisherColumn();
             EnsureApprovalStatusColumn();
+            EnsureTrailerVideoPathColumn();
             EnsureMinimumRequirementsColumn();
             EnsureRecommendedRequirementsColumn();
             EnsureSupportedLanguagesColumn();
@@ -18,6 +19,7 @@ namespace VOID_STORE.Models
             EnsureGamePlatformsTable();
             EnsureGameDraftsTable();
             EnsureDraftCategoryColumn();
+            EnsureDraftTrailerVideoPathColumn();
             EnsureDraftMinimumRequirementsColumn();
             EnsureDraftRecommendedRequirementsColumn();
             EnsureDraftSupportedLanguagesColumn();
@@ -62,7 +64,17 @@ namespace VOID_STORE.Models
             if (!ColumnExists("Games", "MinimumRequirements"))
             {
                 DatabaseManager.ExecuteNonQuery(
-                    "ALTER TABLE Games ADD COLUMN MinimumRequirements TEXT NULL AFTER TrailerUrl");
+                    "ALTER TABLE Games ADD COLUMN MinimumRequirements TEXT NULL AFTER TrailerVideoPath");
+            }
+        }
+
+        private static void EnsureTrailerVideoPathColumn()
+        {
+        // fragman video yolunu kontrol et
+            if (!ColumnExists("Games", "TrailerVideoPath"))
+            {
+                DatabaseManager.ExecuteNonQuery(
+                    "ALTER TABLE Games ADD COLUMN TrailerVideoPath VARCHAR(255) NULL AFTER TrailerUrl");
             }
         }
 
@@ -128,6 +140,7 @@ namespace VOID_STORE.Models
                     Publisher VARCHAR(100) NULL,
                     ReleaseDate DATETIME NULL,
                     TrailerUrl VARCHAR(500) NULL,
+                    TrailerVideoPath VARCHAR(255) NULL,
                     MinimumRequirements TEXT NULL,
                     RecommendedRequirements TEXT NULL,
                     SupportedLanguages TEXT NULL,
@@ -159,7 +172,17 @@ namespace VOID_STORE.Models
             if (!ColumnExists("GameDrafts", "MinimumRequirements"))
             {
                 DatabaseManager.ExecuteNonQuery(
-                    "ALTER TABLE GameDrafts ADD COLUMN MinimumRequirements TEXT NULL AFTER TrailerUrl");
+                    "ALTER TABLE GameDrafts ADD COLUMN MinimumRequirements TEXT NULL AFTER TrailerVideoPath");
+            }
+        }
+
+        private static void EnsureDraftTrailerVideoPathColumn()
+        {
+        // taslak fragman yolunu kontrol et
+            if (!ColumnExists("GameDrafts", "TrailerVideoPath"))
+            {
+                DatabaseManager.ExecuteNonQuery(
+                    "ALTER TABLE GameDrafts ADD COLUMN TrailerVideoPath VARCHAR(255) NULL AFTER TrailerUrl");
             }
         }
 

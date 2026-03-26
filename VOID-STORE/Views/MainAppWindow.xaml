@@ -1,106 +1,671 @@
-<Window x:Class="VOID_STORE.Views.MainAppWindow"
+﻿<Window x:Class="VOID_STORE.Views.MainAppWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VOID_STORE.Views"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
-        Title="VOID STORE" Height="780" Width="1480"
-        WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize"
-        WindowStartupLocation="CenterScreen" Background="#0A0A0C">
-
-    <!-- Styles -->
+        Title="VOID STORE" Width="1580" Height="960" MinWidth="1440" MinHeight="900"
+        WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResize"
+        WindowStartupLocation="CenterScreen" Background="Transparent"
+        StateChanged="Window_StateChanged">
     <Window.Resources>
-        <!-- Kırmızı Çıkış Yap Butonu Stili -->
-        <Style x:Key="LogoutButton" TargetType="Button">
-            <Setter Property="Background" Value="#E81123"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Cursor" Value="Hand"/>
+        <Style x:Key="TitleBarButton" TargetType="Button"><Setter Property="Width" Value="42"/><Setter Property="Height" Value="30"/><Setter Property="Foreground" Value="#F5F7FA"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="HeaderIconButton" TargetType="Button"><Setter Property="Width" Value="48"/><Setter Property="Height" Value="48"/><Setter Property="Background" Value="#151519"/><Setter Property="Foreground" Value="#F3F4F6"/><Setter Property="BorderBrush" Value="#1E1E24"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="24"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#19191D"/><Setter TargetName="Surface" Property="BorderBrush" Value="#26262D"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="ProfileShellButton" TargetType="Button" BasedOn="{StaticResource HeaderIconButton}">
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style x:Key="PopupMenuButton" TargetType="Button"><Setter Property="Height" Value="38"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#F3F4F6"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="14,0"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="10"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#17171C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="CategoryMenuItemButton" TargetType="Button"><Setter Property="Height" Value="40"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#F3F4F6"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="14,0"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Margin" Value="0,0,0,6"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="12"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#17171C"/></Trigger><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></DataTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="SidebarButton" TargetType="Button"><Setter Property="Height" Value="46"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#C8CDD5"/><Setter Property="BorderThickness" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Padding" Value="18,0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" CornerRadius="15"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/></Border></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="TopNavButton" TargetType="Button"><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#E7EAF0"/><Setter Property="BorderThickness" Value="0"/><Setter Property="FontSize" Value="15"/><Setter Property="FontWeight" Value="Medium"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="0"/><Setter Property="Margin" Value="0,0,24,0"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Background="Transparent" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="#FFFFFF"/></Trigger></Style.Triggers></Style>
+        <Style x:Key="CategoryMenuFlatButton" TargetType="Button" BasedOn="{StaticResource TopNavButton}"><Setter Property="Margin" Value="0,0,24,0"/><Setter Property="Padding" Value="0"/></Style>
+        <Style x:Key="TopActionIconButton" TargetType="Button"><Setter Property="Width" Value="28"/><Setter Property="Height" Value="28"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#D8DCE3"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Background="Transparent"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="#FFFFFF"/></Trigger></Style.Triggers></Style>
+        <Style x:Key="CategoryChipButton" TargetType="Button"><Setter Property="MinHeight" Value="38"/><Setter Property="Background" Value="#101014"/><Setter Property="Foreground" Value="#E7EAF0"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="16,0"/><Setter Property="Margin" Value="0,0,10,10"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="19"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#16161A"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2A2A31"/></Trigger><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></DataTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="StoreCardButton" TargetType="Button"><Setter Property="Width" Value="238"/><Setter Property="Margin" Value="8,0,8,26"/><Setter Property="Padding" Value="0"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="HorizontalAlignment" Value="Left"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="GhostActionButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="Padding" Value="18,0"/><Setter Property="Background" Value="#111114"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#16161A"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2A2A31"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="48"/><Setter Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/><Setter Property="BorderBrush" Value="#FFFFFF"/><Setter Property="FontSize" Value="14"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="14"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#F1F1F1"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="MediaArrowButton" TargetType="Button" BasedOn="{StaticResource HeaderIconButton}"><Setter Property="Width" Value="52"/><Setter Property="Height" Value="52"/><Setter Property="Background" Value="#2209090B"/><Setter Property="BorderBrush" Value="#66FFFFFF"/><Setter Property="BorderThickness" Value="1"/></Style>
+        <Style x:Key="TrailerControlButton" TargetType="Button"><Setter Property="Width" Value="34"/><Setter Property="Height" Value="34"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="17"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#22FFFFFF"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="TrailerProgressSlider" TargetType="Slider">
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Height" Value="18"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                CornerRadius="5">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid Height="18" VerticalAlignment="Center">
+                            <Border Height="4" Background="#35FFFFFF" CornerRadius="2" VerticalAlignment="Center"/>
+                            <Track x:Name="PART_Track" VerticalAlignment="Center">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="Slider.DecreaseLarge"
+                                                  CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border Height="4" Background="#FFFFFFFF" CornerRadius="2"/>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Width="12" Height="12">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Ellipse Fill="#FFFFFF"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="Slider.IncreaseLarge"
+                                                  CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border Height="4" Background="Transparent" CornerRadius="2"/>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FF2233"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>
+        <Style x:Key="PageButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Width" Value="42"/><Setter Property="Padding" Value="0"/></Style>
+        <Style x:Key="TagChipBorder" TargetType="Border"><Setter Property="Background" Value="#11151C"/><Setter Property="BorderBrush" Value="#232B36"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="18"/><Setter Property="Padding" Value="16,9"/><Setter Property="Margin" Value="0,0,12,12"/></Style>
+        <Style x:Key="DetailSectionTitle" TargetType="TextBlock"><Setter Property="Foreground" Value="White"/><Setter Property="FontSize" Value="26"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+        <Style x:Key="DetailBodyText" TargetType="TextBlock"><Setter Property="Foreground" Value="#CCD3DD"/><Setter Property="FontSize" Value="14"/><Setter Property="LineHeight" Value="24"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
+        <Style x:Key="DetailMetaLabel" TargetType="TextBlock"><Setter Property="Foreground" Value="#6F7783"/><Setter Property="FontSize" Value="11"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+        <Style x:Key="DetailMetaValue" TargetType="TextBlock"><Setter Property="Foreground" Value="#F4F7FB"/><Setter Property="FontSize" Value="14"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+        <Style TargetType="RepeatButton"><Setter Property="Focusable" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></Setter.Value></Setter></Style>
+        <Style TargetType="Thumb"><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Thumb"><Border Background="#1F2026" CornerRadius="6"/></ControlTemplate></Setter.Value></Setter></Style>
+        <Style TargetType="ScrollBar"><Setter Property="Background" Value="#0A0A0D"/><Setter Property="Width" Value="12"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ScrollBar"><Border Background="#0A0A0D" CornerRadius="6" Padding="2"><Track x:Name="PART_Track" IsDirectionReversed="True"><Track.DecreaseRepeatButton><RepeatButton/></Track.DecreaseRepeatButton><Track.Thumb><Thumb/></Track.Thumb><Track.IncreaseRepeatButton><RepeatButton/></Track.IncreaseRepeatButton></Track></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="Orientation" Value="Horizontal"><Setter Property="Height" Value="12"/><Setter Property="Width" Value="Auto"/></Trigger></Style.Triggers></Style>
     </Window.Resources>
-
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <!-- Özel Başlık Çubuğu Yalnızca Sürükleme ve Kapatma Butonu İçerir-->
-        <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Panel.ZIndex="1">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="—" Width="30" Foreground="White" Background="Transparent" BorderThickness="0" Click="MinimizeButton_Click" Cursor="Hand">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border x:Name="border" Background="Transparent">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Border Background="#09090B" BorderBrush="#17171B" BorderThickness="1" CornerRadius="16">
+        <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="34"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="12,0,10,0" Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <TextBlock Text="VOID STORE" Foreground="#7B828C" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Style="{StaticResource TitleBarButton}" Click="MinimizeButton_Click"><TextBlock Text="&#xE921;" FontFamily="Segoe MDL2 Assets" FontSize="10"/></Button>
+                    <Button Style="{StaticResource TitleBarButton}" Click="ToggleWindowStateButton_Click"><TextBlock x:Name="txtToggleWindowGlyph" Text="&#xE922;" FontFamily="Segoe MDL2 Assets" FontSize="10"/></Button>
+                    <Button Click="CloseButton_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource TitleBarButton}"><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#E81123"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style></Button.Style><TextBlock Text="&#xE8BB;" FontFamily="Segoe MDL2 Assets" FontSize="10"/></Button>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="252"/><ColumnDefinition Width="28"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Background="#0B0B0D" CornerRadius="26" Margin="28,20,0,28" Padding="20,10">
+                    <Grid>
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                        <Border Grid.Row="0" Width="100" Height="30" HorizontalAlignment="Center" Margin="0,18,0,0">
+                            <Border.Background>
+                                <ImageBrush ImageSource="/voidstoreimages/VOIDSTORE_NOBG_LOGO.png"
+                                            Stretch="Uniform"
+                                            Viewbox="0.08,0.35,0.80,0.22"
+                                            ViewboxUnits="RelativeToBoundingBox"/>
+                            </Border.Background>
+                        </Border>
+                        <StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="0,34,0,0">
+                            <Button x:Name="btnStoreNav" Style="{StaticResource SidebarButton}" Click="StoreNavButton_Click" MouseEnter="SidebarButton_MouseEnter" MouseLeave="SidebarButton_MouseLeave">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="&#xE719;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Mağaza" FontSize="17" FontWeight="SemiBold" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="btnLibraryNav" Style="{StaticResource SidebarButton}" Click="LibraryNavButton_Click" MouseEnter="SidebarButton_MouseEnter" MouseLeave="SidebarButton_MouseLeave" Margin="0,10,0,0">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="&#xE8F1;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Kütüphane" FontSize="17" FontWeight="Medium" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="btnDownloadsNav" Style="{StaticResource SidebarButton}" Click="DownloadsNavButton_Click" MouseEnter="SidebarButton_MouseEnter" MouseLeave="SidebarButton_MouseLeave" Margin="0,10,0,0">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                                    <TextBlock Text="İndirmeler" FontSize="17" FontWeight="Medium" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <Grid Grid.Column="2" Margin="0,26,30,28">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="16"/><RowDefinition Height="Auto"/><RowDefinition Height="18"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Width="286" Height="48" Background="#111114" BorderBrush="#1C1C22" BorderThickness="1" CornerRadius="24">
+                                <Grid Margin="16,0"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="10"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" Foreground="#7C8591" FontSize="14" VerticalAlignment="Center"/><TextBox x:Name="txtSearch" Grid.Column="2" Background="Transparent" BorderThickness="0" Foreground="White" FontSize="15" VerticalContentAlignment="Center" TextChanged="SearchTextBox_TextChanged"/><TextBlock x:Name="txtSearchPlaceholder" Grid.Column="2" Text="Mağazada ara" Foreground="#7C8591" FontSize="15" VerticalAlignment="Center" IsHitTestVisible="False"/></Grid>
+                            </Border>
+                            <StackPanel Orientation="Horizontal" Margin="28,0,0,0" VerticalAlignment="Center">
+                                <Button Style="{StaticResource TopNavButton}" Content="Keşfet" Click="HeaderShellButton_Click"/>
+                                <Button Style="{StaticResource TopNavButton}" Content="Göz At" Click="HeaderShellButton_Click"/>
+                                <Button Style="{StaticResource TopNavButton}" Content="Haberler" Click="HeaderShellButton_Click"/>
+                                <Button x:Name="btnCategoryMenu" Style="{StaticResource CategoryMenuFlatButton}" Click="CategoryMenuButton_Click">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Text="Kategori Seç" FontSize="15" FontWeight="Medium"/>
+                                        <TextBlock x:Name="txtCategoryMenuLabel" Text=" Tümü" FontSize="15" FontWeight="Medium" Margin="6,0,0,0" Foreground="#A6AFBB"/>
+                                    </StackPanel>
+                                </Button>
+                                <Popup x:Name="popCategoryMenu" PlacementTarget="{Binding ElementName=btnCategoryMenu}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+                                    <Border Background="#101014" BorderBrush="#1E1E24" BorderThickness="1" CornerRadius="16" Padding="12" Margin="0,12,0,0">
+                                        <ScrollViewer Width="240" MaxHeight="340" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                            <ItemsControl x:Name="icCategories">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="{Binding Name}" Tag="{Binding Name}" Style="{StaticResource CategoryMenuItemButton}" Click="CategoryChip_Click"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </StackPanel>
+                        </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Style="{StaticResource TopActionIconButton}" Click="HeaderShellButton_Click" Margin="0,0,18,0"><TextBlock Text="&#xE734;" FontFamily="Segoe MDL2 Assets" FontSize="17"/></Button>
+                            <Button Style="{StaticResource TopActionIconButton}" Click="HeaderShellButton_Click" Margin="0,0,18,0"><TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="17"/></Button>
+                            <Border Width="1" Height="26" Background="#24242A" Margin="0,0,18,0" VerticalAlignment="Center"/>
+                            <Button x:Name="btnFriends" Style="{StaticResource HeaderIconButton}" Click="FriendsButton_Click" Margin="0,0,14,0"><TextBlock Text="&#xE716;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                            <Grid>
+                                <Button x:Name="btnProfileMenu" Style="{StaticResource ProfileShellButton}" Click="ProfileMenuButton_Click">
+                                    <Grid>
+                                        <Border Width="48" Height="48" Background="#151519" BorderBrush="#1E1E24" BorderThickness="1" CornerRadius="24">
+                                            <Image x:Name="imgProfile" Stretch="UniformToFill" Visibility="Collapsed"/>
                                         </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="border" Property="Background" Value="#222228"/>
-                                                <Setter Property="Foreground" Value="White"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Button.Style>
-                </Button>
-                <Button Content="X" Width="30" Foreground="White" Background="Transparent" BorderThickness="0" Click="CloseButton_Click" Cursor="Hand">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border x:Name="border" Background="Transparent">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="txtProfileInitial" Text="M" Foreground="White" FontSize="20" FontWeight="SemiBold" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,3,0,0"/>
+                                        <Ellipse Width="8" Height="8" Fill="#00CC00" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,3,3"/>
+                                    </Grid>
+                                </Button>
+                                <Popup x:Name="popProfileMenu" PlacementTarget="{Binding ElementName=btnProfileMenu}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+                                    <Border Background="#101014" BorderBrush="#1E1E24" BorderThickness="1" CornerRadius="14" Padding="8" Margin="0,12,0,0">
+                                        <StackPanel Width="180">
+                                            <Button x:Name="btnProfilePrimaryAction" Content="Profili Düzenle" Style="{StaticResource PopupMenuButton}" Click="ProfilePrimaryAction_Click"/>
+                                            <Button x:Name="btnProfileSecondaryAction" Content="Çıkış Yap" Style="{StaticResource PopupMenuButton}" Click="ProfileSecondaryAction_Click"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                    <Grid x:Name="StoreHeaderPanel" Grid.Row="2"/>
+                    <Grid x:Name="DetailHeaderPanel" Grid.Row="2" Visibility="Collapsed"/>
+                    <Grid Grid.Row="4">
+                        <Grid x:Name="StoreContentPanel">
+                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="18"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel><TextBlock Text="Öne Çıkan Oyunlar" Foreground="White" FontSize="26" FontWeight="Bold"/><TextBlock x:Name="txtStoreResultInfo" Foreground="#8F98A5" FontSize="14" Margin="0,8,0,0"/></StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button x:Name="btnPreviousPage" Style="{StaticResource PageButton}" Click="PreviousPageButton_Click" Margin="0,0,12,0"><TextBlock Text="&#xE76B;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button><TextBlock x:Name="txtPageInfo" Foreground="#C8CDD5" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0"/><Button x:Name="btnNextPage" Style="{StaticResource PageButton}" Click="NextPageButton_Click"><TextBlock Text="&#xE76C;" FontFamily="Segoe MDL2 Assets" FontSize="14"/></Button></StackPanel>
+                            </Grid>
+                            <ScrollViewer x:Name="StoreGamesScrollViewer" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" SizeChanged="StoreGamesScrollViewer_SizeChanged">
+                                <Grid>
+                                    <ItemsControl x:Name="icStoreGames" HorizontalAlignment="Center">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Style="{StaticResource StoreCardButton}" Tag="{Binding GameId}" Click="StoreGameButton_Click" MouseEnter="StoreCard_MouseEnter" MouseLeave="StoreCard_MouseLeave">
+                                                    <StackPanel>
+                                                        <Grid Height="318">
+                                                            <Border x:Name="CardGlow" Background="Transparent" CornerRadius="18" Opacity="0" IsHitTestVisible="False">
+                                                                <Border.Effect>
+                                                                    <DropShadowEffect Color="#FFFFFFFF" BlurRadius="26" ShadowDepth="0" Opacity="0.55"/>
+                                                                </Border.Effect>
+                                                            </Border>
+                                                            <Border x:Name="CardSurface" Background="#0F0F12" BorderBrush="#17171D" BorderThickness="1" CornerRadius="18" ClipToBounds="True" RenderTransformOrigin="0.5,0.5">
+                                                                <Grid>
+                                                                    <Image x:Name="CardCoverImage" Source="{Binding CoverPreview}" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5">
+                                                                        <Image.RenderTransform>
+                                                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                                        </Image.RenderTransform>
+                                                                    </Image>
+                                                                    <Border x:Name="CardHoverOverlay" Background="#18FFFFFF" Opacity="0"/>
+                                                                    <Border x:Name="CardHoverFrame" BorderBrush="#FFFFFF" BorderThickness="1" CornerRadius="18" Opacity="0"/>
+                                                                </Grid>
+                                                            </Border>
+                                                        </Grid>
+                                                        <TextBlock Text="{Binding Category}" Foreground="#8F98A5" FontSize="12" Margin="0,14,0,0"/>
+                                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                                        <TextBlock Text="{Binding PriceText}" Foreground="White" FontSize="15" FontWeight="SemiBold" Margin="0,14,0,0"/>
+                                                    </StackPanel>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Border x:Name="EmptyStoreState" Visibility="Collapsed" Background="#0F0F12" BorderBrush="#19191E" BorderThickness="1" CornerRadius="24" Padding="32" Margin="0,8,0,0"><StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="Bu filtrede gösterilecek oyun bulunamadı." Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/><TextBlock Text="Arama metnini ya da kategori seçimini değiştirerek tekrar deneyin." Foreground="#8F98A5" FontSize="13" Margin="0,12,0,0" HorizontalAlignment="Center" TextAlignment="Center"/></StackPanel></Border>
+                                </Grid>
+                            </ScrollViewer>
+                        </Grid>
+                        <ScrollViewer x:Name="DetailContentPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="0,8,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="56"/>
+                                        <ColumnDefinition Width="352"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <Border Height="548" Background="Transparent" BorderThickness="0" Padding="0">
+                                            <Border CornerRadius="30" Background="#0A0A0D" BorderBrush="#1B1E25" BorderThickness="1" ClipToBounds="True">
+                                                <Grid MouseMove="DetailMediaArea_MouseMove">
+                                                    <Image x:Name="imgDetailHero" Stretch="UniformToFill"/>
+                                                    <Grid x:Name="DetailTrailerInlineHost">
+                                                        <wv2:WebView2 x:Name="mediaDetailTrailer"
+                                                                      Visibility="Collapsed"
+                                                                      HorizontalAlignment="Stretch"
+                                                                      VerticalAlignment="Stretch"/>
+                                                    </Grid>
+                                                    <Rectangle VerticalAlignment="Top" Height="126" IsHitTestVisible="False">
+                                                        <Rectangle.Fill>
+                                                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                                                <GradientStop Color="#52090A0D" Offset="0"/>
+                                                                <GradientStop Color="#00090A0D" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Rectangle.Fill>
+                                                    </Rectangle>
+                                                    <Rectangle VerticalAlignment="Bottom" Height="168" IsHitTestVisible="False">
+                                                        <Rectangle.Fill>
+                                                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                                                <GradientStop Color="#00090A0D" Offset="0"/>
+                                                                <GradientStop Color="#92090A0D" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Rectangle.Fill>
+                                                    </Rectangle>
+                                                    <Button x:Name="btnDetailPlayTrailer"
+                                                            Width="92"
+                                                            Height="92"
+                                                            Visibility="Collapsed"
+                                                            Background="#B30C0F14"
+                                                            BorderBrush="#F5F7FA"
+                                                            BorderThickness="1"
+                                                            Cursor="Hand"
+                                                            Click="PlayTrailerButton_Click"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}"
+                                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                                        CornerRadius="46">
+                                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                                                      VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                        <TextBlock Text="&#xE768;"
+                                                                   FontFamily="Segoe MDL2 Assets"
+                                                                   Foreground="White"
+                                                                   FontSize="30"/>
+                                                    </Button>
+                                                    <Button x:Name="btnDetailMediaPrevious" Style="{StaticResource MediaArrowButton}" Click="DetailMediaPreviousButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="18,0,0,0" Background="#29090B10" BorderBrush="#66FFFFFF">
+                                                        <TextBlock Text="&#xE76B;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                                                    </Button>
+                                                    <Button x:Name="btnDetailMediaNext" Style="{StaticResource MediaArrowButton}" Click="DetailMediaNextButton_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,18,0" Background="#29090B10" BorderBrush="#66FFFFFF">
+                                                        <TextBlock Text="&#xE76C;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                                                    </Button>
+                                                    <Button x:Name="btnDetailCloseTrailer"
+                                                            Width="46"
+                                                            Height="46"
+                                                            Visibility="Collapsed"
+                                                            Background="#880A0D12"
+                                                            BorderBrush="#55FFFFFF"
+                                                            BorderThickness="1"
+                                                            Cursor="Hand"
+                                                            Click="CloseTrailerButton_Click"
+                                                            HorizontalAlignment="Right"
+                                                            VerticalAlignment="Top"
+                                                            Margin="0,18,18,0">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}"
+                                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                                        CornerRadius="23">
+                                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                                                      VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                        <TextBlock Text="&#xE8BB;"
+                                                                   FontFamily="Segoe MDL2 Assets"
+                                                                   Foreground="White"
+                                                                   FontSize="12"/>
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
                                         </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="border" Property="Background" Value="#E81123"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Button.Style>
-                </Button>
-            </StackPanel>
+                                        <Border x:Name="DetailTrailerControls"
+                                                Visibility="Collapsed"
+                                                Margin="0,14,0,0"
+                                                Background="#9A101318"
+                                                BorderBrush="#1F242D"
+                                                BorderThickness="1"
+                                                CornerRadius="18"
+                                                Padding="16,12"
+                                                MouseMove="DetailMediaArea_MouseMove">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="10"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="96"/>
+                                                    <ColumnDefinition Width="16"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="16"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Button x:Name="btnTrailerPlayPause"
+                                                        Style="{StaticResource TrailerControlButton}"
+                                                        Click="TrailerPlayPauseButton_Click">
+                                                    <TextBlock x:Name="txtTrailerPlayPauseGlyph"
+                                                               Text="&#xE769;"
+                                                               FontFamily="Segoe MDL2 Assets"
+                                                               FontSize="14"/>
+                                                </Button>
+                                                <Button x:Name="btnTrailerMute"
+                                                        Grid.Column="2"
+                                                        Style="{StaticResource TrailerControlButton}"
+                                                        HorizontalAlignment="Left"
+                                                        Click="TrailerMuteButton_Click">
+                                                    <TextBlock x:Name="txtTrailerMuteGlyph"
+                                                               Text="&#xE767;"
+                                                               FontFamily="Segoe MDL2 Assets"
+                                                               FontSize="14"/>
+                                                </Button>
+                                                <Slider x:Name="sldTrailerVolume"
+                                                        Grid.Column="3"
+                                                        Minimum="0"
+                                                        Maximum="1"
+                                                        Value="0.7"
+                                                        SmallChange="0.05"
+                                                        LargeChange="0.1"
+                                                        Style="{StaticResource TrailerProgressSlider}"
+                                                        VerticalAlignment="Center"
+                                                        ValueChanged="TrailerVolumeSlider_ValueChanged"/>
+                                                <Slider x:Name="sldTrailerProgress"
+                                                        Grid.Column="5"
+                                                        Minimum="0"
+                                                        Maximum="1"
+                                                        Value="0"
+                                                        IsMoveToPointEnabled="True"
+                                                        Style="{StaticResource TrailerProgressSlider}"
+                                                        ValueChanged="TrailerProgress_ValueChanged"
+                                                        PreviewMouseLeftButtonDown="TrailerProgress_PreviewMouseLeftButtonDown"
+                                                        PreviewMouseLeftButtonUp="TrailerProgress_PreviewMouseLeftButtonUp"/>
+                                                <TextBlock x:Name="txtTrailerTime"
+                                                           Grid.Column="7"
+                                                           Foreground="White"
+                                                           FontSize="12"
+                                                           FontWeight="SemiBold"
+                                                           VerticalAlignment="Center"
+                                                           Text="00:00 / 00:00"/>
+                                            </Grid>
+                                        </Border>
+                                        <Grid Margin="0,24,0,0">
+                                            <ScrollViewer x:Name="DetailMediaStripScrollViewer"
+                                                          HorizontalScrollBarVisibility="Hidden"
+                                                          VerticalScrollBarVisibility="Disabled"
+                                                          CanContentScroll="False"
+                                                          Focusable="False"
+                                                          PanningMode="HorizontalOnly">
+                                                <ItemsControl x:Name="icDetailMedia">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal"/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Button Tag="{Binding Name}" Click="DetailMediaButton_Click" Width="144" Margin="0,0,12,0" Padding="0" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="{Binding Name}" HorizontalAlignment="Left">
+                                                                <Border x:Name="MediaSurface" Width="144" Height="92" CornerRadius="16" BorderThickness="1" Background="#101216" BorderBrush="Transparent" ClipToBounds="True" Opacity="0.82">
+                                                                    <Grid>
+                                                                        <Image Source="{Binding Preview}" Stretch="UniformToFill"/>
+                                                                        <Border Background="#14000000"/>
+                                                                        <Rectangle x:Name="TrailerFade" VerticalAlignment="Bottom" Height="46" Visibility="Collapsed">
+                                                                            <Rectangle.Fill>
+                                                                                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                                                                    <GradientStop Color="#00090A0D" Offset="0"/>
+                                                                                    <GradientStop Color="#B8090A0D" Offset="1"/>
+                                                                                </LinearGradientBrush>
+                                                                            </Rectangle.Fill>
+                                                                        </Rectangle>
+                                                                        <StackPanel x:Name="TrailerLabel" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="12,0,0,12" Visibility="Collapsed">
+                                                                            <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="10" VerticalAlignment="Center"/>
+                                                                            <TextBlock Text="FRAGMAN" Foreground="White" FontSize="10" FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                                                        </StackPanel>
+                                                                        <Border x:Name="TrailerBadge" Width="42" Height="42" CornerRadius="21" Background="#94090B10" BorderBrush="#55FFFFFF" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                                                                            <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        </Border>
+                                                                    </Grid>
+                                                                </Border>
+                                                            </Button>
+                                                            <DataTemplate.Triggers>
+                                                                <DataTrigger Binding="{Binding IsTrailer}" Value="True">
+                                                                    <Setter TargetName="TrailerFade" Property="Visibility" Value="Visible"/>
+                                                                    <Setter TargetName="TrailerLabel" Property="Visibility" Value="Visible"/>
+                                                                    <Setter TargetName="TrailerBadge" Property="Visibility" Value="Visible"/>
+                                                                    <Setter TargetName="MediaSurface" Property="BorderBrush" Value="#36FFFFFF"/>
+                                                                    <Setter TargetName="MediaSurface" Property="Opacity" Value="0.94"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                                    <Setter TargetName="MediaSurface" Property="Opacity" Value="1"/>
+                                                                    <Setter TargetName="MediaSurface" Property="BorderBrush" Value="#FFFFFF"/>
+                                                                    <Setter TargetName="MediaSurface" Property="BorderThickness" Value="2"/>
+                                                                </DataTrigger>
+                                                            </DataTemplate.Triggers>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                        </Grid>
+                                        <Rectangle Height="1"
+                                                   Fill="#171B22"
+                                                   Margin="0,42,0,34"/>
+                                        <TextBlock Text="Oyun Hakkında"
+                                                   Style="{StaticResource DetailSectionTitle}"/>
+                                        <TextBlock x:Name="txtDetailDescription"
+                                                   Style="{StaticResource DetailBodyText}"
+                                                   Margin="0,18,0,0"/>
+                                        <Rectangle Height="1"
+                                                   Fill="#171B22"
+                                                   Margin="0,32,0,28"/>
+                                        <TextBlock Text="Öne Çıkan Özellikler"
+                                                   Style="{StaticResource DetailSectionTitle}"/>
+                                        <ItemsControl x:Name="icDetailFeatures" Margin="0,18,0,0">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal"
+                                                                Width="250"
+                                                                Margin="0,0,18,16">
+                                                        <Path Data="{Binding IconData}"
+                                                              Width="14"
+                                                              Height="14"
+                                                              Stroke="White"
+                                                              StrokeThickness="1.4"
+                                                              StrokeLineJoin="Round"
+                                                              StrokeStartLineCap="Round"
+                                                              StrokeEndLineCap="Round"
+                                                              Stretch="Uniform"
+                                                              Margin="0,2,10,0"
+                                                              VerticalAlignment="Top"/>
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   Style="{StaticResource DetailBodyText}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1"
+                                                   Fill="#171B22"
+                                                   Margin="0,32,0,28"/>
+                                        <TextBlock Text="Desteklenen Diller"
+                                                   Style="{StaticResource DetailSectionTitle}"/>
+                                        <TextBlock x:Name="txtSupportedLanguages"
+                                                   Style="{StaticResource DetailBodyText}"
+                                                   Margin="0,18,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Margin="0,4,0,0">
+                                        <Image x:Name="imgDetailCover"
+                                               Height="468"
+                                               Stretch="Uniform"
+                                               HorizontalAlignment="Stretch"/>
+                                        <TextBlock x:Name="txtDetailCategory"
+                                                   Foreground="#8D96A3"
+                                                   FontSize="12"
+                                                   FontWeight="SemiBold"
+                                                   Margin="2,26,0,0"/>
+                                        <TextBlock x:Name="txtDetailTitle"
+                                                   Foreground="White"
+                                                   FontSize="28"
+                                                   FontWeight="Bold"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,10,0,0"/>
+                                        <TextBlock x:Name="txtDetailPrice"
+                                                   Foreground="White"
+                                                   FontSize="32"
+                                                   FontWeight="Bold"
+                                                   Margin="0,18,0,0"/>
+                                        <Button Content="Sepete Ekle"
+                                                Style="{StaticResource PrimaryActionButton}"
+                                                Height="54"
+                                                Margin="0,20,0,0"
+                                                Click="AddToCartButton_Click"/>
+                                        <Button Content="İstek Listesine Ekle"
+                                                Style="{StaticResource GhostActionButton}"
+                                                Height="48"
+                                                Margin="0,12,0,0"
+                                                Background="#101319"
+                                                BorderBrush="#202734"
+                                                Click="AddToWishlistButton_Click"/>
+                                        <Rectangle Height="1"
+                                                   Fill="#171B22"
+                                                   Margin="0,28,0,24"/>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="18"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Yapımcı"
+                                                       Style="{StaticResource DetailMetaLabel}"/>
+                                            <TextBlock x:Name="txtDetailDeveloper"
+                                                       Grid.Column="2"
+                                                       Style="{StaticResource DetailMetaValue}"/>
+                                            <Rectangle Grid.Row="1"
+                                                       Grid.ColumnSpan="3"
+                                                       Height="1"
+                                                       Fill="#171B22"
+                                                       Margin="0,14,0,14"/>
+                                            <TextBlock Grid.Row="2"
+                                                       Text="Yayıncı"
+                                                       Style="{StaticResource DetailMetaLabel}"/>
+                                            <TextBlock x:Name="txtDetailPublisher"
+                                                       Grid.Row="2"
+                                                       Grid.Column="2"
+                                                       Style="{StaticResource DetailMetaValue}"/>
+                                            <Rectangle Grid.Row="3"
+                                                       Grid.ColumnSpan="3"
+                                                       Height="1"
+                                                       Fill="#171B22"
+                                                       Margin="0,14,0,14"/>
+                                            <TextBlock Grid.Row="4"
+                                                       Text="Çıkış Tarihi"
+                                                       Style="{StaticResource DetailMetaLabel}"/>
+                                            <TextBlock x:Name="txtDetailReleaseDate"
+                                                       Grid.Row="4"
+                                                       Grid.Column="2"
+                                                       Style="{StaticResource DetailMetaValue}"/>
+                                            <Rectangle Grid.Row="5"
+                                                       Grid.ColumnSpan="3"
+                                                       Height="1"
+                                                       Fill="#171B22"
+                                                       Margin="0,14,0,14"/>
+                                            <TextBlock Grid.Row="6"
+                                                       Text="Kategori"
+                                                       Style="{StaticResource DetailMetaLabel}"/>
+                                            <TextBlock x:Name="txtDetailCategoryValue"
+                                                       Grid.Row="6"
+                                                       Grid.Column="2"
+                                                       Style="{StaticResource DetailMetaValue}"/>
+                                        </Grid>
+                                        <Rectangle Height="1"
+                                                   Fill="#171B22"
+                                                   Margin="0,28,0,24"/>
+                                        <TextBlock Text="Platformlar"
+                                                   Foreground="White"
+                                                   FontSize="20"
+                                                   FontWeight="SemiBold"/>
+                                        <ItemsControl x:Name="icDetailPlatforms" Margin="0,18,0,0">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal"
+                                                                Margin="0,0,0,12">
+                                                        <Ellipse Width="6"
+                                                                 Height="6"
+                                                                 Fill="#FFFFFF"
+                                                                 Margin="0,7,10,0"
+                                                                 VerticalAlignment="Top"/>
+                                                        <TextBlock Text="{Binding}"
+                                                                   Style="{StaticResource DetailBodyText}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1"
+                                                   Fill="#171B22"
+                                                   Margin="0,28,0,24"/>
+                                        <TextBlock Text="Minimum Sistem Gereksinimleri"
+                                                   Foreground="White"
+                                                   FontSize="20"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock x:Name="txtMinimumRequirements"
+                                                   Style="{StaticResource DetailBodyText}"
+                                                   Margin="0,18,0,0"/>
+                                        <Rectangle Height="1"
+                                                   Fill="#171B22"
+                                                   Margin="0,28,0,24"/>
+                                        <TextBlock Text="Önerilen Sistem Gereksinimleri"
+                                                   Foreground="White"
+                                                   FontSize="20"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock x:Name="txtRecommendedRequirements"
+                                                   Style="{StaticResource DetailBodyText}"
+                                                   Margin="0,18,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </Grid>
         </Grid>
-
-        <!-- Sayfa İçeriği -->
-        <Grid Grid.Row="1">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <!-- Geliştirme Aşamasında Metni -->
-                <TextBlock Text="Mağaza ve Ana Uygulama Arayüzü Geliştirme Aşamasında" 
-                           Foreground="White" FontSize="36" FontWeight="Bold" 
-                           HorizontalAlignment="Center" Margin="0,0,0,50"/>
-                
-                <!-- Çıkış Yap Butonu -->
-                <Button Content="Çıkış Yap" Width="200" Height="45" Style="{StaticResource LogoutButton}" Click="Logout_Click"/>
-            </StackPanel>
-        </Grid>
-    </Grid>
+    </Border>
 </Window>
+

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +6,7 @@ namespace VOID_STORE.Models
 {
     public static class GameCategoryCatalog
     {
-        // kullanilan oyun kategorileri
+        // kullanılan kategori listesi
         public static IReadOnlyList<string> All { get; } = new List<string>
         {
             "Aksiyon",
@@ -21,12 +21,12 @@ namespace VOID_STORE.Models
             "Simülasyon"
         };
 
-        // varsayilan kategori adi
+        // varsayılan kategori
         public static string Default => All[0];
 
         public static string Normalize(string? value)
         {
-        // secimi gecerli kategoriye uyarla
+            // gelen değeri geçerli kategoriye uyarla
             if (string.IsNullOrWhiteSpace(value))
             {
                 return Default;

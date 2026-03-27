@@ -1,6 +1,6 @@
 Aktif olarak üniversite projesi kapsamında geliştirdiğim WPF tabanlı bir dijital oyun mağazası uygulaması.
 
-Geliştirirken referans olarak Epic Games Launcher’ı alıyorum.
+Geliştirirken referans olarak Epic Games Launcher’ı örnek alıyorum.
 
 ## Mevcut Özellikler
 

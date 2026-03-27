@@ -15,6 +15,8 @@ namespace VOID_STORE.Models
 
         public string PriceText { get; set; } = string.Empty;
 
+        public decimal PriceAmount { get; set; }
+
         public string CoverImagePath { get; set; } = string.Empty;
 
         public BitmapImage? CoverPreview { get; set; }
@@ -32,6 +34,10 @@ namespace VOID_STORE.Models
         public string RecommendedRequirements { get; set; } = string.Empty;
 
         public string SupportedLanguages { get; set; } = string.Empty;
+
+        public bool IsOwned { get; set; }
+
+        public bool IsInCart { get; set; }
 
         public List<string> Platforms { get; set; } = new();
 

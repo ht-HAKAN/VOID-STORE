@@ -34,12 +34,12 @@ namespace VOID_STORE.Controllers
                     isAdmin = Convert.ToBoolean(dt.Rows[0]["IsAdmin"]);
                     return true;
                 }
-                
+
                 return false;
             }
             catch (Exception)
             {
-                throw; // hatayi view katmaninda yakala
+                throw;
             }
         }
 
@@ -54,6 +54,33 @@ namespace VOID_STORE.Controllers
                 new SqlParameter("@User", usernameOrEmail));
 
             return result?.ToString() ?? usernameOrEmail.Trim();
+        }
+
+        public AuthenticatedUserInfo GetAuthenticatedUser(string usernameOrEmail)
+        {
+            // oturum icin gereken alanlari getir
+            DataTable table = DatabaseManager.ExecuteQuery(
+                @"SELECT UserId, Username, Balance
+                  FROM Users
+                  WHERE Username = @User OR Email = @User
+                  LIMIT 1;",
+                new SqlParameter("@User", usernameOrEmail));
+
+            if (table.Rows.Count == 0)
+            {
+                throw new InvalidOperationException("Kullanıcı bilgisi alınamadı.");
+            }
+
+            DataRow row = table.Rows[0];
+
+            return new AuthenticatedUserInfo
+            {
+                UserId = Convert.ToInt32(row["UserId"]),
+                Username = row["Username"]?.ToString() ?? "Oyuncu",
+                Balance = row["Balance"] == DBNull.Value
+                    ? 0
+                    : Convert.ToDecimal(row["Balance"])
+            };
         }
     }
 }

@@ -419,7 +419,6 @@ namespace VOID_STORE.Views
         private bool _isTrailerMuted;
         private bool _isTrailerPlayerReady;
         private bool _isTrailerVolumeUpdating;
-        private int _storeGridColumns = 4;
         private double _trailerCurrentSeconds;
         private double _trailerDurationSeconds;
 
@@ -452,6 +451,7 @@ namespace VOID_STORE.Views
 
             EnsureSession();
             ConfigureProfileArea();
+            InitializeCommerceState();
             BuildCategories();
             UpdateSearchPlaceholder();
             ShowStoreView();
@@ -682,6 +682,8 @@ namespace VOID_STORE.Views
                 imgProfile.Visibility = Visibility.Collapsed;
                 txtProfileInitial.Visibility = Visibility.Visible;
             }
+
+            RefreshWalletPage();
         }
 
         private void BuildCategories()
@@ -716,6 +718,7 @@ namespace VOID_STORE.Views
             _currentPage = result.CurrentPage;
 
             _storeItems = result.Items.ToList();
+            ApplyStoreOwnershipState();
             icStoreGames.ItemsSource = null;
             icStoreGames.ItemsSource = _storeItems;
             EmptyStoreState.Visibility = result.Items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -739,8 +742,12 @@ namespace VOID_STORE.Views
         {
             // ana magazaya don
             StopTrailer();
+            popCartMenu.IsOpen = false;
+            _isLibraryViewActive = false;
             StoreHeaderPanel.Visibility = Visibility.Visible;
             StoreContentPanel.Visibility = Visibility.Visible;
+            LibraryContentPanel.Visibility = Visibility.Collapsed;
+            WalletContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
             SetSidebarSelection(btnStoreNav);
@@ -749,7 +756,7 @@ namespace VOID_STORE.Views
 
         private void UpdateStoreGridColumns()
         {
-            // kartlari esit tutup seridi ortala
+            // kartlari soldan akit
             double viewportWidth = StoreGamesScrollViewer.ViewportWidth;
 
             if (viewportWidth <= 0)
@@ -764,41 +771,11 @@ namespace VOID_STORE.Views
 
             if (_storeItems.Count == 0)
             {
-                _storeGridColumns = 1;
                 icStoreGames.Width = double.NaN;
                 return;
             }
 
-            const double storeCardOuterWidth = 254;
-            int maxColumns = Math.Max(1, (int)Math.Floor(viewportWidth / storeCardOuterWidth));
-            maxColumns = Math.Min(maxColumns, _storeItems.Count);
-
-            int bestColumns = 1;
-            int bestRows = int.MaxValue;
-            double bestFillRatio = -1;
-
-            for (int candidate = 1; candidate <= maxColumns; candidate++)
-            {
-                int rowCount = (int)Math.Ceiling(_storeItems.Count / (double)candidate);
-                int lastRowCount = _storeItems.Count % candidate;
-
-                if (lastRowCount == 0)
-                {
-                    lastRowCount = candidate;
-                }
-
-                double fillRatio = lastRowCount / (double)candidate;
-
-                if (rowCount < bestRows || (rowCount == bestRows && fillRatio > bestFillRatio))
-                {
-                    bestColumns = candidate;
-                    bestRows = rowCount;
-                    bestFillRatio = fillRatio;
-                }
-            }
-
-            _storeGridColumns = bestColumns;
-            icStoreGames.Width = _storeGridColumns * storeCardOuterWidth;
+            icStoreGames.Width = Math.Max(0, viewportWidth - 4);
         }
 
         private void ShowDetailView(StoreGameDetail detail)
@@ -845,9 +822,11 @@ namespace VOID_STORE.Views
 
             StoreHeaderPanel.Visibility = Visibility.Collapsed;
             StoreContentPanel.Visibility = Visibility.Collapsed;
+            LibraryContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Visible;
             DetailContentPanel.Visibility = Visibility.Visible;
-            SetSidebarSelection(btnStoreNav);
+            SetSidebarSelection(_isLibraryViewActive ? btnLibraryNav : btnStoreNav);
+            ApplyDetailOwnershipState();
             ScrollSelectedMediaIntoView();
         }
 
@@ -1348,8 +1327,14 @@ namespace VOID_STORE.Views
 
         private void BackToStoreButton_Click(object sender, RoutedEventArgs e)
         {
-            // detaydan magazaya don
+            // detaydan onceki listeye don
             StopTrailer();
+            if (_isLibraryViewActive)
+            {
+                ShowLibraryView();
+                return;
+            }
+
             ShowStoreView();
         }
 
@@ -1656,9 +1641,8 @@ namespace VOID_STORE.Views
 
         private void LibraryNavButton_Click(object sender, RoutedEventArgs e)
         {
-            // kutuphane bolumu simdilik gorsel kabuk olarak durur
-            SetSidebarSelection(btnStoreNav);
-            CustomError.ShowDialog("Kütüphane bölümü henüz hazır değil.", "BILGI", owner: this);
+            // kutuphane ekranina gec
+            ShowLibraryView();
         }
 
         private void DownloadsNavButton_Click(object sender, RoutedEventArgs e)
@@ -1693,7 +1677,15 @@ namespace VOID_STORE.Views
 
             if (UserSession.IsGuest)
             {
-                CustomError.ShowDialog("Kayıt olma bölümü henüz hazır değil.", "BILGI", owner: this);
+                Register registerWindow = new Register
+                {
+                    Left = Left,
+                    Top = Top,
+                    WindowStartupLocation = WindowStartupLocation.Manual
+                };
+
+                registerWindow.Show();
+                Close();
                 return;
             }
 
@@ -1707,17 +1699,59 @@ namespace VOID_STORE.Views
 
             if (UserSession.IsGuest)
             {
-                CustomError.ShowDialog("Giriş ekranı henüz hazır değil.", "BILGI", owner: this);
+                Login loginWindow = new Login
+                {
+                    Left = Left,
+                    Top = Top,
+                    WindowStartupLocation = WindowStartupLocation.Manual
+                };
+
+                loginWindow.Show();
+                Close();
                 return;
             }
 
-            CustomError.ShowDialog("Çıkış menüsü henüz hazır değil.", "BILGI", owner: this);
+            if (!CustomConfirm.ShowDialog("Çıkış Yap", "Oturumu kapatmak istiyor musun", "Çıkış Yap", this))
+            {
+                return;
+            }
+
+            UserSession.Clear();
+            Login nextLoginWindow = new Login
+            {
+                Left = Left,
+                Top = Top,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+
+            nextLoginWindow.Show();
+            Close();
         }
 
         private void AddToCartButton_Click(object sender, RoutedEventArgs e)
         {
-            // sepet akisi hafta sonrasi icin hazir kalir
-            CustomError.ShowDialog("Sepet bölümü henüz hazır değil.", "BILGI", owner: this);
+            // detaydaki oyunu sepete ekle
+            if (_currentDetail == null)
+            {
+                return;
+            }
+
+            if (!EnsureAuthenticatedForCommerce())
+            {
+                return;
+            }
+
+            try
+            {
+                _commerceController.AddToCart(UserSession.UserId, _currentDetail.GameId);
+                RefreshCommerceState(false);
+                ApplyDetailOwnershipState();
+                CustomError.ShowDialog("Oyun sepete eklendi.", "BILGI", owner: this);
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "BILGI", owner: this);
+            }
         }
 
         private void AddToWishlistButton_Click(object sender, RoutedEventArgs e)

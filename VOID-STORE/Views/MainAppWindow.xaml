@@ -21,6 +21,37 @@
         <Style x:Key="TopNavButton" TargetType="Button"><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#E7EAF0"/><Setter Property="BorderThickness" Value="0"/><Setter Property="FontSize" Value="15"/><Setter Property="FontWeight" Value="Medium"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="0"/><Setter Property="Margin" Value="0,0,24,0"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Background="Transparent" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="#FFFFFF"/></Trigger></Style.Triggers></Style>
         <Style x:Key="CategoryMenuFlatButton" TargetType="Button" BasedOn="{StaticResource TopNavButton}"><Setter Property="Margin" Value="0,0,24,0"/><Setter Property="Padding" Value="0"/></Style>
         <Style x:Key="TopActionIconButton" TargetType="Button"><Setter Property="Width" Value="28"/><Setter Property="Height" Value="28"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#D8DCE3"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Background="Transparent"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="#FFFFFF"/></Trigger></Style.Triggers></Style>
+        <Style x:Key="HeaderBalanceButton" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="Background" Value="#151519"/>
+            <Setter Property="Foreground" Value="#F6F7FB"/>
+            <Setter Property="BorderBrush" Value="#1E1E24"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Surface"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="21">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Surface" Property="Background" Value="#19191D"/>
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="#26262D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="CategoryChipButton" TargetType="Button"><Setter Property="MinHeight" Value="38"/><Setter Property="Background" Value="#101014"/><Setter Property="Foreground" Value="#E7EAF0"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="16,0"/><Setter Property="Margin" Value="0,0,10,10"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="19"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#16161A"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2A2A31"/></Trigger><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></DataTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="StoreCardButton" TargetType="Button"><Setter Property="Width" Value="238"/><Setter Property="Margin" Value="8,0,8,26"/><Setter Property="Padding" Value="0"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="HorizontalAlignment" Value="Left"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="GhostActionButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="Padding" Value="18,0"/><Setter Property="Background" Value="#111114"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#16161A"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2A2A31"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
@@ -167,9 +198,181 @@
                                 </Popup>
                             </StackPanel>
                         </StackPanel>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button Style="{StaticResource TopActionIconButton}" Click="HeaderShellButton_Click" Margin="0,0,18,0"><TextBlock Text="&#xE734;" FontFamily="Segoe MDL2 Assets" FontSize="17"/></Button>
-                            <Button Style="{StaticResource TopActionIconButton}" Click="HeaderShellButton_Click" Margin="0,0,18,0"><TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="17"/></Button>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button x:Name="btnWishlistHeader" Style="{StaticResource TopActionIconButton}" Click="HeaderShellButton_Click" Margin="0,0,18,0">
+                                <TextBlock Text="&#xE734;" FontFamily="Segoe MDL2 Assets" FontSize="17"/>
+                            </Button>
+                            <Grid Margin="0,0,14,0">
+                                <Button x:Name="btnCartMenu" Style="{StaticResource HeaderIconButton}" Click="CartMenuButton_Click">
+                                    <TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
+                                </Button>
+                                <Border x:Name="bdgCartCount"
+                                        Background="#FFFFFF"
+                                        CornerRadius="10"
+                                        MinWidth="20"
+                                        Height="20"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Margin="0,-2,-2,0"
+                                        Padding="6,0"
+                                        Visibility="Collapsed">
+                                    <TextBlock x:Name="txtCartCount"
+                                               Foreground="#0A0A0C"
+                                               FontSize="10"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+                                <Popup x:Name="popCartMenu"
+                                       PlacementTarget="{Binding ElementName=btnCartMenu}"
+                                       Placement="Bottom"
+                                       StaysOpen="False"
+                                       AllowsTransparency="True"
+                                       PopupAnimation="Fade">
+                                    <Border Background="#101216"
+                                            BorderBrush="#1D222B"
+                                            BorderThickness="1"
+                                            CornerRadius="18"
+                                            Padding="18"
+                                            Margin="0,12,0,0">
+                                        <StackPanel Width="348">
+                                            <TextBlock Text="Sepet"
+                                                       Foreground="White"
+                                                       FontSize="20"
+                                                       FontWeight="SemiBold"/>
+                                            <TextBlock x:Name="txtCartSummary"
+                                                       Foreground="#8F98A5"
+                                                       FontSize="13"
+                                                       Margin="0,8,0,0"/>
+                                            <Border x:Name="EmptyCartState"
+                                                    Background="#0D0F14"
+                                                    BorderBrush="#1A1F28"
+                                                    BorderThickness="1"
+                                                    CornerRadius="16"
+                                                    Padding="18"
+                                                    Margin="0,18,0,0"
+                                                    Visibility="Collapsed">
+                                                <StackPanel>
+                                                    <TextBlock Text="Sepet şu an boş"
+                                                               Foreground="White"
+                                                               FontSize="16"
+                                                               FontWeight="SemiBold"/>
+                                                    <TextBlock Text="Satın almak istediğin oyunları detay sayfasından sepete ekleyebilirsin"
+                                                               Foreground="#8F98A5"
+                                                               FontSize="12"
+                                                               Margin="0,8,0,0"
+                                                               TextWrapping="Wrap"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <ScrollViewer x:Name="CartItemsScrollViewer"
+                                                          MaxHeight="320"
+                                                          Margin="0,18,0,0"
+                                                          VerticalScrollBarVisibility="Auto"
+                                                          HorizontalScrollBarVisibility="Disabled">
+                                                <ItemsControl x:Name="icCartItems">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Background="#0C0E13"
+                                                                    BorderBrush="#171C24"
+                                                                    BorderThickness="1"
+                                                                    CornerRadius="16"
+                                                                    Padding="12"
+                                                                    Margin="0,0,0,12">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="68"/>
+                                                                        <ColumnDefinition Width="14"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Border Width="68"
+                                                                            Height="92"
+                                                                            CornerRadius="12"
+                                                                            ClipToBounds="True"
+                                                                            Background="#13161B">
+                                                                        <Image Source="{Binding CoverPreview}" Stretch="UniformToFill"/>
+                                                                    </Border>
+                                                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                                        <TextBlock Text="{Binding Category}"
+                                                                                   Foreground="#8F98A5"
+                                                                                   FontSize="11"/>
+                                                                        <TextBlock Text="{Binding Title}"
+                                                                                   Foreground="White"
+                                                                                   FontSize="15"
+                                                                                   FontWeight="SemiBold"
+                                                                                   Margin="0,6,0,0"
+                                                                                   TextWrapping="Wrap"/>
+                                                                        <TextBlock Text="{Binding PriceText}"
+                                                                                   Foreground="White"
+                                                                                   FontSize="14"
+                                                                                   FontWeight="SemiBold"
+                                                                                   Margin="0,12,0,0"/>
+                                                                    </StackPanel>
+                                                                    <Button Grid.Column="3"
+                                                                            Tag="{Binding GameId}"
+                                                                            Width="34"
+                                                                            Height="34"
+                                                                            Background="Transparent"
+                                                                            Foreground="#AAB2BD"
+                                                                            BorderThickness="0"
+                                                                            Cursor="Hand"
+                                                                            FocusVisualStyle="{x:Null}"
+                                                                            VerticalAlignment="Top"
+                                                                            Click="RemoveCartItemButton_Click">
+                                                                        <TextBlock Text="&#xE894;"
+                                                                                   FontFamily="Segoe MDL2 Assets"
+                                                                                   FontSize="14"/>
+                                                                    </Button>
+                                                                </Grid>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                            <Rectangle Height="1"
+                                                       Fill="#171C24"
+                                                       Margin="0,6,0,16"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="Toplam"
+                                                           Foreground="#98A0AB"
+                                                           FontSize="13"
+                                                           FontWeight="SemiBold"/>
+                                                <TextBlock x:Name="txtCartTotal"
+                                                           Grid.Column="1"
+                                                           Foreground="White"
+                                                           FontSize="18"
+                                                           FontWeight="Bold"/>
+                                            </Grid>
+                                            <Button x:Name="btnCheckoutCart"
+                                                    Content="Satın Al"
+                                                    Style="{StaticResource PrimaryActionButton}"
+                                                    Height="50"
+                                                    Margin="0,16,0,0"
+                                                    Click="CheckoutCartButton_Click"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                            <Grid Margin="0,0,18,0">
+                                <Button x:Name="btnWalletMenu" Style="{StaticResource HeaderBalanceButton}" Click="WalletMenuButton_Click">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="Bakiye"
+                                                   FontSize="12"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#AAB2BD"
+                                                   Margin="0,0,10,0"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="txtWalletBalance"
+                                                   FontSize="13"
+                                                   FontWeight="Bold"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
                             <Border Width="1" Height="26" Background="#24242A" Margin="0,0,18,0" VerticalAlignment="Center"/>
                             <Button x:Name="btnFriends" Style="{StaticResource HeaderIconButton}" Click="FriendsButton_Click" Margin="0,0,14,0"><TextBlock Text="&#xE716;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
                             <Grid>
@@ -204,7 +407,7 @@
                             </Grid>
                             <ScrollViewer x:Name="StoreGamesScrollViewer" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" SizeChanged="StoreGamesScrollViewer_SizeChanged">
                                 <Grid>
-                                    <ItemsControl x:Name="icStoreGames" HorizontalAlignment="Center">
+                                    <ItemsControl x:Name="icStoreGames" HorizontalAlignment="Left">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <WrapPanel/>
@@ -234,9 +437,18 @@
                                                         </Grid>
                                                         <TextBlock Text="{Binding Category}" Foreground="#8F98A5" FontSize="12" Margin="0,14,0,0"/>
                                                         <TextBlock Text="{Binding Title}" Foreground="White" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                                        <TextBlock x:Name="txtStoreCardStatus" Text="{Binding StatusText}" Foreground="#82E4B0" FontSize="12" FontWeight="SemiBold" Margin="0,10,0,0"/>
                                                         <TextBlock Text="{Binding PriceText}" Foreground="White" FontSize="15" FontWeight="SemiBold" Margin="0,14,0,0"/>
                                                     </StackPanel>
                                                 </Button>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding StatusText}" Value="">
+                                                        <Setter TargetName="txtStoreCardStatus" Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsInCart}" Value="True">
+                                                        <Setter TargetName="txtStoreCardStatus" Property="Foreground" Value="#F5D174"/>
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -244,6 +456,218 @@
                                 </Grid>
                             </ScrollViewer>
                         </Grid>
+                        <Grid x:Name="LibraryContentPanel" Visibility="Collapsed">
+                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="18"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Kütüphanem" Foreground="White" FontSize="26" FontWeight="Bold"/>
+                                <TextBlock x:Name="txtLibraryResultInfo" Foreground="#8F98A5" FontSize="14" Margin="0,8,0,0"/>
+                            </StackPanel>
+                            <ScrollViewer x:Name="LibraryGamesScrollViewer" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" SizeChanged="LibraryGamesScrollViewer_SizeChanged">
+                                <Grid>
+                                    <ItemsControl x:Name="icLibraryGames" HorizontalAlignment="Left">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Style="{StaticResource StoreCardButton}" Tag="{Binding GameId}" Click="StoreGameButton_Click" MouseEnter="StoreCard_MouseEnter" MouseLeave="StoreCard_MouseLeave">
+                                                    <StackPanel>
+                                                        <Grid Height="318">
+                                                            <Border x:Name="CardGlow" Background="Transparent" CornerRadius="18" Opacity="0" IsHitTestVisible="False">
+                                                                <Border.Effect>
+                                                                    <DropShadowEffect Color="#FFFFFFFF" BlurRadius="26" ShadowDepth="0" Opacity="0.55"/>
+                                                                </Border.Effect>
+                                                            </Border>
+                                                            <Border x:Name="CardSurface" Background="#0F0F12" BorderBrush="#17171D" BorderThickness="1" CornerRadius="18" ClipToBounds="True" RenderTransformOrigin="0.5,0.5">
+                                                                <Grid>
+                                                                    <Image x:Name="CardCoverImage" Source="{Binding CoverPreview}" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5">
+                                                                        <Image.RenderTransform>
+                                                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                                        </Image.RenderTransform>
+                                                                    </Image>
+                                                                    <Border x:Name="CardHoverOverlay" Background="#18FFFFFF" Opacity="0"/>
+                                                                    <Border x:Name="CardHoverFrame" BorderBrush="#FFFFFF" BorderThickness="1" CornerRadius="18" Opacity="0"/>
+                                                                </Grid>
+                                                            </Border>
+                                                        </Grid>
+                                                        <TextBlock Text="{Binding Category}" Foreground="#8F98A5" FontSize="12" Margin="0,14,0,0"/>
+                                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                                        <TextBlock Text="{Binding PurchasedAtText}" Foreground="#82E4B0" FontSize="12" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                                                        <TextBlock Text="{Binding PriceText}" Foreground="White" FontSize="15" FontWeight="SemiBold" Margin="0,14,0,0"/>
+                                                    </StackPanel>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Border x:Name="EmptyLibraryState" Visibility="Collapsed" Background="#0F0F12" BorderBrush="#19191E" BorderThickness="1" CornerRadius="24" Padding="32" Margin="0,8,0,0">
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock x:Name="txtLibraryEmptyTitle" Text="Kütüphanede oyun görünmüyor" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="txtLibraryEmptyMessage" Text="Satın aldığın oyunlar burada listelenecek" Foreground="#8F98A5" FontSize="13" Margin="0,12,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </ScrollViewer>
+                        </Grid>
+                        <ScrollViewer x:Name="WalletContentPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="0,8,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="32"/>
+                                        <ColumnDefinition Width="380"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Cüzdan" Foreground="White" FontSize="32" FontWeight="Bold"/>
+                                        <TextBlock x:Name="txtWalletPageInfo" Foreground="#8F98A5" FontSize="14" Margin="0,10,0,0"/>
+                                        <Border Background="#101014" BorderBrush="#1E1E24" BorderThickness="1" CornerRadius="28" Padding="28" Margin="0,28,0,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="26"/>
+                                                    <ColumnDefinition Width="240"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Text="Toplam Bakiye" Foreground="#96A0AD" FontSize="13" FontWeight="SemiBold"/>
+                                                    <TextBlock x:Name="txtWalletPopupBalance" Foreground="White" FontSize="42" FontWeight="Bold" Margin="0,14,0,0"/>
+                                                </StackPanel>
+                                                <Border Grid.Column="2" Background="#0C0C0F" BorderBrush="#1A1A20" BorderThickness="1" CornerRadius="24" Padding="20">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Seçili Ödeme" Foreground="#8F98A5" FontSize="12" FontWeight="SemiBold"/>
+                                                        <TextBlock x:Name="txtSelectedPaymentTitle" Foreground="White" FontSize="18" FontWeight="SemiBold" Margin="0,12,0,0"/>
+                                                        <TextBlock x:Name="txtSelectedPaymentNumber" Foreground="#A5AEBB" FontSize="13" Margin="0,8,0,0"/>
+                                                        <TextBlock x:Name="txtSelectedPaymentExpiry" Foreground="#6F7A88" FontSize="12" Margin="0,10,0,0"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                        <Grid Margin="0,28,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="26"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Background="#101014" BorderBrush="#1E1E24" BorderThickness="1" CornerRadius="26" Padding="24">
+                                                <StackPanel>
+                                                    <TextBlock Text="Bakiye Yükle" Foreground="White" FontSize="22" FontWeight="SemiBold"/>
+                                                    <TextBlock Text="Hazır tutarlar veya özel tutar ile yükleme yap" Foreground="#8F98A5" FontSize="13" Margin="0,8,0,0"/>
+                                                    <TextBlock Text="Hazır tutarlar" Foreground="#8F98A5" FontSize="12" Margin="0,20,0,0"/>
+                                                    <UniformGrid Columns="2" Margin="0,12,0,0">
+                                                        <Button Content="₺200" Tag="200" Style="{StaticResource GhostActionButton}" Height="42" Margin="0,0,10,10" Click="WalletQuickAmountButton_Click"/>
+                                                        <Button Content="₺500" Tag="500" Style="{StaticResource GhostActionButton}" Height="42" Margin="0,0,0,10" Click="WalletQuickAmountButton_Click"/>
+                                                        <Button Content="₺1000" Tag="1000" Style="{StaticResource GhostActionButton}" Height="42" Margin="0,0,10,0" Click="WalletQuickAmountButton_Click"/>
+                                                        <Button Content="₺5000" Tag="5000" Style="{StaticResource GhostActionButton}" Height="42" Click="WalletQuickAmountButton_Click"/>
+                                                    </UniformGrid>
+                                                    <TextBlock Text="Özel tutar" Foreground="#8F98A5" FontSize="12" Margin="0,20,0,0"/>
+                                                    <Border Background="#0C0C0F" BorderBrush="#1A1A20" BorderThickness="1" CornerRadius="16" Margin="0,12,0,0" Padding="16,0">
+                                                        <Grid Height="52">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="12"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Text="₺" Foreground="#8F98A5" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                            <TextBox x:Name="txtWalletCustomAmount" Grid.Column="2" Background="Transparent" BorderThickness="0" Foreground="White" FontSize="15" VerticalContentAlignment="Center"/>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Button Content="Bakiye Yükle" Style="{StaticResource PrimaryActionButton}" Height="52" Margin="0,16,0,0" Click="AddWalletBalanceButton_Click"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <Border Grid.Column="2" Background="#101014" BorderBrush="#1E1E24" BorderThickness="1" CornerRadius="26" Padding="24">
+                                                <StackPanel>
+                                                    <TextBlock Text="Ödeme Yöntemleri" Foreground="White" FontSize="22" FontWeight="SemiBold"/>
+                                                    <Button x:Name="btnPaymentVisa" Tag="visa" Background="#131519" BorderBrush="#2C66F5" BorderThickness="1" Margin="0,18,0,0" Padding="0" Cursor="Hand" Click="PaymentMethodButton_Click">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="22" Padding="18">
+                                                                    <ContentPresenter/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                        <Grid>
+                                                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                                            <TextBlock Text="Visa" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                                                            <TextBlock Grid.Row="1" Text="**** **** **** 4242" Foreground="#BFC7D3" FontSize="14" Margin="0,14,0,0"/>
+                                                            <TextBlock Grid.Row="2" Text="Son Kullanma 12/30" Foreground="#6F7A88" FontSize="12" Margin="0,12,0,0"/>
+                                                        </Grid>
+                                                    </Button>
+                                                    <Button x:Name="btnPaymentMaster" Tag="mastercard" Background="#101014" BorderBrush="#1E1E24" BorderThickness="1" Margin="0,12,0,0" Padding="0" Cursor="Hand" Click="PaymentMethodButton_Click">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="22" Padding="18">
+                                                                    <ContentPresenter/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                        <Grid>
+                                                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                                            <TextBlock Text="MasterCard" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                                                            <TextBlock Grid.Row="1" Text="**** **** **** 5454" Foreground="#BFC7D3" FontSize="14" Margin="0,14,0,0"/>
+                                                            <TextBlock Grid.Row="2" Text="Son Kullanma 09/31" Foreground="#6F7A88" FontSize="12" Margin="0,12,0,0"/>
+                                                        </Grid>
+                                                    </Button>
+                                                    <Button x:Name="btnPaymentTroy" Tag="troy" Background="#101014" BorderBrush="#1E1E24" BorderThickness="1" Margin="0,12,0,0" Padding="0" Cursor="Hand" Click="PaymentMethodButton_Click">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="22" Padding="18">
+                                                                    <ContentPresenter/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                        <Grid>
+                                                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                                            <TextBlock Text="Troy" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                                                            <TextBlock Grid.Row="1" Text="**** **** **** 9792" Foreground="#BFC7D3" FontSize="14" Margin="0,14,0,0"/>
+                                                            <TextBlock Grid.Row="2" Text="Son Kullanma 05/32" Foreground="#6F7A88" FontSize="12" Margin="0,12,0,0"/>
+                                                        </Grid>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </StackPanel>
+                                    <Border Grid.Column="2" Background="#101014" BorderBrush="#1E1E24" BorderThickness="1" CornerRadius="26" Padding="24">
+                                        <StackPanel>
+                                            <TextBlock Text="İşlem Geçmişi" Foreground="White" FontSize="22" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Son bakiye yükleme ve satın alma hareketleri" Foreground="#8F98A5" FontSize="13" Margin="0,8,0,0"/>
+                                            <Border x:Name="EmptyWalletState" Background="#0C0F14" BorderBrush="#171D25" BorderThickness="1" CornerRadius="18" Padding="20" Margin="0,20,0,0" Visibility="Collapsed">
+                                                <StackPanel>
+                                                    <TextBlock Text="Henüz işlem hareketi görünmüyor" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                                                    <TextBlock Text="Bakiye yüklediğinde ve satın alma yaptığında kayıtlar burada listelenecek" Foreground="#8F98A5" FontSize="12" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <ScrollViewer x:Name="WalletTransactionsScrollViewer" Margin="0,20,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                                <ItemsControl x:Name="icWalletTransactions">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Background="#0C0E13" BorderBrush="#171C24" BorderThickness="1" CornerRadius="16" Padding="16" Margin="0,0,0,12">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <StackPanel>
+                                                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                                                                        <TextBlock Text="{Binding Description}" Foreground="#8F98A5" FontSize="12" Margin="0,5,0,0"/>
+                                                                        <TextBlock Text="{Binding CreatedAtText}" Foreground="#64707E" FontSize="11" Margin="0,10,0,0"/>
+                                                                    </StackPanel>
+                                                                    <TextBlock x:Name="txtTransactionAmount" Grid.Column="1" Text="{Binding AmountText}" Foreground="#86E8B6" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                                </Grid>
+                                                            </Border>
+                                                            <DataTemplate.Triggers>
+                                                                <DataTrigger Binding="{Binding IsPositive}" Value="False">
+                                                                    <Setter TargetName="txtTransactionAmount" Property="Foreground" Value="#F6B06B"/>
+                                                                </DataTrigger>
+                                                            </DataTemplate.Triggers>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
                         <ScrollViewer x:Name="DetailContentPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel Margin="0,8,0,0">
                                 <Grid>
@@ -533,17 +957,25 @@
                                                    FontWeight="Bold"
                                                    TextWrapping="Wrap"
                                                    Margin="0,10,0,0"/>
+                                        <TextBlock x:Name="txtDetailOwnershipState"
+                                                   Foreground="#82E4B0"
+                                                   FontSize="12"
+                                                   FontWeight="SemiBold"
+                                                   Margin="0,14,0,0"
+                                                   Visibility="Collapsed"/>
                                         <TextBlock x:Name="txtDetailPrice"
                                                    Foreground="White"
                                                    FontSize="32"
                                                    FontWeight="Bold"
                                                    Margin="0,18,0,0"/>
-                                        <Button Content="Sepete Ekle"
+                                        <Button x:Name="btnDetailAddToCart"
+                                                Content="Sepete Ekle"
                                                 Style="{StaticResource PrimaryActionButton}"
                                                 Height="54"
                                                 Margin="0,20,0,0"
                                                 Click="AddToCartButton_Click"/>
-                                        <Button Content="İstek Listesine Ekle"
+                                        <Button x:Name="btnDetailWishlist"
+                                                Content="İstek Listesine Ekle"
                                                 Style="{StaticResource GhostActionButton}"
                                                 Height="48"
                                                 Margin="0,12,0,0"

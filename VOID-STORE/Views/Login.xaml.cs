@@ -1,8 +1,8 @@
-using VOID_STORE.Models;
 using System;
 using System.Windows;
 using System.Windows.Input;
 using VOID_STORE.Controllers;
+using VOID_STORE.Models;
 
 namespace VOID_STORE.Views
 {
@@ -15,7 +15,6 @@ namespace VOID_STORE.Views
         {
             // formu baslat
             InitializeComponent();
-            // giris denetleyicisini hazirla
             _loginController = new LoginController();
         }
 
@@ -49,7 +48,6 @@ namespace VOID_STORE.Views
             // bos alanlari kontrol et
             if (string.IsNullOrEmpty(usernameOrEmail) || string.IsNullOrEmpty(password))
             {
-                // eksik bilgiyi bildir
                 CustomError.ShowDialog("Lütfen kullanıcı adı ve şifrenizi girin.", "GİRİŞ HATASI");
                 return;
             }
@@ -59,47 +57,44 @@ namespace VOID_STORE.Views
                 // kullanici kaydini denetle
                 bool isValidUser = _loginController.ValidateUser(usernameOrEmail, password, out bool isEmailVerified, out bool isAdmin);
 
-                if (isValidUser)
+                if (!isValidUser)
                 {
-                    // dogrulama durumunu kontrol et
-                    if (!isEmailVerified)
-                    {
-                        // dogrulama eksigini bildir
-                        CustomError.ShowDialog("Lütfen e-posta adresinize gönderilen doğrulama kodu ile hesabınızı onaylayın.", "DOĞRULANMAMIŞ HESAP");
-                        return;
-                    }
-
-                    string displayUsername = _loginController.GetDisplayUsername(usernameOrEmail);
-                    UserSession.SetAuthenticated(displayUsername);
-
-                    // yonetici hesabini ayir
-                    if (isAdmin)
-                    {
-                        // admin secim ekranina gec
-                        AdminRoleSelection adminRoleSelection = new AdminRoleSelection();
-                        adminRoleSelection.Left = this.Left;
-                        adminRoleSelection.Top = this.Top;
-                        adminRoleSelection.WindowStartupLocation = WindowStartupLocation.Manual;
-                        adminRoleSelection.Show();
-                        this.Close();
-                        return;
-                    }
-
-                    // ana pencereyi ac
-                    MainAppWindow mainWindow = new MainAppWindow();
-                    mainWindow.Show();
-                    // giris ekranini kapat
-                    Close();
-                }
-                else
-                {
-                    // hatali girisi bildir
                     CustomError.ShowDialog("Kullanıcı adı veya şifre hatalı.", "GİRİŞ BAŞARISIZ");
+                    return;
                 }
+
+                // dogrulama durumunu kontrol et
+                if (!isEmailVerified)
+                {
+                    CustomError.ShowDialog("Lütfen e posta adresinize gönderilen doğrulama kodu ile hesabınızı onaylayın.", "DOĞRULANMAMIŞ HESAP");
+                    return;
+                }
+
+                AuthenticatedUserInfo authenticatedUser = _loginController.GetAuthenticatedUser(usernameOrEmail);
+                UserSession.SetAuthenticated(authenticatedUser.UserId, authenticatedUser.Username, authenticatedUser.Balance);
+
+                // yonetici hesabini ayir
+                if (isAdmin)
+                {
+                    AdminRoleSelection adminRoleSelection = new AdminRoleSelection
+                    {
+                        Left = Left,
+                        Top = Top,
+                        WindowStartupLocation = WindowStartupLocation.Manual
+                    };
+
+                    adminRoleSelection.Show();
+                    Close();
+                    return;
+                }
+
+                // ana pencereyi ac
+                MainAppWindow mainWindow = new MainAppWindow();
+                mainWindow.Show();
+                Close();
             }
             catch (Exception ex)
             {
-                // sistem hatasini goster
                 CustomError.ShowDialog("Bağlantı sırasında bir hata oluştu: " + ex.Message, "SİSTEM HATASI");
             }
         }
@@ -107,14 +102,13 @@ namespace VOID_STORE.Views
         private void AccountRecovery_Click(object sender, RoutedEventArgs e)
         {
             // kurtarma ekranini ac
-            AccountRecovery recoveryScreen = new AccountRecovery();
+            AccountRecovery recoveryScreen = new AccountRecovery
+            {
+                Left = Left,
+                Top = Top,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
 
-            // mevcut konumu koru
-            recoveryScreen.Left = Left;
-            recoveryScreen.Top = Top;
-            recoveryScreen.WindowStartupLocation = WindowStartupLocation.Manual;
-
-            // yeni ekrana gec
             recoveryScreen.Show();
             Close();
         }
@@ -122,10 +116,13 @@ namespace VOID_STORE.Views
         private void Register_Click(object sender, RoutedEventArgs e)
         {
             // kayit ekranini ac
-            Register registerScreen = new Register();
-            registerScreen.Left = Left;
-            registerScreen.Top = Top;
-            registerScreen.WindowStartupLocation = WindowStartupLocation.Manual;
+            Register registerScreen = new Register
+            {
+                Left = Left,
+                Top = Top,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+
             registerScreen.Show();
             Close();
         }

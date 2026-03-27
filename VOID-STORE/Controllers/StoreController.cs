@@ -89,6 +89,7 @@ namespace VOID_STORE.Controllers
                     Title = row["Title"]?.ToString() ?? string.Empty,
                     Category = GameCategoryCatalog.Normalize(row["Category"]?.ToString()),
                     Subtitle = row["Subtitle"]?.ToString() ?? string.Empty,
+                    PriceAmount = Convert.ToDecimal(row["Price"], CultureInfo.InvariantCulture),
                     PriceText = FormatPrice(row["Price"]),
                     CoverImagePath = coverPath,
                     CoverPreview = GameAssetManager.LoadBitmap(coverPath)
@@ -148,6 +149,7 @@ namespace VOID_STORE.Controllers
                 Title = row["Title"]?.ToString() ?? string.Empty,
                 Category = GameCategoryCatalog.Normalize(row["Category"]?.ToString()),
                 Description = row["Description"]?.ToString() ?? string.Empty,
+                PriceAmount = row["Price"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Price"], CultureInfo.InvariantCulture),
                 PriceText = FormatPrice(row["Price"]),
                 CoverImagePath = coverPath,
                 CoverPreview = GameAssetManager.LoadBitmap(coverPath),

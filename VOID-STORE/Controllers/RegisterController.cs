@@ -14,23 +14,33 @@ namespace VOID_STORE.Controllers
             // bos alan kontrolu
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(username) ||
                 string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
+            {
                 return "Lütfen tüm alanları eksiksiz doldurun.";
+            }
 
             // sifre esleme kontrolu
             if (password != confirmPassword)
+            {
                 return "Girdiğiniz şifreler birbiriyle eşleşmiyor.";
+            }
 
             // kullanici adi uzunluk kontrolu
             if (username.Length < 3 || username.Length > 16)
-                return "Kullanıcı adı en az 3, en fazla 16 karakter uzunluğunda olmalıdır.";
+            {
+                return "Kullanıcı adı en az 3 en fazla 16 karakter uzunluğunda olmalıdır.";
+            }
 
             // kullanici adi karakter kontrolu
             if (!Regex.IsMatch(username, @"^[a-zA-Z0-9_]+$"))
-                return "Kullanıcı adı sadece harf, rakam ve alt çizgi (_) içerebilir.";
+            {
+                return "Kullanıcı adı sadece harf rakam ve alt çizgi içerebilir.";
+            }
 
             // eposta format kontrolu
             if (!email.Contains("@") || !email.Contains("."))
-                return "Lütfen geçerli bir e-posta adresi girin.";
+            {
+                return "Lütfen geçerli bir e posta adresi girin.";
+            }
 
             // veritabaninda ayni eposta veya kullanici adi var mi kontrol et
             string checkQuery = "SELECT COUNT(*) FROM Users WHERE Email = @Email OR Username = @Username";
@@ -42,12 +52,14 @@ namespace VOID_STORE.Controllers
 
             int count = Convert.ToInt32(DatabaseManager.ExecuteScalar(checkQuery, checkParams));
             if (count > 0)
-                return "Bu e-posta adresi veya kullanıcı adı zaten kullanımda.";
+            {
+                return "Bu e posta adresi veya kullanıcı adı zaten kullanımda.";
+            }
 
             // sifreyi hashle
             string hashedPassword = SecurityManager.HashPassword(password);
 
-            // kullaniciya onaysiz kayit at (isemailverified = 0)
+            // kullaniciya onaysiz kayit at
             string insertUserQuery = "INSERT INTO Users (Username, Email, PasswordHash, IsAdmin, Balance, IsEmailVerified) VALUES (@Username, @Email, @Password, 0, 0.00, 0)";
             SqlParameter[] insertParams = new SqlParameter[]
             {
@@ -57,11 +69,11 @@ namespace VOID_STORE.Controllers
             };
             DatabaseManager.ExecuteNonQuery(insertUserQuery, insertParams);
 
-            // 6 haneli dogrulama kodu olustur
+            // alti haneli dogrulama kodu olustur
             Random rnd = new Random();
             string code = rnd.Next(100000, 999999).ToString();
 
-            // kodu veritabanina 10 dk suresiyle kaydet
+            // kodu veritabanina on dakika suresiyle kaydet
             string insertCodeQuery = "INSERT INTO VerificationCodes (Email, Code, ExpirationDate, IsUsed) VALUES (@Email, @Code, DATE_ADD(NOW(), INTERVAL 10 MINUTE), 0)";
             SqlParameter[] codeParams = new SqlParameter[]
             {
@@ -74,7 +86,9 @@ namespace VOID_STORE.Controllers
             bool isEmailSent = EmailManager.SendVerificationEmail(email, code);
 
             if (!isEmailSent)
-                return "Mail ayarlarında sorun var, kayıt olundu ancak doğrulama e-postası gönderilemedi.";
+            {
+                return "Mail ayarlarında sorun var kayıt olundu ancak doğrulama e postası gönderilemedi.";
+            }
 
             // basarili kayit bos string dondur
             return string.Empty;

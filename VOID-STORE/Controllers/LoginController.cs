@@ -7,7 +7,7 @@ namespace VOID_STORE.Controllers
 {
     public class LoginController
     {
-        // girilen bilgilerin veritabaninda eslesip eslesmedigini kontrol et
+        // girilen bilgilerin veritabanında eşleşip eşleşmediğini kontrol et
         public bool ValidateUser(string usernameOrEmail, string password, out bool isEmailVerified, out bool isAdmin)
         {
             isEmailVerified = false;
@@ -15,12 +15,12 @@ namespace VOID_STORE.Controllers
 
             try
             {
-                // sifreyi dogrulama icin hashle
+                // şifreyi doğrulama için hashle
                 string hashedPassword = SecurityManager.HashPassword(password);
 
-                // kullanici profilini veritabanindan cek
+                // kullanıcı profilini veritabanından çek
                 string loginQuery = "SELECT UserId, IsAdmin, IsEmailVerified FROM Users WHERE (Username = @User OR Email = @User) AND PasswordHash = @Password";
-                SqlParameter[] loginParams = new SqlParameter[]
+                SqlParameter[] loginParams =
                 {
                     new SqlParameter("@User", usernameOrEmail),
                     new SqlParameter("@Password", hashedPassword)
@@ -37,7 +37,7 @@ namespace VOID_STORE.Controllers
 
                 return false;
             }
-            catch (Exception)
+            catch
             {
                 throw;
             }
@@ -45,7 +45,7 @@ namespace VOID_STORE.Controllers
 
         public string GetDisplayUsername(string usernameOrEmail)
         {
-            // oturumda gosterilecek kullanici adini getir
+            // oturumda gösterilecek kullanıcı adını getir
             object? result = DatabaseManager.ExecuteScalar(
                 @"SELECT Username
                   FROM Users
@@ -58,7 +58,7 @@ namespace VOID_STORE.Controllers
 
         public AuthenticatedUserInfo GetAuthenticatedUser(string usernameOrEmail)
         {
-            // oturum icin gereken alanlari getir
+            // oturum için gereken alanları getir
             DataTable table = DatabaseManager.ExecuteQuery(
                 @"SELECT UserId, Username, Balance
                   FROM Users

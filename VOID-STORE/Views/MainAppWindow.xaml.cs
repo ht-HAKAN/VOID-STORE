@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -1758,6 +1759,587 @@ namespace VOID_STORE.Views
         {
             // istek listesi akisi hafta sonrasi icin hazir kalir
             CustomError.ShowDialog("İstek listesi bölümü henüz hazır değil.", "BILGI", owner: this);
+        }
+
+        // ticaret akışlarını tek yerden yönet
+        private readonly CommerceController _commerceController = new();
+
+        // anlık sepet verisini tut
+        private List<CartGameItem> _cartItems = new();
+
+        // sahip olunan oyunları tut
+        private List<LibraryGameItem> _libraryItems = new();
+
+        // son işlem geçmişini tut
+        private List<WalletTransactionItem> _walletTransactions = new();
+
+        // sahiplik durumunu hızlı sorgula
+        private HashSet<int> _ownedGameIds = new();
+
+        // sepetteki oyunları hızlı sorgula
+        private HashSet<int> _cartGameIds = new();
+
+        // detaydan geri dönüşte kütüphane akışını koru
+        private bool _isLibraryViewActive;
+
+        // seçili ödeme yöntemini sakla
+        private string _selectedPaymentMethod = "visa";
+
+        private void InitializeCommerceState()
+        {
+            // ilk verileri açılışta yükle
+            RefreshCommerceState(false);
+        }
+
+        private void RefreshCommerceState(bool showErrors = true)
+        {
+            // tüm ticaret yüzeylerini aynı anda yenile
+            try
+            {
+                if (UserSession.IsGuest)
+                {
+                    // misafir için tüm listeleri temizle
+                    _cartItems = new List<CartGameItem>();
+                    _libraryItems = new List<LibraryGameItem>();
+                    _walletTransactions = new List<WalletTransactionItem>();
+                    _ownedGameIds = new HashSet<int>();
+                    _cartGameIds = new HashSet<int>();
+                }
+                else
+                {
+                    // güncel bakiyeyi oturuma yaz
+                    decimal balance = _commerceController.GetBalance(UserSession.UserId);
+                    UserSession.UpdateBalance(balance);
+
+                    // sayfalarda kullanılacak listeleri çek
+                    _cartItems = _commerceController.GetCartItems(UserSession.UserId).ToList();
+                    _libraryItems = _commerceController.GetLibraryGames(UserSession.UserId).ToList();
+                    _walletTransactions = _commerceController.GetRecentTransactions(UserSession.UserId).ToList();
+
+                    // hızlı kontrol setlerini doldur
+                    _ownedGameIds = _commerceController.GetOwnedGameIds(UserSession.UserId);
+                    _cartGameIds = _commerceController.GetCartGameIds(UserSession.UserId);
+                }
+
+                // store ve detay durumlarını güncelle
+                ApplyStoreOwnershipState();
+                ApplyDetailOwnershipState();
+
+                // alt sayfaları yeni veriyle yenile
+                RefreshLibraryPanel();
+                RefreshCartPopup();
+                RefreshWalletPage();
+            }
+            catch (Exception ex)
+            {
+                // hata ekrana kontrollü yansın
+                if (showErrors)
+                {
+                    CustomError.ShowDialog($"Ticaret verileri yüklenemedi {ex.Message}", "SISTEM HATASI", owner: this);
+                }
+            }
+        }
+
+        private void ApplyStoreOwnershipState()
+        {
+            // store kartlarında sahiplik bilgisini yansıt
+            foreach (StoreGameCardItem item in _storeItems)
+            {
+                item.IsOwned = _ownedGameIds.Contains(item.GameId);
+                item.IsInCart = !item.IsOwned && _cartGameIds.Contains(item.GameId);
+
+                // kart alt durumunu netleştir
+                item.StatusText = item.IsOwned
+                    ? "Kütüphanede"
+                    : item.IsInCart
+                        ? "Sepette"
+                        : string.Empty;
+            }
+
+            // items controlü taze veriyle bağla
+            icStoreGames.ItemsSource = null;
+            icStoreGames.ItemsSource = _storeItems;
+
+            // yerleşimi yeni genişlikle kur
+            Dispatcher.BeginInvoke(new Action(() => UpdateStoreGridColumns()), DispatcherPriority.Loaded);
+        }
+
+        private void ApplyDetailOwnershipState()
+        {
+            // detay ekranında tek buton dili kullan
+            if (_currentDetail == null)
+            {
+                return;
+            }
+
+            // seçili oyunun sahiplik bilgisini güncelle
+            _currentDetail.IsOwned = _ownedGameIds.Contains(_currentDetail.GameId);
+            _currentDetail.IsInCart = !_currentDetail.IsOwned && _cartGameIds.Contains(_currentDetail.GameId);
+
+            // durum metnini varsayılan olarak gizle
+            txtDetailOwnershipState.Visibility = Visibility.Collapsed;
+
+            if (UserSession.IsGuest)
+            {
+                // misafire açık yönlendirme göster
+                txtDetailOwnershipState.Text = "Satın almak için giriş yap";
+                txtDetailOwnershipState.Foreground = CreateBrush("#8F98A5");
+                txtDetailOwnershipState.Visibility = Visibility.Visible;
+                btnDetailAddToCart.Content = "Sepete Ekle";
+                btnDetailAddToCart.IsEnabled = true;
+                return;
+            }
+
+            if (_currentDetail.IsOwned)
+            {
+                // sahip olunan oyunda satın alma kapansın
+                txtDetailOwnershipState.Text = "Bu oyun kütüphanende bulunuyor";
+                txtDetailOwnershipState.Foreground = CreateBrush("#82E4B0");
+                txtDetailOwnershipState.Visibility = Visibility.Visible;
+                btnDetailAddToCart.Content = "Kütüphanede";
+                btnDetailAddToCart.IsEnabled = false;
+                return;
+            }
+
+            if (_currentDetail.IsInCart)
+            {
+                // sepette olan oyunda tekrar ekleme kapansın
+                txtDetailOwnershipState.Text = "Bu oyun sepette bekliyor";
+                txtDetailOwnershipState.Foreground = CreateBrush("#F5D174");
+                txtDetailOwnershipState.Visibility = Visibility.Visible;
+                btnDetailAddToCart.Content = "Sepette";
+                btnDetailAddToCart.IsEnabled = false;
+                return;
+            }
+
+            // satın alınabilir durumda butonu aç
+            btnDetailAddToCart.Content = "Sepete Ekle";
+            btnDetailAddToCart.IsEnabled = true;
+        }
+
+        private void RefreshCartPopup()
+        {
+            // sepet içeriğini yeniden bağla
+            icCartItems.ItemsSource = null;
+            icCartItems.ItemsSource = _cartItems;
+
+            // toplam tutarı tek yerde hesapla
+            bool hasItems = _cartItems.Count > 0;
+            decimal totalAmount = _cartItems.Sum(item => item.PriceAmount);
+
+            // üst bilgi metnini duruma göre değiştir
+            txtCartSummary.Text = UserSession.IsGuest
+                ? "Sepet giriş yaptıktan sonra aktif olur"
+                : hasItems
+                    ? $"{_cartItems.Count} oyun satın almaya hazır"
+                    : "Henüz sepetine oyun eklemedin";
+
+            // toplam tutarı göster
+            txtCartTotal.Text = FormatMoney(totalAmount);
+
+            // boş ve dolu durumları ayır
+            EmptyCartState.Visibility = hasItems ? Visibility.Collapsed : Visibility.Visible;
+            CartItemsScrollViewer.Visibility = hasItems ? Visibility.Visible : Visibility.Collapsed;
+
+            // misafir veya boş sepette ödemeyi kapat
+            btnCheckoutCart.IsEnabled = !UserSession.IsGuest && hasItems;
+
+            // cart badge sayısını yenile
+            bdgCartCount.Visibility = !UserSession.IsGuest && hasItems ? Visibility.Visible : Visibility.Collapsed;
+            txtCartCount.Text = _cartItems.Count > 99 ? "99+" : _cartItems.Count.ToString();
+        }
+
+        private void RefreshWalletPage()
+        {
+            // üstteki bakiye pillini güncelle
+            txtWalletBalance.Text = UserSession.IsGuest ? "Giriş yap" : FormatMoney(UserSession.Balance);
+
+            // sayfadaki özet bakiyeyi güncelle
+            txtWalletPopupBalance.Text = UserSession.IsGuest
+                ? "Giriş yapman gerekiyor"
+                : FormatMoney(UserSession.Balance);
+
+            // cüzdan açıklama satırını sade tut
+            txtWalletPageInfo.Text = UserSession.IsGuest
+                ? "Cüzdan ve ödeme yöntemleri girişten sonra aktif olur"
+                : "Bakiye yükleme ve işlem geçmişi burada görünür";
+
+            // hareket geçmişini listele
+            icWalletTransactions.ItemsSource = null;
+            icWalletTransactions.ItemsSource = _walletTransactions;
+
+            // boş durum katmanını ayarla
+            bool hasTransactions = _walletTransactions.Count > 0;
+            EmptyWalletState.Visibility = hasTransactions ? Visibility.Collapsed : Visibility.Visible;
+            WalletTransactionsScrollViewer.Visibility = hasTransactions ? Visibility.Visible : Visibility.Collapsed;
+
+            // seçili kart kartvizitini yenile
+            ApplyPaymentMethodSelection();
+        }
+
+        private void RefreshLibraryPanel()
+        {
+            // kütüphane verisini yeniden bağla
+            icLibraryGames.ItemsSource = null;
+            icLibraryGames.ItemsSource = _libraryItems;
+
+            if (UserSession.IsGuest)
+            {
+                // misafir kütüphane mesajı
+                txtLibraryResultInfo.Text = "Kütüphaneyi görmek için giriş yap";
+                txtLibraryEmptyTitle.Text = "Kütüphane oturumla açılır";
+                txtLibraryEmptyMessage.Text = "Satın aldığın oyunlar burada görünür";
+            }
+            else if (_libraryItems.Count == 0)
+            {
+                // ilk satın alma öncesi boş durum
+                txtLibraryResultInfo.Text = "Henüz sahip olunan oyun bulunmuyor";
+                txtLibraryEmptyTitle.Text = "Kütüphanede oyun görünmüyor";
+                txtLibraryEmptyMessage.Text = "Mağazadan satın aldığın oyunlar burada listelenecek";
+            }
+            else
+            {
+                // dolu kütüphane sonucu
+                txtLibraryResultInfo.Text = _libraryItems.Count == 1
+                    ? "1 oyun kütüphanede bulunuyor"
+                    : $"{_libraryItems.Count} oyun kütüphanede bulunuyor";
+                txtLibraryEmptyTitle.Text = "Kütüphanede oyun görünmüyor";
+                txtLibraryEmptyMessage.Text = "Mağazadan satın aldığın oyunlar burada listelenecek";
+            }
+
+            // boş kütüphane durumunu ayarla
+            EmptyLibraryState.Visibility = _libraryItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            // soldan akan yerleşimi yeniden hesapla
+            Dispatcher.BeginInvoke(new Action(() => UpdateLibraryGridColumns()), DispatcherPriority.Loaded);
+        }
+
+        private void UpdateLibraryGridColumns()
+        {
+            // kütüphane kartlarını sola akıt
+            double viewportWidth = LibraryGamesScrollViewer.ViewportWidth;
+
+            // viewport yoksa gerçek genişliği kullan
+            if (viewportWidth <= 0)
+            {
+                viewportWidth = LibraryGamesScrollViewer.ActualWidth;
+            }
+
+            // halen genişlik yoksa çık
+            if (viewportWidth <= 0)
+            {
+                return;
+            }
+
+            // veri yoksa paneli serbest bırak
+            if (_libraryItems.Count == 0)
+            {
+                icLibraryGames.Width = double.NaN;
+                return;
+            }
+
+            // wrap alanı sola yaslanacak kadar geniş olsun
+            icLibraryGames.Width = Math.Max(0, viewportWidth - 4);
+        }
+
+        private void ShowLibraryView()
+        {
+            // kütüphane ekranına geç
+            StopTrailer();
+            popCartMenu.IsOpen = false;
+            _isLibraryViewActive = true;
+
+            // sadece ilgili panelleri aç
+            StoreHeaderPanel.Visibility = Visibility.Visible;
+            StoreContentPanel.Visibility = Visibility.Collapsed;
+            LibraryContentPanel.Visibility = Visibility.Visible;
+            WalletContentPanel.Visibility = Visibility.Collapsed;
+            DetailHeaderPanel.Visibility = Visibility.Collapsed;
+            DetailContentPanel.Visibility = Visibility.Collapsed;
+
+            // sidebar seçimini kütüphane yap
+            SetSidebarSelection(btnLibraryNav);
+            RefreshLibraryPanel();
+        }
+
+        private void ShowWalletView()
+        {
+            // cüzdan ekranına geç
+            StopTrailer();
+            popCartMenu.IsOpen = false;
+            _isLibraryViewActive = false;
+
+            // sadece cüzdan panelini aç
+            StoreHeaderPanel.Visibility = Visibility.Visible;
+            StoreContentPanel.Visibility = Visibility.Collapsed;
+            LibraryContentPanel.Visibility = Visibility.Collapsed;
+            WalletContentPanel.Visibility = Visibility.Visible;
+            DetailHeaderPanel.Visibility = Visibility.Collapsed;
+            DetailContentPanel.Visibility = Visibility.Collapsed;
+
+            // sidebar mevcut store seçimini koru
+            SetSidebarSelection(btnStoreNav);
+            RefreshWalletPage();
+        }
+
+        private bool EnsureAuthenticatedForCommerce()
+        {
+            // misafir ticaret akışlarını kapat
+            if (!UserSession.IsGuest)
+            {
+                return true;
+            }
+
+            // açık popup kalmasın
+            popCartMenu.IsOpen = false;
+
+            // net yönlendirme göster
+            CustomError.ShowDialog("Bu işlem için giriş yapmanız gerekiyor", "BILGI", owner: this);
+            return false;
+        }
+
+        private void WalletMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            // header bakiye alanından sayfaya git
+            ShowWalletView();
+        }
+
+        private void CartMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            // sepet popup durumunu tersine çevir
+            RefreshCartPopup();
+            popCartMenu.IsOpen = !popCartMenu.IsOpen;
+        }
+
+        private void WalletQuickAmountButton_Click(object sender, RoutedEventArgs e)
+        {
+            // hazır tutarı tek tıkla yükle
+            if (sender is not Button button || !int.TryParse(button.Tag?.ToString(), out int amount))
+            {
+                return;
+            }
+
+            AddBalance(amount);
+        }
+
+        private void AddWalletBalanceButton_Click(object sender, RoutedEventArgs e)
+        {
+            // özel girilen tutarı yükle
+            if (!EnsureAuthenticatedForCommerce())
+            {
+                return;
+            }
+
+            string rawValue = txtWalletCustomAmount.Text?.Trim() ?? string.Empty;
+
+            // sayı ve pozitiflik kontrolü yap
+            if (!int.TryParse(rawValue, out int amount) || amount <= 0)
+            {
+                CustomError.ShowDialog("Geçerli bir bakiye tutarı girin", "BILGI", owner: this);
+                return;
+            }
+
+            AddBalance(amount);
+        }
+
+        private void AddBalance(int amount)
+        {
+            // bakiye yüklemeyi tek akışta yürüt
+            if (!EnsureAuthenticatedForCommerce())
+            {
+                return;
+            }
+
+            // seçili kart bilgisini özetle
+            string paymentTitle = GetSelectedPaymentTitle();
+
+            // kullanıcıdan son onayı al
+            if (!CustomConfirm.ShowDialog("Bakiye Yükle", $"{FormatMoney(amount)} seçili kart ile yüklensin mi", "Yükle", this))
+            {
+                return;
+            }
+
+            try
+            {
+                // yeni bakiyeyi veritabanından al
+                decimal balanceAfter = _commerceController.AddBalance(UserSession.UserId, amount);
+                UserSession.UpdateBalance(balanceAfter);
+
+                // formu temiz tut
+                txtWalletCustomAmount.Clear();
+
+                // tüm sayfaları tek seferde yenile
+                RefreshCommerceState(false);
+                ShowWalletView();
+
+                // sonuç bilgisini göster
+                CustomError.ShowDialog($"{paymentTitle} ile bakiye güncellendi", "BILGI", owner: this);
+            }
+            catch (Exception ex)
+            {
+                // hata mesajını ekrana taşı
+                CustomError.ShowDialog($"Bakiye yüklenemedi {ex.Message}", "SISTEM HATASI", owner: this);
+            }
+        }
+
+        private void RemoveCartItemButton_Click(object sender, RoutedEventArgs e)
+        {
+            // seçili oyunu sepetten çıkar
+            if (sender is not Button button || button.Tag == null)
+            {
+                return;
+            }
+
+            // misafir çıkarma yapamasın
+            if (!EnsureAuthenticatedForCommerce())
+            {
+                return;
+            }
+
+            // game id yoksa işlemi durdur
+            if (!int.TryParse(button.Tag.ToString(), out int gameId))
+            {
+                return;
+            }
+
+            // kaydı sil ve yüzeyi yenile
+            _commerceController.RemoveFromCart(UserSession.UserId, gameId);
+            RefreshCommerceState(false);
+            ApplyDetailOwnershipState();
+
+            // kullanıcı akışı bozulmasın
+            popCartMenu.IsOpen = true;
+        }
+
+        private void CheckoutCartButton_Click(object sender, RoutedEventArgs e)
+        {
+            // sepet satın alma akışını başlat
+            if (!EnsureAuthenticatedForCommerce())
+            {
+                return;
+            }
+
+            // boş sepette ilerleme
+            if (_cartItems.Count == 0)
+            {
+                CustomError.ShowDialog("Sepette satın alınacak oyun bulunmuyor", "BILGI", owner: this);
+                return;
+            }
+
+            decimal totalAmount = _cartItems.Sum(item => item.PriceAmount);
+
+            // son onayı kullanıcıdan al
+            if (!CustomConfirm.ShowDialog("Satın Al", $"{_cartItems.Count} oyunu {FormatMoney(totalAmount)} karşılığında satın almak istiyor musun", "Satın Al", this))
+            {
+                return;
+            }
+
+            try
+            {
+                // checkout sonucunu uygula
+                CheckoutResult result = _commerceController.CheckoutCart(UserSession.UserId);
+                UserSession.UpdateBalance(result.BalanceAfter);
+
+                // tüm commerce ekranlarını yenile
+                RefreshCommerceState(false);
+                popCartMenu.IsOpen = false;
+
+                // satın alma sonrası kütüphaneye git
+                ShowLibraryView();
+                CustomError.ShowDialog($"{result.ItemCount} oyun kütüphanene eklendi", "BILGI", owner: this);
+            }
+            catch (Exception ex)
+            {
+                // checkout hatasını göster
+                CustomError.ShowDialog($"Satın alma tamamlanamadı {ex.Message}", "SISTEM HATASI", owner: this);
+            }
+        }
+
+        private void LibraryGamesScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // pencere boyutu değiştiğinde kütüphaneyi yeniden diz
+            UpdateLibraryGridColumns();
+        }
+
+        private void PaymentMethodButton_Click(object sender, RoutedEventArgs e)
+        {
+            // seçili kartı değiştir
+            if (sender is not Button button || button.Tag is not string methodKey)
+            {
+                return;
+            }
+
+            // seçimi sakla ve yüzeye uygula
+            _selectedPaymentMethod = methodKey;
+            ApplyPaymentMethodSelection();
+        }
+
+        private void ApplyPaymentMethodSelection()
+        {
+            // buton vurgularını seçime göre güncelle
+            ApplyPaymentButtonStyle(btnPaymentVisa, _selectedPaymentMethod == "visa", "#2C66F5");
+            ApplyPaymentButtonStyle(btnPaymentMaster, _selectedPaymentMethod == "mastercard", "#FF7043");
+            ApplyPaymentButtonStyle(btnPaymentTroy, _selectedPaymentMethod == "troy", "#1DBB73");
+
+            // seçili kart özetini yaz
+            txtSelectedPaymentTitle.Text = GetSelectedPaymentTitle();
+            txtSelectedPaymentNumber.Text = GetSelectedPaymentNumber();
+            txtSelectedPaymentExpiry.Text = GetSelectedPaymentExpiry();
+        }
+
+        private void ApplyPaymentButtonStyle(Button button, bool isSelected, string accentColor)
+        {
+            // seçili kartta daha belirgin kenarlık kullan
+            button.Background = isSelected ? CreateBrush("#151519") : CreateBrush("#101014");
+            button.BorderBrush = isSelected ? CreateBrush(accentColor) : CreateBrush("#1E1E24");
+        }
+
+        private string GetSelectedPaymentTitle()
+        {
+            // kart adını tek noktadan ver
+            return _selectedPaymentMethod switch
+            {
+                "mastercard" => "MasterCard",
+                "troy" => "Troy",
+                _ => "Visa"
+            };
+        }
+
+        private string GetSelectedPaymentNumber()
+        {
+            // maskeli numarayı tek noktadan ver
+            return _selectedPaymentMethod switch
+            {
+                "mastercard" => "**** **** **** 5454",
+                "troy" => "**** **** **** 9792",
+                _ => "**** **** **** 4242"
+            };
+        }
+
+        private string GetSelectedPaymentExpiry()
+        {
+            // son kullanma özetini tek noktadan ver
+            return _selectedPaymentMethod switch
+            {
+                "mastercard" => "Son Kullanma 09 31",
+                "troy" => "Son Kullanma 05 32",
+                _ => "Son Kullanma 12 30"
+            };
+        }
+
+        private Brush CreateBrush(string hex)
+        {
+            // ortak renk üretimi yap
+            Color color = (Color)ColorConverter.ConvertFromString(hex);
+            SolidColorBrush brush = new SolidColorBrush(color);
+            brush.Freeze();
+            return brush;
+        }
+
+        private string FormatMoney(decimal amount)
+        {
+            // para formatını tek noktada sabitle
+            return $"₺{amount.ToString("0.##", CultureInfo.GetCultureInfo("tr-TR"))}";
         }
     }
 }

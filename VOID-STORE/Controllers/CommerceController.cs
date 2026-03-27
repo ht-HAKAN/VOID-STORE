@@ -15,13 +15,13 @@ namespace VOID_STORE.Controllers
     {
         public CommerceController()
         {
-            // hafta 7 tablolari hazir olsun
+            // kullanıcı ticaret alanlarını hazırla
             UserCommerceSchemaManager.EnsureSchema();
         }
 
         public decimal GetBalance(int userId)
         {
-            // kullanicinin guncel bakiyesini cek
+            // kullanıcının güncel bakiyesini çek
             object? result = DatabaseManager.ExecuteScalar(
                 @"SELECT Balance
                   FROM Users
@@ -29,7 +29,7 @@ namespace VOID_STORE.Controllers
                   LIMIT 1;",
                 new SqlParameter("@UserId", userId));
 
-            // sonuc yoksa sifira don
+            // sonuç yoksa sıfıra dön
             return result == null || result == DBNull.Value
                 ? 0
                 : Convert.ToDecimal(result, CultureInfo.InvariantCulture);
@@ -47,22 +47,22 @@ namespace VOID_STORE.Controllers
                 new SqlParameter("@UserId", userId),
                 new SqlParameter("@Take", take));
 
-            // tabloyu gorunum modeline cevir
+            // tabloyu görünüm modeline çevir
             List<WalletTransactionItem> items = new();
 
             foreach (DataRow row in table.Rows)
             {
-                // satirdaki ham degerleri cikar
+                // satırdaki ham değerleri çıkar
                 decimal amount = Convert.ToDecimal(row["Amount"], CultureInfo.InvariantCulture);
                 DateTime createdAt = Convert.ToDateTime(row["CreatedAt"], CultureInfo.InvariantCulture);
                 string transactionType = row["TransactionType"]?.ToString() ?? string.Empty;
                 string description = row["Description"]?.ToString() ?? string.Empty;
 
-                // ekrana dogrudan basilan modeli kur
+                // ekrana doğrudan basılan modeli kur
                 items.Add(new WalletTransactionItem
                 {
                     Title = BuildTransactionTitle(transactionType),
-                    Description = string.IsNullOrWhiteSpace(description) ? $"I\u015flem kayd\u0131" : description,
+                    Description = string.IsNullOrWhiteSpace(description) ? "İşlem kaydı" : description,
                     AmountText = BuildAmountText(amount),
                     CreatedAtText = createdAt.ToString("dd.MM.yyyy HH:mm"),
                     IsPositive = amount >= 0
@@ -74,26 +74,26 @@ namespace VOID_STORE.Controllers
 
         public decimal AddBalance(int userId, int amount)
         {
-            // oturum olmadan isleme girme
+            // oturum olmadan işleme girme
             if (userId <= 0)
             {
-                throw new InvalidOperationException($"Bu i\u015flem i\u00e7in giri\u015f yapman\u0131z gerekiyor");
+                throw new InvalidOperationException("Bu işlem için giriş yapmanız gerekiyor");
             }
 
-            // sifir ve alti tutari reddet
+            // sıfır ve altı tutarı reddet
             if (amount <= 0)
             {
-                throw new InvalidOperationException($"Y\u00fcklenecek tutar s\u0131f\u0131rdan b\u00fcy\u00fck olmal\u0131d\u0131r");
+                throw new InvalidOperationException("Yüklenecek tutar sıfırdan büyük olmalıdır");
             }
 
-            // bakiye ve hareket kaydini ayni transaction icinde tut
+            // bakiye ve hareket kaydını aynı transaction içinde tut
             using SqlConnection connection = DatabaseManager.GetConnection();
             connection.Open();
             using SqlTransaction transaction = connection.BeginTransaction();
 
             try
             {
-                // onceki bakiyeyi kilitleyerek al
+                // önceki bakiyeyi kilitleyerek al
                 decimal balanceBefore = GetLockedBalance(connection, transaction, userId);
                 decimal balanceAfter = balanceBefore + amount;
 
@@ -107,7 +107,7 @@ namespace VOID_STORE.Controllers
                     new SqlParameter("@Balance", balanceAfter),
                     new SqlParameter("@UserId", userId));
 
-                // yukleme hareketini kaydet
+                // yükleme hareketini kaydet
                 ExecuteNonQuery(
                     connection,
                     transaction,
@@ -119,15 +119,15 @@ namespace VOID_STORE.Controllers
                     new SqlParameter("@Amount", amount),
                     new SqlParameter("@BalanceBefore", balanceBefore),
                     new SqlParameter("@BalanceAfter", balanceAfter),
-                    new SqlParameter("@Description", $"{amount} TL bakiye y\u00fckleme"));
+                    new SqlParameter("@Description", $"{amount} TL bakiye yükleme"));
 
-                // tum yazimlar tamamsa kalici yap
+                // tüm yazımlar tamamsa kalıcı yap
                 transaction.Commit();
                 return balanceAfter;
             }
             catch
             {
-                // sorun olursa tek noktadan geri don
+                // sorun olursa tek noktadan geri dön
                 transaction.Rollback();
                 throw;
             }
@@ -135,13 +135,13 @@ namespace VOID_STORE.Controllers
 
         public IReadOnlyList<CartGameItem> GetCartItems(int userId)
         {
-            // misafir kullanicida bos liste don
+            // misafir kullanıcıda boş liste dön
             if (userId <= 0)
             {
                 return new List<CartGameItem>();
             }
 
-            // sepetteki oyunlari aktif oyunlarla birlestir
+            // sepetteki oyunları aktif oyunlarla birleştir
             DataTable table = DatabaseManager.ExecuteQuery(
                 @"SELECT
                     g.GameId,
@@ -157,17 +157,17 @@ namespace VOID_STORE.Controllers
                   ORDER BY c.CreatedAt DESC;",
                 new SqlParameter("@UserId", userId));
 
-            // tabloyu kart listesine donustur
+            // tabloyu kart listesine dönüştür
             List<CartGameItem> items = new();
 
             foreach (DataRow row in table.Rows)
             {
-                // kapak yolunu guvenli al
+                // kapak yolunu güvenli al
                 string coverPath = row["CoverImagePath"] == DBNull.Value
                     ? string.Empty
                     : row["CoverImagePath"]?.ToString() ?? string.Empty;
 
-                // fiyati para tipine cevir
+                // fiyatı para tipine çevir
                 decimal price = Convert.ToDecimal(row["Price"], CultureInfo.InvariantCulture);
 
                 // sepet kart modelini doldur
@@ -188,13 +188,13 @@ namespace VOID_STORE.Controllers
 
         public IReadOnlyList<LibraryGameItem> GetLibraryGames(int userId)
         {
-            // misafir kullanicida bos kutuphane don
+            // misafir kullanıcıda boş kütüphane dön
             if (userId <= 0)
             {
                 return new List<LibraryGameItem>();
             }
 
-            // sahip olunan oyunlari yeni tarihe gore getir
+            // sahip olunan oyunları yeni tarihe göre getir
             DataTable table = DatabaseManager.ExecuteQuery(
                 @"SELECT
                     g.GameId,
@@ -209,21 +209,21 @@ namespace VOID_STORE.Controllers
                   ORDER BY ul.PurchasedAt DESC, ul.LibraryItemId DESC;",
                 new SqlParameter("@UserId", userId));
 
-            // kutuphane kartlarini uret
+            // kütüphane kartlarını üret
             List<LibraryGameItem> items = new();
 
             foreach (DataRow row in table.Rows)
             {
-                // kapak yolunu guvenli al
+                // kapak yolunu güvenli al
                 string coverPath = row["CoverImagePath"] == DBNull.Value
                     ? string.Empty
                     : row["CoverImagePath"]?.ToString() ?? string.Empty;
 
-                // satin alma verilerini cikar
+                // satın alma verilerini çıkar
                 decimal price = Convert.ToDecimal(row["PurchasedPrice"], CultureInfo.InvariantCulture);
                 DateTime purchasedAt = Convert.ToDateTime(row["PurchasedAt"], CultureInfo.InvariantCulture);
 
-                // kutuphane kart modelini doldur
+                // kütüphane kart modelini doldur
                 items.Add(new LibraryGameItem
                 {
                     GameId = Convert.ToInt32(row["GameId"]),
@@ -241,7 +241,7 @@ namespace VOID_STORE.Controllers
 
         public HashSet<int> GetOwnedGameIds(int userId)
         {
-            // sahip olunan oyun kodlarini tek sorguda al
+            // sahip olunan oyun kodlarını tek sorguda al
             return GetGameIdSet(
                 @"SELECT GameId
                   FROM UserLibrary
@@ -251,7 +251,7 @@ namespace VOID_STORE.Controllers
 
         public HashSet<int> GetCartGameIds(int userId)
         {
-            // sepetteki oyun kodlarini tek sorguda al
+            // sepetteki oyun kodlarını tek sorguda al
             return GetGameIdSet(
                 @"SELECT GameId
                   FROM CartItems
@@ -261,31 +261,31 @@ namespace VOID_STORE.Controllers
 
         public void AddToCart(int userId, int gameId)
         {
-            // oturum kontrolu yap
+            // oturum kontrolü yap
             if (userId <= 0)
             {
-                throw new InvalidOperationException($"Sepet i\u015flemi i\u00e7in giri\u015f yapman\u0131z gerekiyor");
+                throw new InvalidOperationException("Sepet işlemi için giriş yapmanız gerekiyor");
             }
 
-            // oyun gecerli mi kontrol et
+            // oyun geçerli mi kontrol et
             if (!GameExists(gameId))
             {
-                throw new InvalidOperationException($"Se\u00e7ilen oyun ma\u011fazada bulunamad\u0131");
+                throw new InvalidOperationException("Seçilen oyun mağazada bulunamadı");
             }
 
             // sahip olunan oyun tekrar sepete girmesin
             if (GetOwnedGameIds(userId).Contains(gameId))
             {
-                throw new InvalidOperationException($"Bu oyun zaten k\u00fct\u00fcphanenizde bulunuyor");
+                throw new InvalidOperationException("Bu oyun zaten kütüphanenizde bulunuyor");
             }
 
-            // ayni oyunu ikinci kez sepete alma
+            // aynı oyunu ikinci kez sepete alma
             if (GetCartGameIds(userId).Contains(gameId))
             {
-                throw new InvalidOperationException($"Bu oyun zaten sepetinizde bulunuyor");
+                throw new InvalidOperationException("Bu oyun zaten sepetinizde bulunuyor");
             }
 
-            // yeni sepet kaydini yaz
+            // yeni sepet kaydını yaz
             DatabaseManager.ExecuteNonQuery(
                 @"INSERT INTO CartItems (UserId, GameId)
                   VALUES (@UserId, @GameId);",
@@ -295,13 +295,13 @@ namespace VOID_STORE.Controllers
 
         public void RemoveFromCart(int userId, int gameId)
         {
-            // misafirde sessizce cik
+            // misafirde sessizce çık
             if (userId <= 0)
             {
                 return;
             }
 
-            // sepet kaydini sil
+            // sepet kaydını sil
             DatabaseManager.ExecuteNonQuery(
                 @"DELETE FROM CartItems
                   WHERE UserId = @UserId
@@ -312,42 +312,42 @@ namespace VOID_STORE.Controllers
 
         public CheckoutResult CheckoutCart(int userId)
         {
-            // satin alma sadece oturumla ilerler
+            // satın alma sadece oturumla ilerler
             if (userId <= 0)
             {
-                throw new InvalidOperationException($"Sat\u0131n alma i\u015flemi i\u00e7in giri\u015f yapman\u0131z gerekiyor");
+                throw new InvalidOperationException("Satın alma işlemi için giriş yapmanız gerekiyor");
             }
 
-            // kutuphane sepete bakiye hareketine tek transaction uygula
+            // kütüphane sepet bakiye hareketine tek transaction uygula
             using SqlConnection connection = DatabaseManager.GetConnection();
             connection.Open();
             using SqlTransaction transaction = connection.BeginTransaction();
 
             try
             {
-                // satin alinacak oyunlari cek
+                // satın alınacak oyunları çek
                 List<(int GameId, string Title, decimal Price)> cartEntries = GetCartEntries(connection, transaction, userId);
 
-                // bos sepette checkout yapma
+                // boş sepette checkout yapma
                 if (cartEntries.Count == 0)
                 {
-                    throw new InvalidOperationException($"Sat\u0131n al\u0131nacak oyun bulunamad\u0131");
+                    throw new InvalidOperationException("Satın alınacak oyun bulunamadı");
                 }
 
-                // toplam tutari hesapla
+                // toplam tutarı hesapla
                 decimal balanceBefore = GetLockedBalance(connection, transaction, userId);
                 decimal totalAmount = cartEntries.Sum(item => item.Price);
 
-                // bakiye yetersizse islemi durdur
+                // bakiye yetersizse işlemi durdur
                 if (balanceBefore < totalAmount)
                 {
-                    throw new InvalidOperationException($"Bakiyeniz bu sat\u0131n alma i\u015flemi i\u00e7in yeterli de\u011fil");
+                    throw new InvalidOperationException("Bakiyeniz bu satın alma işlemi için yeterli değil");
                 }
 
-                // tek satin alma zamani kullan
+                // tek satın alma zamanı kullan
                 DateTime purchaseTime = DateTime.Now;
 
-                // her oyunu kutuphaneye ekle
+                // her oyunu kütüphaneye ekle
                 foreach ((int gameId, _, decimal price) in cartEntries)
                 {
                     ExecuteNonQuery(
@@ -364,7 +364,7 @@ namespace VOID_STORE.Controllers
                 // yeni bakiyeyi hesapla
                 decimal balanceAfter = balanceBefore - totalAmount;
 
-                // kullanici bakiyesini guncelle
+                // kullanıcı bakiyesini güncelle
                 ExecuteNonQuery(
                     connection,
                     transaction,
@@ -382,7 +382,7 @@ namespace VOID_STORE.Controllers
                       WHERE UserId = @UserId;",
                     new SqlParameter("@UserId", userId));
 
-                // toplam satin alma hareketini yaz
+                // toplam satın alma hareketini yaz
                 ExecuteNonQuery(
                     connection,
                     transaction,
@@ -394,12 +394,12 @@ namespace VOID_STORE.Controllers
                     new SqlParameter("@Amount", -totalAmount),
                     new SqlParameter("@BalanceBefore", balanceBefore),
                     new SqlParameter("@BalanceAfter", balanceAfter),
-                    new SqlParameter("@Description", $"{cartEntries.Count} oyun sat\u0131n al\u0131nd\u0131"));
+                    new SqlParameter("@Description", $"{cartEntries.Count} oyun satın alındı"));
 
-                // tum adimlar tamamsa kalici yap
+                // tüm adımlar tamamsa kalıcı yap
                 transaction.Commit();
 
-                // ekrana donecek sonucu uret
+                // ekrana dönecek sonucu üret
                 return new CheckoutResult
                 {
                     ItemCount = cartEntries.Count,
@@ -411,7 +411,7 @@ namespace VOID_STORE.Controllers
             }
             catch
             {
-                // yarim veri kalmasin
+                // yarım veri kalmasın
                 transaction.Rollback();
                 throw;
             }
@@ -419,7 +419,7 @@ namespace VOID_STORE.Controllers
 
         private HashSet<int> GetGameIdSet(string query, int userId)
         {
-            // ham tabloyu cek
+            // ham tabloyu çek
             DataTable table = DatabaseManager.ExecuteQuery(
                 query,
                 new SqlParameter("@UserId", userId));
@@ -437,7 +437,7 @@ namespace VOID_STORE.Controllers
 
         private bool GameExists(int gameId)
         {
-            // sadece onayli ve aktif oyunlar sepete girebilir
+            // sadece onaylı ve aktif oyunlar sepete girebilir
             object? result = DatabaseManager.ExecuteScalar(
                 @"SELECT COUNT(*)
                   FROM Games
@@ -451,7 +451,7 @@ namespace VOID_STORE.Controllers
 
         private List<(int GameId, string Title, decimal Price)> GetCartEntries(SqlConnection connection, SqlTransaction transaction, int userId)
         {
-            // kutuphane ile cakisan oyunlari cekme
+            // kütüphane ile çakışan oyunları çekme
             using SqlCommand command = new SqlCommand(
                 @"SELECT
                     g.GameId,
@@ -470,7 +470,7 @@ namespace VOID_STORE.Controllers
 
             command.Parameters.AddWithValue("@UserId", userId);
 
-            // reader sonucunu tuple listesine donustur
+            // reader sonucunu tuple listesine dönüştür
             using var reader = command.ExecuteReader();
             List<(int GameId, string Title, decimal Price)> items = new();
 
@@ -487,7 +487,7 @@ namespace VOID_STORE.Controllers
 
         private decimal GetLockedBalance(SqlConnection connection, SqlTransaction transaction, int userId)
         {
-            // bakiye satirini kilitleyerek cek
+            // bakiye satırını kilitleyerek çek
             using SqlCommand command = new SqlCommand(
                 @"SELECT Balance
                   FROM Users
@@ -500,10 +500,10 @@ namespace VOID_STORE.Controllers
             command.Parameters.AddWithValue("@UserId", userId);
             object? result = command.ExecuteScalar();
 
-            // kayit yoksa isleme devam etme
+            // kayıt yoksa işleme devam etme
             if (result == null || result == DBNull.Value)
             {
-                throw new InvalidOperationException($"Kullan\u0131c\u0131 kayd\u0131 bulunamad\u0131");
+                throw new InvalidOperationException("Kullanıcı kaydı bulunamadı");
             }
 
             return Convert.ToDecimal(result, CultureInfo.InvariantCulture);
@@ -511,7 +511,7 @@ namespace VOID_STORE.Controllers
 
         private void ExecuteNonQuery(SqlConnection connection, SqlTransaction transaction, string query, params SqlParameter[] parameters)
         {
-            // ortak parametreli komut yurutucusu
+            // ortak parametreli komut yürütücüsü
             using SqlCommand command = new SqlCommand(query, connection, transaction);
             command.Parameters.AddRange(parameters);
             command.ExecuteNonQuery();
@@ -519,19 +519,19 @@ namespace VOID_STORE.Controllers
 
         private string BuildTransactionTitle(string transactionType)
         {
-            // islem tipini okunur basliga cevir
+            // işlem tipini okunur başlığa çevir
             return transactionType switch
             {
-                "topup" => $"Bakiye y\u00fckleme",
-                "purchase" => $"Sat\u0131n alma",
-                "refund" => $"Iade",
-                _ => $"C\u00fczdan hareketi"
+                "topup" => "Bakiye yükleme",
+                "purchase" => "Satın alma",
+                "refund" => "İade",
+                _ => "Cüzdan hareketi"
             };
         }
 
         private string BuildAmountText(decimal amount)
         {
-            // arti eksi isaretini tek yerde olustur
+            // artı eksi işaretini tek yerde oluştur
             string prefix = amount >= 0 ? "+" : "-";
             decimal normalizedAmount = Math.Abs(amount);
             return $"{prefix}{FormatPrice(normalizedAmount)}";
@@ -539,8 +539,8 @@ namespace VOID_STORE.Controllers
 
         private string FormatPrice(decimal price)
         {
-            // para gorunumu tum uygulamada ayni olsun
-            return $"\u20BA{price.ToString("0.##", CultureInfo.GetCultureInfo("tr-TR"))}";
+            // para görünümü tüm uygulamada aynı olsun
+            return $"₺{price.ToString("0.##", CultureInfo.GetCultureInfo("tr-TR"))}";
         }
     }
 }

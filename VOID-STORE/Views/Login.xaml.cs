@@ -8,19 +8,19 @@ namespace VOID_STORE.Views
 {
     public partial class Login : Window
     {
-        // giris isteklerini yonet
+        // giriş isteklerini yönet
         private readonly LoginController _loginController;
 
         public Login()
         {
-            // formu baslat
+            // formu başlat
             InitializeComponent();
             _loginController = new LoginController();
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // pencereyi surukle
+            // pencereyi sürükle
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();
@@ -29,23 +29,23 @@ namespace VOID_STORE.Views
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
-            // pencereyi kucult
+            // pencereyi küçült
             WindowState = WindowState.Minimized;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            // uygulamayi kapat
+            // uygulamayı kapat
             Application.Current.Shutdown();
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            // giris bilgilerini al
+            // giriş bilgilerini al
             string usernameOrEmail = txtUsername.Text.Trim();
             string password = txtPassword.Password;
 
-            // bos alanlari kontrol et
+            // boş alanları kontrol et
             if (string.IsNullOrEmpty(usernameOrEmail) || string.IsNullOrEmpty(password))
             {
                 CustomError.ShowDialog("Lütfen kullanıcı adı ve şifrenizi girin.", "GİRİŞ HATASI");
@@ -54,7 +54,7 @@ namespace VOID_STORE.Views
 
             try
             {
-                // kullanici kaydini denetle
+                // kullanıcı kaydını denetle
                 bool isValidUser = _loginController.ValidateUser(usernameOrEmail, password, out bool isEmailVerified, out bool isAdmin);
 
                 if (!isValidUser)
@@ -63,7 +63,7 @@ namespace VOID_STORE.Views
                     return;
                 }
 
-                // dogrulama durumunu kontrol et
+                // doğrulama durumunu kontrol et
                 if (!isEmailVerified)
                 {
                     CustomError.ShowDialog("Lütfen e posta adresinize gönderilen doğrulama kodu ile hesabınızı onaylayın.", "DOĞRULANMAMIŞ HESAP");
@@ -73,7 +73,7 @@ namespace VOID_STORE.Views
                 AuthenticatedUserInfo authenticatedUser = _loginController.GetAuthenticatedUser(usernameOrEmail);
                 UserSession.SetAuthenticated(authenticatedUser.UserId, authenticatedUser.Username, authenticatedUser.Balance);
 
-                // yonetici hesabini ayir
+                // yönetici hesabını ayır
                 if (isAdmin)
                 {
                     AdminRoleSelection adminRoleSelection = new AdminRoleSelection
@@ -88,8 +88,8 @@ namespace VOID_STORE.Views
                     return;
                 }
 
-                // ana pencereyi ac
-                MainAppWindow mainWindow = new MainAppWindow();
+                // ana pencereyi aç
+                MainAppWindow mainWindow = new();
                 mainWindow.Show();
                 Close();
             }
@@ -101,8 +101,8 @@ namespace VOID_STORE.Views
 
         private void AccountRecovery_Click(object sender, RoutedEventArgs e)
         {
-            // kurtarma ekranini ac
-            AccountRecovery recoveryScreen = new AccountRecovery
+            // kurtarma ekranını aç
+            AccountRecovery recoveryScreen = new()
             {
                 Left = Left,
                 Top = Top,
@@ -115,8 +115,8 @@ namespace VOID_STORE.Views
 
         private void Register_Click(object sender, RoutedEventArgs e)
         {
-            // kayit ekranini ac
-            Register registerScreen = new Register
+            // kayıt ekranını aç
+            Register registerScreen = new()
             {
                 Left = Left,
                 Top = Top,
@@ -131,7 +131,7 @@ namespace VOID_STORE.Views
         {
             // misafir olarak devam et
             UserSession.SetGuest();
-            MainAppWindow mainWindow = new MainAppWindow();
+            MainAppWindow mainWindow = new();
             mainWindow.Show();
             Close();
         }

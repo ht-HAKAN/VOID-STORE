@@ -39,6 +39,26 @@ namespace VOID_STORE.Models
 
         public bool IsInCart { get; set; }
 
+        public string InstallStatus { get; set; } = "not_installed";
+
+        public string InstallStatusText { get; set; } = string.Empty;
+
+        public string InstallAccent { get; set; } = "#8F98A5";
+
+        public bool ShowInstallProgress { get; set; }
+
+        public double InstallProgressValue { get; set; }
+
+        public string InstallProgressText { get; set; } = string.Empty;
+
+        public string PrimaryInstallActionText { get; set; } = "Kurulumu Başlat";
+
+        public string SecondaryInstallActionText { get; set; } = string.Empty;
+
+        public bool ShowSecondaryInstallAction { get; set; }
+
+        public string InstallPath { get; set; } = string.Empty;
+
         public List<string> Platforms { get; set; } = new();
 
         public List<string> Features { get; set; } = new();

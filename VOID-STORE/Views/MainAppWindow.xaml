@@ -37,7 +37,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="21">
+                                CornerRadius="10">
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
                                               Margin="{TemplateBinding Padding}"/>
@@ -52,10 +52,29 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="CategoryChipButton" TargetType="Button"><Setter Property="MinHeight" Value="38"/><Setter Property="Background" Value="#101014"/><Setter Property="Foreground" Value="#E7EAF0"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="16,0"/><Setter Property="Margin" Value="0,0,10,10"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="19"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#16161A"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2A2A31"/></Trigger><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></DataTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="CategoryChipButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="MinWidth" Value="76"/><Setter Property="Background" Value="#101014"/><Setter Property="Foreground" Value="#E7EAF0"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="18,0"/><Setter Property="Margin" Value="0,0,12,12"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="7"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#15181E"/><Setter TargetName="Surface" Property="BorderBrush" Value="#353C47"/></Trigger><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="Surface" Property="Background" Value="#101014"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#FFFFFF"/></DataTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="StoreCardButton" TargetType="Button"><Setter Property="Width" Value="238"/><Setter Property="Margin" Value="8,0,8,26"/><Setter Property="Padding" Value="0"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="HorizontalAlignment" Value="Left"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="GhostActionButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="Padding" Value="18,0"/><Setter Property="Background" Value="#111114"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#16161A"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2A2A31"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
-        <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="48"/><Setter Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/><Setter Property="BorderBrush" Value="#FFFFFF"/><Setter Property="FontSize" Value="14"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="14"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#F1F1F1"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="48"/><Setter Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/><Setter Property="BorderBrush" Value="#FFFFFF"/><Setter Property="FontSize" Value="14"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="14"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.94"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="InstallHeroPrimaryActionButton" TargetType="Button" BasedOn="{StaticResource PrimaryActionButton}"><Setter Property="Height" Value="58"/><Setter Property="Padding" Value="26,0"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.92"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="InstallHeroSecondaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="58"/><Setter Property="Padding" Value="26,0"/><Setter Property="Background" Value="#12161C"/><Setter Property="BorderBrush" Value="#2A313D"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#171C24"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="DownloadProgressBar" TargetType="ProgressBar">
+            <Setter Property="Height" Value="8"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Background" Value="#171B22"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4" SnapsToDevicePixels="True">
+                            <Grid x:Name="PART_Track" ClipToBounds="True">
+                                <Rectangle x:Name="PART_Indicator" HorizontalAlignment="Left" Fill="{TemplateBinding Foreground}" RadiusX="4" RadiusY="4"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="MediaArrowButton" TargetType="Button" BasedOn="{StaticResource HeaderIconButton}"><Setter Property="Width" Value="52"/><Setter Property="Height" Value="52"/><Setter Property="Background" Value="#2209090B"/><Setter Property="BorderBrush" Value="#66FFFFFF"/><Setter Property="BorderThickness" Value="1"/></Style>
         <Style x:Key="TrailerControlButton" TargetType="Button"><Setter Property="Width" Value="34"/><Setter Property="Height" Value="34"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="17"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#22FFFFFF"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="TrailerProgressSlider" TargetType="Slider">
@@ -138,7 +157,7 @@
                                             ViewboxUnits="RelativeToBoundingBox"/>
                             </Border.Background>
                         </Border>
-                        <StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="0,34,0,0">
+                        <StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="0,74,0,0">
                             <Button x:Name="btnStoreNav" Style="{StaticResource SidebarButton}" Click="StoreNavButton_Click" MouseEnter="SidebarButton_MouseEnter" MouseLeave="SidebarButton_MouseLeave">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="&#xE719;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
@@ -203,7 +222,11 @@
                                 <TextBlock Text="&#xE734;" FontFamily="Segoe MDL2 Assets" FontSize="17"/>
                             </Button>
                             <Grid Margin="0,0,14,0">
-                                <Button x:Name="btnCartMenu" Style="{StaticResource HeaderIconButton}" Click="CartMenuButton_Click">
+                                <Button x:Name="btnCartMenu"
+                                        Style="{StaticResource TopActionIconButton}"
+                                        Width="36"
+                                        Height="36"
+                                        Click="CartMenuButton_Click">
                                     <TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
                                 </Button>
                                 <Border x:Name="bdgCartCount"
@@ -437,7 +460,7 @@
                                                         </Grid>
                                                         <TextBlock Text="{Binding Category}" Foreground="#8F98A5" FontSize="12" Margin="0,14,0,0"/>
                                                         <TextBlock Text="{Binding Title}" Foreground="White" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,6,0,0"/>
-                                                        <TextBlock x:Name="txtStoreCardStatus" Text="{Binding StatusText}" Foreground="#82E4B0" FontSize="12" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                                                        <TextBlock x:Name="txtStoreCardStatus" Text="{Binding StatusText}" Foreground="#82E4B0" FontSize="11" FontWeight="SemiBold" Margin="0,10,0,0" TextWrapping="Wrap"/>
                                                         <TextBlock Text="{Binding PriceText}" Foreground="White" FontSize="15" FontWeight="SemiBold" Margin="0,14,0,0"/>
                                                     </StackPanel>
                                                 </Button>
@@ -457,12 +480,37 @@
                             </ScrollViewer>
                         </Grid>
                         <Grid x:Name="LibraryContentPanel" Visibility="Collapsed">
-                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="18"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="22"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="18"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
                             <StackPanel>
                                 <TextBlock Text="Kütüphanem" Foreground="White" FontSize="26" FontWeight="Bold"/>
                                 <TextBlock x:Name="txtLibraryResultInfo" Foreground="#8F98A5" FontSize="14" Margin="0,8,0,0"/>
                             </StackPanel>
-                            <ScrollViewer x:Name="LibraryGamesScrollViewer" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" SizeChanged="LibraryGamesScrollViewer_SizeChanged">
+                            <ScrollViewer Grid.Row="2"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Disabled">
+                                <ItemsControl x:Name="icLibraryCategories">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding Name}"
+                                                    Tag="{Binding Name}"
+                                                    Style="{StaticResource CategoryChipButton}"
+                                                    Click="LibraryCategoryChip_Click"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                            <ScrollViewer x:Name="LibraryGamesScrollViewer" Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" SizeChanged="LibraryGamesScrollViewer_SizeChanged">
                                 <Grid>
                                     <ItemsControl x:Name="icLibraryGames" HorizontalAlignment="Left">
                                         <ItemsControl.ItemsPanel>
@@ -494,10 +542,15 @@
                                                         </Grid>
                                                         <TextBlock Text="{Binding Category}" Foreground="#8F98A5" FontSize="12" Margin="0,14,0,0"/>
                                                         <TextBlock Text="{Binding Title}" Foreground="White" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,6,0,0"/>
-                                                        <TextBlock Text="{Binding PurchasedAtText}" Foreground="#82E4B0" FontSize="12" FontWeight="SemiBold" Margin="0,10,0,0"/>
-                                                        <TextBlock Text="{Binding PriceText}" Foreground="White" FontSize="15" FontWeight="SemiBold" Margin="0,14,0,0"/>
+                                                        <TextBlock Text="{Binding InstallStatusText}" Foreground="{Binding InstallAccent}" FontSize="12" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                                                        <TextBlock x:Name="txtLibraryProgress" Text="{Binding ProgressText}" Foreground="#9BA5B2" FontSize="12" Margin="0,6,0,0"/>
                                                     </StackPanel>
                                                 </Button>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding ShowProgress}" Value="False">
+                                                        <Setter TargetName="txtLibraryProgress" Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -505,6 +558,66 @@
                                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <TextBlock x:Name="txtLibraryEmptyTitle" Text="Kütüphanede oyun görünmüyor" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
                                             <TextBlock x:Name="txtLibraryEmptyMessage" Text="Satın aldığın oyunlar burada listelenecek" Foreground="#8F98A5" FontSize="13" Margin="0,12,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </ScrollViewer>
+                        </Grid>
+                        <Grid x:Name="DownloadsContentPanel" Visibility="Collapsed">
+                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="18"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="İndirmeler" Foreground="White" FontSize="26" FontWeight="Bold"/>
+                                <TextBlock x:Name="txtDownloadsResultInfo" Foreground="#8F98A5" FontSize="14" Margin="0,8,0,0"/>
+                            </StackPanel>
+                            <ScrollViewer x:Name="DownloadsItemsScrollViewer" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <Grid>
+                                    <ItemsControl x:Name="icDownloads">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#101216" BorderBrush="#1A1F27" BorderThickness="1" CornerRadius="24" Padding="18" Margin="0,0,0,16">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="148"/>
+                                                            <ColumnDefinition Width="22"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="24"/>
+                                                            <ColumnDefinition Width="220"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Button Grid.Column="0" Tag="{Binding GameId}" Click="StoreGameButton_Click" Background="Transparent" BorderThickness="0" Padding="0" Cursor="Hand">
+                                                            <Border CornerRadius="18" BorderThickness="1" BorderBrush="#1A1F27" ClipToBounds="True">
+                                                                <Image Source="{Binding CoverPreview}" Height="196" Stretch="UniformToFill"/>
+                                                            </Border>
+                                                        </Button>
+                                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Category}" Foreground="#8F98A5" FontSize="12"/>
+                                                            <TextBlock Text="{Binding Title}" Foreground="White" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                                                            <TextBlock Text="{Binding InstallStatusText}" Foreground="{Binding InstallAccent}" FontSize="13" FontWeight="SemiBold" Margin="0,16,0,0"/>
+                                                            <ProgressBar x:Name="pbDownloadItem" Style="{StaticResource DownloadProgressBar}" Value="{Binding ProgressValue}" Maximum="100" Margin="0,14,0,0" Foreground="{Binding InstallAccent}"/>
+                                                            <TextBlock Text="{Binding ProgressText}" Foreground="#9CA6B3" FontSize="12" Margin="0,10,0,0"/>
+                                                            <TextBlock Text="{Binding SizeText}" Foreground="#6F7A88" FontSize="11" Margin="0,8,0,0"/>
+                                                            <TextBlock Text="{Binding DownloadedText}" Foreground="#6F7A88" FontSize="11" Margin="0,4,0,0"/>
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                                                            <Button Content="{Binding PrimaryActionText}" Tag="{Binding GameId}" Style="{StaticResource PrimaryActionButton}" Height="50" Click="DownloadPrimaryActionButton_Click"/>
+                                                            <Button x:Name="btnDownloadSecondaryAction" Content="{Binding SecondaryActionText}" Tag="{Binding GameId}" Style="{StaticResource GhostActionButton}" Height="46" Margin="0,12,0,0" Click="DownloadSecondaryActionButton_Click"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding ShowProgress}" Value="False">
+                                                        <Setter TargetName="pbDownloadItem" Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding ShowSecondaryAction}" Value="False">
+                                                        <Setter TargetName="btnDownloadSecondaryAction" Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Border x:Name="EmptyDownloadsState" Visibility="Collapsed" Background="#0F0F12" BorderBrush="#19191E" BorderThickness="1" CornerRadius="24" Padding="32" Margin="0,8,0,0">
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock x:Name="txtDownloadsEmptyTitle" Text="İndirme kuyruğu boş" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                            <TextBlock x:Name="txtDownloadsEmptyMessage" Text="Kütüphanendeki bir oyundan kurulumu başlattığında burada görünür" Foreground="#8F98A5" FontSize="13" Margin="0,12,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
                                         </StackPanel>
                                     </Border>
                                 </Grid>
@@ -915,17 +1028,26 @@
                                                     <StackPanel Orientation="Horizontal"
                                                                 Width="250"
                                                                 Margin="0,0,18,16">
-                                                        <Path Data="{Binding IconData}"
-                                                              Width="14"
-                                                              Height="14"
-                                                              Stroke="White"
-                                                              StrokeThickness="1.4"
-                                                              StrokeLineJoin="Round"
-                                                              StrokeStartLineCap="Round"
-                                                              StrokeEndLineCap="Round"
-                                                              Stretch="Uniform"
-                                                              Margin="0,2,10,0"
-                                                              VerticalAlignment="Top"/>
+                                                        <Border Width="24"
+                                                                Height="24"
+                                                                Background="#11151B"
+                                                                BorderBrush="#1F2530"
+                                                                BorderThickness="1"
+                                                                CornerRadius="6"
+                                                                Margin="0,0,10,0"
+                                                                VerticalAlignment="Top">
+                                                            <Path Data="{Binding IconData}"
+                                                                  Width="13"
+                                                                  Height="13"
+                                                                  Stroke="#F2F5F9"
+                                                                  StrokeThickness="1.5"
+                                                                  StrokeLineJoin="Round"
+                                                                  StrokeStartLineCap="Round"
+                                                                  StrokeEndLineCap="Round"
+                                                                  Stretch="Uniform"
+                                                                  HorizontalAlignment="Center"
+                                                                  VerticalAlignment="Center"/>
+                                                        </Border>
                                                         <TextBlock Text="{Binding Name}"
                                                                    Style="{StaticResource DetailBodyText}"/>
                                                     </StackPanel>
@@ -982,6 +1104,65 @@
                                                 Background="#101319"
                                                 BorderBrush="#202734"
                                                 Click="AddToWishlistButton_Click"/>
+                                        <Border x:Name="DetailInstallPanel"
+                                                Background="#101216"
+                                                BorderBrush="#1A1F27"
+                                                BorderThickness="1"
+                                                CornerRadius="22"
+                                                Padding="18"
+                                                Margin="0,16,0,0"
+                                                Visibility="Collapsed">
+                                            <StackPanel>
+                                                <TextBlock Text="Kurulum Durumu"
+                                                           Foreground="#8F98A5"
+                                                           FontSize="12"
+                                                           FontWeight="SemiBold"/>
+                                                <TextBlock x:Name="txtDetailInstallState"
+                                                           Foreground="#82E4B0"
+                                                           FontSize="20"
+                                                           FontWeight="SemiBold"
+                                                           Margin="0,10,0,0"/>
+                                                <TextBlock x:Name="txtDetailInstallSize"
+                                                           Foreground="#9BA5B2"
+                                                           FontSize="12"
+                                                           Margin="0,10,0,0"/>
+                                                <ProgressBar x:Name="pbDetailInstallProgress"
+                                                             Style="{StaticResource DownloadProgressBar}"
+                                                             Maximum="100"
+                                                             Foreground="#6FCBFF"
+                                                             Margin="0,14,0,0"
+                                                             Visibility="Collapsed"/>
+                                                <TextBlock x:Name="txtDetailInstallProgress"
+                                                           Foreground="#9BA5B2"
+                                                           FontSize="12"
+                                                           Margin="0,10,0,0"
+                                                           Visibility="Collapsed"/>
+                                                <Grid Margin="0,18,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="12"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Button x:Name="btnDetailPrimaryInstallAction"
+                                                            Content="Kurulumu Başlat"
+                                                            Style="{StaticResource PrimaryActionButton}"
+                                                            Height="48"
+                                                            Click="DetailPrimaryInstallActionButton_Click"/>
+                                                    <Button x:Name="btnDetailSecondaryInstallAction"
+                                                            Grid.Column="2"
+                                                            Content="İptal"
+                                                            Style="{StaticResource GhostActionButton}"
+                                                            Height="48"
+                                                            Click="DetailSecondaryInstallActionButton_Click"/>
+                                                </Grid>
+                                                <TextBlock x:Name="txtDetailInstallPath"
+                                                           Foreground="#6F7A88"
+                                                           FontSize="11"
+                                                           Margin="0,14,0,0"
+                                                           TextWrapping="Wrap"
+                                                           Visibility="Collapsed"/>
+                                            </StackPanel>
+                                        </Border>
                                         <Rectangle Height="1"
                                                    Fill="#171B22"
                                                    Margin="0,28,0,24"/>
@@ -1093,6 +1274,156 @@
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
+                        </ScrollViewer>
+                        <ScrollViewer x:Name="InstallContentPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <Grid Margin="0,8,0,28">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="0"/>
+                                    <RowDefinition Height="0"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="34"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="54"/>
+                                    <ColumnDefinition Width="320"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Row="2"
+                                        Grid.ColumnSpan="3"
+                                        Height="420"
+                                        CornerRadius="34"
+                                        ClipToBounds="True">
+                                    <Grid>
+                                        <Image x:Name="imgInstallHero"
+                                               Stretch="UniformToFill"/>
+                                        <Border Background="#24090B10"/>
+                                        <Border>
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0.5,0"
+                                                                     EndPoint="0.5,1">
+                                                    <GradientStop Color="#05090B10"
+                                                                  Offset="0"/>
+                                                    <GradientStop Color="#2A090B10"
+                                                                  Offset="0.4"/>
+                                                    <GradientStop Color="#D8090B10"
+                                                                  Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Top"
+                                                    Margin="44,30,470,0">
+                                            <TextBlock x:Name="txtInstallTitle"
+                                                       Foreground="White"
+                                                       FontSize="36"
+                                                       FontWeight="Bold"
+                                                       TextWrapping="Wrap"
+                                                       Margin="0,0,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel VerticalAlignment="Bottom"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="44,0,0,36">
+                                            <TextBlock x:Name="txtInstallPlaySummary"
+                                                       Foreground="#DCE4EE"
+                                                       FontSize="13"
+                                                       FontWeight="Medium"
+                                                       Margin="0,0,0,14"/>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Margin="0,0,0,0">
+                                                <Button x:Name="btnInstallPrimaryAction"
+                                                        Content="YÜKLE"
+                                                        Style="{StaticResource InstallHeroPrimaryActionButton}"
+                                                        Width="220"
+                                                        Height="58"
+                                                        HorizontalAlignment="Left"
+                                                        Click="DetailPrimaryInstallActionButton_Click"/>
+                                                <Button x:Name="btnInstallSecondaryAction"
+                                                        Content="İptal"
+                                                        Style="{StaticResource InstallHeroSecondaryActionButton}"
+                                                        Width="154"
+                                                        Height="58"
+                                                        Margin="14,0,0,0"
+                                                        Click="DetailSecondaryInstallActionButton_Click"/>
+                                            </StackPanel>
+                                            <ProgressBar x:Name="pbInstallProgress"
+                                                         Style="{StaticResource DownloadProgressBar}"
+                                                         Maximum="100"
+                                                         Foreground="#6FCBFF"
+                                                         Margin="0,16,0,0"
+                                                         Width="388"
+                                                         Visibility="Collapsed"/>
+                                            <TextBlock x:Name="txtInstallProgress"
+                                                       Foreground="#A9B2BF"
+                                                       FontSize="12"
+                                                       Margin="0,10,0,0"
+                                                       Visibility="Collapsed"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <StackPanel Grid.Row="4"
+                                            Grid.Column="0">
+                                    <TextBlock Text="Oyun Hakkında"
+                                               Style="{StaticResource DetailSectionTitle}"/>
+                                    <TextBlock x:Name="txtInstallDescription"
+                                               Style="{StaticResource DetailBodyText}"
+                                               Margin="0,18,0,0"/>
+                                    <Rectangle Height="1"
+                                               Fill="#171B22"
+                                               Margin="0,30,0,26"/>
+                                    <TextBlock Text="Desteklenen Diller"
+                                               Foreground="White"
+                                               FontSize="24"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="txtInstallLanguagesValue"
+                                               Style="{StaticResource DetailBodyText}"
+                                               Margin="0,18,0,0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="4"
+                                            Grid.Column="2">
+                                    <Border CornerRadius="26"
+                                            BorderBrush="#202530"
+                                            BorderThickness="1"
+                                            ClipToBounds="True">
+                                        <Image x:Name="imgInstallCover"
+                                               Height="440"
+                                               Stretch="UniformToFill"/>
+                                    </Border>
+                                    <Rectangle Height="1"
+                                               Fill="#171B22"
+                                               Margin="0,30,0,26"/>
+                                    <TextBlock Text="Oyun Bilgileri"
+                                               Foreground="White"
+                                               FontSize="24"
+                                               FontWeight="SemiBold"/>
+                                    <Grid Margin="0,18,0,0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="18"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Satın Alma Tarihi" Style="{StaticResource DetailMetaLabel}"/>
+                                        <TextBlock x:Name="txtInstallDeveloperValue" Grid.Column="2" Style="{StaticResource DetailMetaValue}"/>
+                                        <Rectangle Grid.Row="1" Grid.ColumnSpan="3" Height="1" Fill="#171B22" Margin="0,14,0,14"/>
+                                        <TextBlock Grid.Row="2" Text="Toplam Oynama Süresi" Style="{StaticResource DetailMetaLabel}"/>
+                                        <TextBlock x:Name="txtInstallPublisherValue" Grid.Row="2" Grid.Column="2" Style="{StaticResource DetailMetaValue}"/>
+                                        <Rectangle Grid.Row="3" Grid.ColumnSpan="3" Height="1" Fill="#171B22" Margin="0,14,0,14"/>
+                                        <TextBlock Grid.Row="4" Text="Yayıncı" Style="{StaticResource DetailMetaLabel}"/>
+                                        <TextBlock x:Name="txtInstallReleaseValue" Grid.Row="4" Grid.Column="2" Style="{StaticResource DetailMetaValue}"/>
+                                        <Rectangle Grid.Row="5" Grid.ColumnSpan="3" Height="1" Fill="#171B22" Margin="0,14,0,14"/>
+                                        <TextBlock Grid.Row="6" Text="Platformlar" Style="{StaticResource DetailMetaLabel}"/>
+                                        <TextBlock x:Name="txtInstallPlatformsValue" Grid.Row="6" Grid.Column="2" Style="{StaticResource DetailMetaValue}" TextWrapping="Wrap"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
                         </ScrollViewer>
                     </Grid>
                 </Grid>

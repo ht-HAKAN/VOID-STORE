@@ -15,12 +15,14 @@ using System.Windows.Threading;
 using Microsoft.Web.WebView2.Core;
 using VOID_STORE.Controllers;
 using VOID_STORE.Models;
+using SqlParameter = MySql.Data.MySqlClient.MySqlParameter;
 
 namespace VOID_STORE.Views
 {
     public partial class MainAppWindow : Window
     {
         private static readonly Brush DefaultCardBorderBrush = new SolidColorBrush(Color.FromRgb(0x17, 0x17, 0x1D));
+        private const string OwnedStatusAccentHex = "#82E4B0";
         private const string TrailerPlayerHostName = "voidstore.local";
         private const double DetailMediaThumbnailWidth = 144;
         private const double DetailMediaThumbnailSpacing = 12;
@@ -407,10 +409,12 @@ namespace VOID_STORE.Views
 """;
         private readonly StoreController _storeController;
         private List<StoreCategoryItem> _categories = new();
+        private List<StoreCategoryItem> _libraryCategories = new();
         private StoreGameDetail? _currentDetail;
         private Button? _activeSidebarButton;
         private int _currentPage = 1;
         private string _selectedCategory = "Tümü";
+        private string _selectedLibraryCategory = "Tümü";
         private readonly DispatcherTimer _trailerProgressTimer;
         private readonly DispatcherTimer _trailerOverlayTimer;
         private List<StoreGameCardItem> _storeItems = new();
@@ -434,6 +438,8 @@ namespace VOID_STORE.Views
         {
             InitializeComponent();
             _storeController = new StoreController();
+            _downloadQueueTimer.Interval = TimeSpan.FromSeconds(1);
+            _downloadQueueTimer.Tick += DownloadQueueTimer_Tick;
             _trailerProgressTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(250)
@@ -453,6 +459,7 @@ namespace VOID_STORE.Views
             EnsureSession();
             ConfigureProfileArea();
             InitializeCommerceState();
+            InitializeDownloadState();
             BuildCategories();
             UpdateSearchPlaceholder();
             ShowStoreView();
@@ -712,6 +719,63 @@ namespace VOID_STORE.Views
             icCategories.ItemsSource = _categories;
         }
 
+        private void BuildLibraryCategories()
+        {
+            // kutuphane tur secimini sahip olunan oyunlardan kur
+            List<string> categoryNames = _libraryItems
+                .Select(item => GameCategoryCatalog.Normalize(item.Category))
+                .Where(category => !string.IsNullOrWhiteSpace(category))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(category => category)
+                .ToList();
+
+            if (!string.Equals(_selectedLibraryCategory, "Tümü", StringComparison.OrdinalIgnoreCase) &&
+                !categoryNames.Contains(_selectedLibraryCategory, StringComparer.OrdinalIgnoreCase))
+            {
+                _selectedLibraryCategory = "Tümü";
+            }
+
+            _libraryCategories = new List<StoreCategoryItem>
+            {
+                new StoreCategoryItem
+                {
+                    Name = "Tümü",
+                    IsSelected = string.Equals(_selectedLibraryCategory, "Tümü", StringComparison.OrdinalIgnoreCase)
+                }
+            };
+
+            _libraryCategories.AddRange(categoryNames.Select(category => new StoreCategoryItem
+            {
+                Name = category,
+                IsSelected = string.Equals(category, _selectedLibraryCategory, StringComparison.OrdinalIgnoreCase)
+            }));
+
+            RefreshLibraryCategoryItems();
+        }
+
+        private void RefreshLibraryCategoryItems()
+        {
+            // kutuphane chiplerini yenile
+            icLibraryCategories.ItemsSource = null;
+            icLibraryCategories.ItemsSource = _libraryCategories;
+        }
+
+        private List<LibraryGameItem> GetVisibleLibraryItems()
+        {
+            // secili ture gore kutuphane kartlarini filtrele
+            if (string.Equals(_selectedLibraryCategory, "Tümü", StringComparison.OrdinalIgnoreCase))
+            {
+                return _libraryItems;
+            }
+
+            return _libraryItems
+                .Where(item => string.Equals(
+                    GameCategoryCatalog.Normalize(item.Category),
+                    _selectedLibraryCategory,
+                    StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
         private void LoadStorePage()
         {
             // magazadaki oyunlari sayfalama ile getir
@@ -745,12 +809,16 @@ namespace VOID_STORE.Views
             StopTrailer();
             popCartMenu.IsOpen = false;
             _isLibraryViewActive = false;
+            _isDownloadsViewActive = false;
+            _isInstallViewActive = false;
             StoreHeaderPanel.Visibility = Visibility.Visible;
             StoreContentPanel.Visibility = Visibility.Visible;
             LibraryContentPanel.Visibility = Visibility.Collapsed;
+            DownloadsContentPanel.Visibility = Visibility.Collapsed;
             WalletContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
+            InstallContentPanel.Visibility = Visibility.Collapsed;
             SetSidebarSelection(btnStoreNav);
             Dispatcher.BeginInvoke(new Action(() => UpdateStoreGridColumns()), DispatcherPriority.Loaded);
         }
@@ -787,6 +855,8 @@ namespace VOID_STORE.Views
                 .ToList();
 
             _currentDetail = detail;
+            _isDownloadsViewActive = false;
+            _isInstallViewActive = false;
 
             txtDetailCategory.Text = detail.Category;
             txtDetailTitle.Text = detail.Title;
@@ -824,8 +894,10 @@ namespace VOID_STORE.Views
             StoreHeaderPanel.Visibility = Visibility.Collapsed;
             StoreContentPanel.Visibility = Visibility.Collapsed;
             LibraryContentPanel.Visibility = Visibility.Collapsed;
+            DownloadsContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Visible;
             DetailContentPanel.Visibility = Visibility.Visible;
+            InstallContentPanel.Visibility = Visibility.Collapsed;
             SetSidebarSelection(_isLibraryViewActive ? btnLibraryNav : btnStoreNav);
             ApplyDetailOwnershipState();
             ScrollSelectedMediaIntoView();
@@ -1259,6 +1331,25 @@ namespace VOID_STORE.Views
             LoadStorePage();
         }
 
+        private void LibraryCategoryChip_Click(object sender, RoutedEventArgs e)
+        {
+            // secilen ture gore kutuphaneyi filtrele
+            if (sender is not Button button || button.Tag is not string categoryName)
+            {
+                return;
+            }
+
+            _selectedLibraryCategory = categoryName;
+
+            foreach (StoreCategoryItem category in _libraryCategories)
+            {
+                category.IsSelected = string.Equals(category.Name, categoryName, StringComparison.OrdinalIgnoreCase);
+            }
+
+            RefreshLibraryCategoryItems();
+            RefreshLibraryPanel();
+        }
+
         private void CategoryMenuButton_Click(object sender, RoutedEventArgs e)
         {
             // kategori menusunu ac kapa
@@ -1295,7 +1386,14 @@ namespace VOID_STORE.Views
             try
             {
                 StoreGameDetail detail = _storeController.GetGameDetail(gameId);
-                ShowDetailView(detail);
+                if (_isLibraryViewActive || _isDownloadsViewActive)
+                {
+                    ShowInstallView(detail);
+                }
+                else
+                {
+                    ShowDetailView(detail);
+                }
             }
             catch (Exception ex)
             {
@@ -1330,6 +1428,25 @@ namespace VOID_STORE.Views
         {
             // detaydan onceki listeye don
             StopTrailer();
+
+            if (_isInstallViewActive)
+            {
+                if (_isDownloadsViewActive)
+                {
+                    ShowDownloadsView();
+                    return;
+                }
+
+                if (_isLibraryViewActive)
+                {
+                    ShowLibraryView();
+                    return;
+                }
+
+                ShowStoreView();
+                return;
+            }
+
             if (_isLibraryViewActive)
             {
                 ShowLibraryView();
@@ -1648,9 +1765,8 @@ namespace VOID_STORE.Views
 
         private void DownloadsNavButton_Click(object sender, RoutedEventArgs e)
         {
-            // indirme bolumu simdilik gorsel kabuk olarak durur
-            SetSidebarSelection(btnStoreNav);
-            CustomError.ShowDialog("İndirmeler bölümü henüz hazır değil.", "BILGI", owner: this);
+            // indirmeler ekranina gec
+            ShowDownloadsView();
         }
 
         private void FriendsButton_Click(object sender, RoutedEventArgs e)
@@ -1742,6 +1858,14 @@ namespace VOID_STORE.Views
                 return;
             }
 
+            if (_currentDetail.IsOwned)
+            {
+                _isLibraryViewActive = true;
+                _isDownloadsViewActive = false;
+                ShowInstallView(_currentDetail);
+                return;
+            }
+
             try
             {
                 _commerceController.AddToCart(UserSession.UserId, _currentDetail.GameId);
@@ -1779,8 +1903,36 @@ namespace VOID_STORE.Views
         // sepetteki oyunları hızlı sorgula
         private HashSet<int> _cartGameIds = new();
 
+        // indirme durumlarını oyun koduna göre tut
+        private Dictionary<int, DownloadStateItem> _downloadStates = new();
+
+        // indirmeler sayfası için görünüm modelini tut
+        private List<DownloadQueueItem> _downloadItems = new();
+
+        // indirme akışını ayrı controller ile yönet
+        private readonly DownloadController _downloadController = new();
+
+        // sahte oyun baslatma akisini ayri tut
+        private readonly LaunchController _launchController = new();
+
+        // kurulum ekraninda ayni acilista sabit hero tut
+        private readonly Random _installHeroRandom = new();
+        private BitmapImage? _currentInstallHeroPreview;
+
+        // indirmeleri arka planda ilerlet
+        private readonly DispatcherTimer _downloadQueueTimer = new();
+
+        // aynı anda ikinci tick girmesin
+        private bool _isDownloadTickRunning;
+
         // detaydan geri dönüşte kütüphane akışını koru
         private bool _isLibraryViewActive;
+
+        // indirmeler ekranından gelinen akışı koru
+        private bool _isDownloadsViewActive;
+
+        // ayrı kurulum ekranında olup olmadığını tut
+        private bool _isInstallViewActive;
 
         // seçili ödeme yöntemini sakla
         private string _selectedPaymentMethod = "visa";
@@ -1789,6 +1941,13 @@ namespace VOID_STORE.Views
         {
             // ilk verileri açılışta yükle
             RefreshCommerceState(false);
+        }
+
+        private void InitializeDownloadState()
+        {
+            // kalıcı indirme kuyruğunu timer ile canlı tut
+            RefreshDownloadState(false);
+            _downloadQueueTimer.Start();
         }
 
         private void RefreshCommerceState(bool showErrors = true)
@@ -1804,6 +1963,8 @@ namespace VOID_STORE.Views
                     _walletTransactions = new List<WalletTransactionItem>();
                     _ownedGameIds = new HashSet<int>();
                     _cartGameIds = new HashSet<int>();
+                    _downloadStates = new Dictionary<int, DownloadStateItem>();
+                    _downloadItems = new List<DownloadQueueItem>();
                 }
                 else
                 {
@@ -1821,12 +1982,8 @@ namespace VOID_STORE.Views
                     _cartGameIds = _commerceController.GetCartGameIds(UserSession.UserId);
                 }
 
-                // store ve detay durumlarını güncelle
-                ApplyStoreOwnershipState();
-                ApplyDetailOwnershipState();
-
-                // alt sayfaları yeni veriyle yenile
-                RefreshLibraryPanel();
+                // indirme durumunu da ana veriyle beraber yükle
+                RefreshDownloadState(showErrors);
                 RefreshCartPopup();
                 RefreshWalletPage();
             }
@@ -1840,6 +1997,42 @@ namespace VOID_STORE.Views
             }
         }
 
+        private void RefreshDownloadState(bool showErrors = true)
+        {
+            // kurulum ve indirme durumlarını tek yerde yenile
+            try
+            {
+                if (UserSession.IsGuest)
+                {
+                    _downloadStates = new Dictionary<int, DownloadStateItem>();
+                    _downloadItems = new List<DownloadQueueItem>();
+                }
+                else
+                {
+                    _downloadStates = new Dictionary<int, DownloadStateItem>(_downloadController.GetDownloadStates(UserSession.UserId));
+                    _downloadItems = _downloadController.GetDownloadQueue(UserSession.UserId).ToList();
+                }
+
+                ApplyStoreOwnershipState();
+                ApplyDetailOwnershipState();
+                RefreshLibraryPanel();
+                RefreshDownloadsPanel();
+
+                if (_isInstallViewActive)
+                {
+                    RefreshInstallViewSurface();
+                }
+            }
+            catch (Exception ex)
+            {
+                // indirme hatasını ayrı yakala
+                if (showErrors)
+                {
+                    CustomError.ShowDialog($"İndirme verileri yüklenemedi {ex.Message}", "SISTEM HATASI", owner: this);
+                }
+            }
+        }
+
         private void ApplyStoreOwnershipState()
         {
             // store kartlarında sahiplik bilgisini yansıt
@@ -1849,11 +2042,14 @@ namespace VOID_STORE.Views
                 item.IsInCart = !item.IsOwned && _cartGameIds.Contains(item.GameId);
 
                 // kart alt durumunu netleştir
-                item.StatusText = item.IsOwned
-                    ? "Kütüphanede"
-                    : item.IsInCart
-                        ? "Sepette"
-                        : string.Empty;
+                if (item.IsOwned)
+                {
+                    item.StatusText = "Kütüphanende bulunuyor";
+                }
+                else
+                {
+                    item.StatusText = item.IsInCart ? "Sepette" : string.Empty;
+                }
             }
 
             // items controlü taze veriyle bağla
@@ -1885,19 +2081,26 @@ namespace VOID_STORE.Views
                 txtDetailOwnershipState.Text = "Satın almak için giriş yap";
                 txtDetailOwnershipState.Foreground = CreateBrush("#8F98A5");
                 txtDetailOwnershipState.Visibility = Visibility.Visible;
-                btnDetailAddToCart.Content = "Sepete Ekle";
+                btnDetailAddToCart.Content = BuildDetailPrimaryActionContent("Sepete Ekle", "\uE7BF");
+                btnDetailAddToCart.Background = CreateBrush("#FFFFFF");
+                btnDetailAddToCart.BorderBrush = CreateBrush("#FFFFFF");
+                btnDetailAddToCart.Foreground = CreateBrush("#0A0A0C");
                 btnDetailAddToCart.IsEnabled = true;
+                HideDetailInstallPanel();
                 return;
             }
 
             if (_currentDetail.IsOwned)
             {
-                // sahip olunan oyunda satın alma kapansın
+                // sahip olunan oyunda kutuphaneye yonlendir
                 txtDetailOwnershipState.Text = "Bu oyun kütüphanende bulunuyor";
-                txtDetailOwnershipState.Foreground = CreateBrush("#82E4B0");
+                txtDetailOwnershipState.Foreground = CreateBrush(OwnedStatusAccentHex);
                 txtDetailOwnershipState.Visibility = Visibility.Visible;
-                btnDetailAddToCart.Content = "Kütüphanede";
-                btnDetailAddToCart.IsEnabled = false;
+                btnDetailAddToCart.Content = BuildDetailPrimaryActionContent("Kütüphaneye Git", "\uE8F1");
+                btnDetailAddToCart.Background = CreateBrush("#31C653");
+                btnDetailAddToCart.BorderBrush = CreateBrush("#31C653");
+                btnDetailAddToCart.Foreground = CreateBrush("#FFFFFF");
+                btnDetailAddToCart.IsEnabled = true;
                 return;
             }
 
@@ -1907,14 +2110,22 @@ namespace VOID_STORE.Views
                 txtDetailOwnershipState.Text = "Bu oyun sepette bekliyor";
                 txtDetailOwnershipState.Foreground = CreateBrush("#F5D174");
                 txtDetailOwnershipState.Visibility = Visibility.Visible;
-                btnDetailAddToCart.Content = "Sepette";
+                btnDetailAddToCart.Content = BuildDetailPrimaryActionContent("Sepette", "\uE7BF");
+                btnDetailAddToCart.Background = CreateBrush("#111114");
+                btnDetailAddToCart.BorderBrush = CreateBrush("#1C1C22");
+                btnDetailAddToCart.Foreground = CreateBrush("#FFFFFF");
                 btnDetailAddToCart.IsEnabled = false;
+                HideDetailInstallPanel();
                 return;
             }
 
             // satın alınabilir durumda butonu aç
-            btnDetailAddToCart.Content = "Sepete Ekle";
+            btnDetailAddToCart.Content = BuildDetailPrimaryActionContent("Sepete Ekle", "\uE7BF");
+            btnDetailAddToCart.Background = CreateBrush("#FFFFFF");
+            btnDetailAddToCart.BorderBrush = CreateBrush("#FFFFFF");
+            btnDetailAddToCart.Foreground = CreateBrush("#0A0A0C");
             btnDetailAddToCart.IsEnabled = true;
+            HideDetailInstallPanel();
         }
 
         private void RefreshCartPopup()
@@ -1979,9 +2190,21 @@ namespace VOID_STORE.Views
 
         private void RefreshLibraryPanel()
         {
+            // her kartı güncel indirme durumuyla zenginleştir
+            foreach (LibraryGameItem item in _libraryItems)
+            {
+                ApplyDownloadStateToLibraryItem(item);
+            }
+
+            // tur secimini son listeye gore kur
+            BuildLibraryCategories();
+
+            // secili ture gore gorunen listeyi al
+            List<LibraryGameItem> visibleLibraryItems = GetVisibleLibraryItems();
+
             // kütüphane verisini yeniden bağla
             icLibraryGames.ItemsSource = null;
-            icLibraryGames.ItemsSource = _libraryItems;
+            icLibraryGames.ItemsSource = visibleLibraryItems;
 
             if (UserSession.IsGuest)
             {
@@ -1997,21 +2220,534 @@ namespace VOID_STORE.Views
                 txtLibraryEmptyTitle.Text = "Kütüphanede oyun görünmüyor";
                 txtLibraryEmptyMessage.Text = "Mağazadan satın aldığın oyunlar burada listelenecek";
             }
+            else if (visibleLibraryItems.Count == 0)
+            {
+                // secilen turde sonuc yoksa net bir bos durum goster
+                txtLibraryResultInfo.Text = "Seçilen türde oyun bulunmuyor";
+                txtLibraryEmptyTitle.Text = "Bu türde oyun görünmüyor";
+                txtLibraryEmptyMessage.Text = "Farklı bir tür seçerek kütüphaneni inceleyebilirsin";
+            }
             else
             {
                 // dolu kütüphane sonucu
-                txtLibraryResultInfo.Text = _libraryItems.Count == 1
-                    ? "1 oyun kütüphanede bulunuyor"
-                    : $"{_libraryItems.Count} oyun kütüphanede bulunuyor";
+                txtLibraryResultInfo.Text = string.Equals(_selectedLibraryCategory, "Tümü", StringComparison.OrdinalIgnoreCase)
+                    ? _libraryItems.Count == 1
+                        ? "1 oyun kütüphanede bulunuyor"
+                        : $"{_libraryItems.Count} oyun kütüphanede bulunuyor"
+                    : visibleLibraryItems.Count == 1
+                        ? $"1 oyun {_selectedLibraryCategory} türünde görünüyor"
+                        : $"{visibleLibraryItems.Count} oyun {_selectedLibraryCategory} türünde görünüyor";
                 txtLibraryEmptyTitle.Text = "Kütüphanede oyun görünmüyor";
                 txtLibraryEmptyMessage.Text = "Mağazadan satın aldığın oyunlar burada listelenecek";
             }
 
             // boş kütüphane durumunu ayarla
-            EmptyLibraryState.Visibility = _libraryItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+            EmptyLibraryState.Visibility = visibleLibraryItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
 
             // soldan akan yerleşimi yeniden hesapla
             Dispatcher.BeginInvoke(new Action(() => UpdateLibraryGridColumns()), DispatcherPriority.Loaded);
+        }
+
+        private void ApplyDownloadStateToLibraryItem(LibraryGameItem item)
+        {
+            // kütüphane kartını kurulum durumuyla güncelle
+            DownloadStateItem state = GetInstallSurfaceState(item.GameId);
+            item.InstallStatus = state.InstallStatus;
+            item.InstallStatusText = state.InstallStatusText;
+            item.InstallAccent = state.InstallAccent;
+            item.ShowProgress = state.ShowProgress;
+            item.ProgressValue = state.ProgressValue;
+            item.ProgressText = state.ProgressText;
+            item.SizeText = state.SizeText;
+            item.PrimaryActionText = state.PrimaryActionText;
+            item.SecondaryActionText = state.SecondaryActionText;
+            item.ShowSecondaryAction = state.ShowSecondaryAction;
+            item.InstallPath = state.InstallPath;
+            item.TotalPlayTimeText = BuildPlayTimeText(GetDisplayPlaySeconds(item.GameId));
+        }
+
+        private DownloadStateItem GetDownloadStateOrDefault(int gameId)
+        {
+            // kayıt yoksa varsayılan kurulu değil durumunu ver
+            return _downloadStates.TryGetValue(gameId, out DownloadStateItem? state)
+                ? state
+                : new DownloadStateItem { GameId = gameId };
+        }
+
+        private DownloadStateItem GetInstallSurfaceState(int gameId)
+        {
+            // ham durumu arayuz icin normalize et
+            DownloadStateItem source = GetDownloadStateOrDefault(gameId);
+            DownloadStateItem state = new()
+            {
+                GameId = source.GameId,
+                InstallStatus = source.InstallStatus,
+                InstallStatusText = source.InstallStatusText,
+                InstallAccent = source.InstallAccent,
+                ShowProgress = source.ShowProgress,
+                ProgressValue = source.ProgressValue,
+                ProgressText = source.ProgressText,
+                SizeText = source.SizeText,
+                PrimaryActionText = source.PrimaryActionText,
+                SecondaryActionText = source.SecondaryActionText,
+                ShowSecondaryAction = source.ShowSecondaryAction,
+                InstallPath = source.InstallPath
+            };
+
+            switch (state.InstallStatus)
+            {
+                case "downloading":
+                    state.InstallStatusText = "İndiriliyor";
+                    state.InstallAccent = "#6FCBFF";
+                    state.PrimaryActionText = "DURAKLAT";
+                    state.SecondaryActionText = "İptal";
+                    state.ShowSecondaryAction = true;
+                    break;
+
+                case "queued":
+                    state.InstallStatusText = "Sırada";
+                    state.InstallAccent = "#F5D174";
+                    state.PrimaryActionText = "DURAKLAT";
+                    state.SecondaryActionText = "İptal";
+                    state.ShowSecondaryAction = true;
+                    break;
+
+                case "paused":
+                    state.InstallStatusText = "Duraklatıldı";
+                    state.InstallAccent = "#F39C54";
+                    state.PrimaryActionText = "DEVAM ET";
+                    state.SecondaryActionText = "İptal";
+                    state.ShowSecondaryAction = true;
+                    break;
+
+                case "installed":
+                    state.InstallStatusText = "Yüklü";
+                    state.InstallAccent = OwnedStatusAccentHex;
+                    state.PrimaryActionText = "OYNA";
+                    state.SecondaryActionText = "Kaldır";
+                    state.ShowSecondaryAction = true;
+
+                    if (_launchController.IsRunning(gameId))
+                    {
+                        state.InstallStatusText = "Çalışıyor";
+                        state.InstallAccent = "#E24D4D";
+                        state.PrimaryActionText = "DURDUR";
+                        state.SecondaryActionText = string.Empty;
+                        state.ShowSecondaryAction = false;
+                        state.ShowProgress = false;
+                    }
+
+                    break;
+
+                default:
+                    state.InstallStatus = "not_installed";
+                    state.InstallStatusText = "Yüklü değil";
+                    state.InstallAccent = "#8F98A5";
+                    state.PrimaryActionText = "YÜKLE";
+                    state.SecondaryActionText = string.Empty;
+                    state.ShowSecondaryAction = false;
+                    state.ShowProgress = false;
+                    state.ProgressValue = 0;
+                    state.ProgressText = string.Empty;
+                    break;
+            }
+
+            return state;
+        }
+
+        private void ApplyLaunchStateToDownloadItem(DownloadQueueItem item)
+        {
+            // indirme listesinde oyna durdur dilini koru
+            if (item.InstallStatus != "installed")
+            {
+                return;
+            }
+
+            bool isRunning = _launchController.IsRunning(item.GameId);
+            item.InstallStatusText = isRunning ? "Çalışıyor" : "Yüklü";
+            item.InstallAccent = isRunning ? "#E24D4D" : OwnedStatusAccentHex;
+            item.PrimaryActionText = isRunning ? "DURDUR" : "OYNA";
+            item.SecondaryActionText = isRunning ? string.Empty : "Kaldır";
+            item.ShowSecondaryAction = !isRunning;
+            item.ShowProgress = false;
+        }
+
+        private string BuildPlayTimeText(int totalPlaySeconds)
+        {
+            // oynama suresini kisa tut
+            if (totalPlaySeconds <= 0)
+            {
+                return "-";
+            }
+
+            TimeSpan playTime = TimeSpan.FromSeconds(totalPlaySeconds);
+
+            if (playTime.TotalHours >= 1)
+            {
+                return $"{(int)playTime.TotalHours} sa {playTime.Minutes:D2} dk";
+            }
+
+            int minutes = Math.Max(1, (int)Math.Round(playTime.TotalMinutes));
+            return $"{minutes} dk";
+        }
+
+        private int GetStoredPlaySeconds(int gameId)
+        {
+            // oynama suresini kutuphane kaydindan cek
+            if (UserSession.IsGuest)
+            {
+                return 0;
+            }
+
+            object? result = DatabaseManager.ExecuteScalar(
+                @"SELECT TotalPlaySeconds
+                  FROM UserLibrary
+                  WHERE UserId = @UserId
+                    AND GameId = @GameId
+                  LIMIT 1;",
+                new SqlParameter("@UserId", UserSession.UserId),
+                new SqlParameter("@GameId", gameId));
+
+            if (result == null || result == DBNull.Value)
+            {
+                return 0;
+            }
+
+            return Convert.ToInt32(result, CultureInfo.InvariantCulture);
+        }
+
+        private int GetDisplayPlaySeconds(int gameId)
+        {
+            // aktif oturumu kayitli sureye ekle
+            return GetStoredPlaySeconds(gameId) + _launchController.GetCurrentSessionSeconds(gameId);
+        }
+
+        private string ResolveGameTitle(int gameId)
+        {
+            // oyun adini mevcut gorunumlerden bul
+            if (_currentDetail != null && _currentDetail.GameId == gameId)
+            {
+                return _currentDetail.Title;
+            }
+
+            LibraryGameItem? libraryItem = _libraryItems.FirstOrDefault(item => item.GameId == gameId);
+            if (libraryItem != null)
+            {
+                return libraryItem.Title;
+            }
+
+            DownloadQueueItem? downloadItem = _downloadItems.FirstOrDefault(item => item.GameId == gameId);
+            if (downloadItem != null)
+            {
+                return downloadItem.Title;
+            }
+
+            StoreGameCardItem? storeItem = _storeItems.FirstOrDefault(item => item.GameId == gameId);
+            return storeItem?.Title ?? $"Game {gameId}";
+        }
+
+        private object BuildInstallPrimaryContent(string label)
+        {
+            // ana aksiyon ikonlu gorunsun
+            string icon = label switch
+            {
+                "OYNA" => "▶",
+                "DURDUR" => "■",
+                "DURAKLAT" => "Ⅱ",
+                "DEVAM ET" => "↻",
+                _ => "↓"
+            };
+
+            StackPanel content = new()
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            content.Children.Add(new TextBlock
+            {
+                Text = icon,
+                FontSize = 15,
+                FontWeight = FontWeights.Bold,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 12, 0)
+            });
+
+            content.Children.Add(new TextBlock
+            {
+                Text = label,
+                FontSize = 15,
+                FontWeight = FontWeights.SemiBold,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+
+            return content;
+        }
+
+        private object BuildDetailPrimaryActionContent(string label, string glyph)
+        {
+            // detay ana aksiyonunu ikonla tek dilde kur
+            StackPanel content = new()
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            content.Children.Add(new TextBlock
+            {
+                Text = glyph,
+                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontSize = 14,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 10, 0)
+            });
+
+            content.Children.Add(new TextBlock
+            {
+                Text = label,
+                FontSize = 14,
+                FontWeight = FontWeights.SemiBold,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+
+            return content;
+        }
+
+        private void ApplyInstallPrimaryActionStyle(DownloadStateItem state)
+        {
+            // ana butonu duruma gore renklendir
+            string background = "#FFFFFF";
+            string border = "#FFFFFF";
+            string foreground = "#0A0A0C";
+
+            switch (state.PrimaryActionText)
+            {
+                case "OYNA":
+                    background = "#31C653";
+                    border = "#31C653";
+                    foreground = "#FFFFFF";
+                    break;
+
+                case "DURDUR":
+                    background = "#E34B4B";
+                    border = "#E34B4B";
+                    foreground = "#FFFFFF";
+                    break;
+
+                case "DURAKLAT":
+                    background = "#4A8BFF";
+                    border = "#4A8BFF";
+                    foreground = "#FFFFFF";
+                    break;
+
+                case "DEVAM ET":
+                    background = "#FFFFFF";
+                    border = "#FFFFFF";
+                    foreground = "#0A0A0C";
+                    break;
+            }
+
+            btnInstallPrimaryAction.Background = CreateBrush(background);
+            btnInstallPrimaryAction.BorderBrush = CreateBrush(border);
+            btnInstallPrimaryAction.Foreground = CreateBrush(foreground);
+            btnInstallPrimaryAction.Content = BuildInstallPrimaryContent(state.PrimaryActionText);
+        }
+
+        private void ApplyInstallSecondaryActionStyle(DownloadStateItem state)
+        {
+            // ikincil aksiyonu duruma gore sadeleştir
+            btnInstallSecondaryAction.ToolTip = null;
+            btnInstallSecondaryAction.Padding = new Thickness(26, 0, 26, 0);
+            btnInstallSecondaryAction.Width = 154;
+            btnInstallSecondaryAction.Height = 58;
+            btnInstallSecondaryAction.Background = CreateBrush("#12161C");
+            btnInstallSecondaryAction.BorderBrush = CreateBrush("#2A313D");
+            btnInstallSecondaryAction.Foreground = CreateBrush("#FFFFFF");
+
+            if (state.InstallStatus == "installed" && !_launchController.IsRunning(state.GameId))
+            {
+                btnInstallSecondaryAction.Width = 58;
+                btnInstallSecondaryAction.Padding = new Thickness(0);
+                btnInstallSecondaryAction.Background = CreateBrush("#12161C");
+                btnInstallSecondaryAction.BorderBrush = CreateBrush("#303746");
+                btnInstallSecondaryAction.Foreground = CreateBrush("#FFFFFF");
+                btnInstallSecondaryAction.Content = new TextBlock
+                {
+                    Text = "\uE74D",
+                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    FontSize = 16,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                btnInstallSecondaryAction.ToolTip = "Oyunu Kaldır";
+                return;
+            }
+
+            btnInstallSecondaryAction.Content = state.SecondaryActionText;
+        }
+
+        private void ApplyDetailDownloadState()
+        {
+            // detay sağ kolona kurulum durumunu yansıt
+            if (_currentDetail == null || !_currentDetail.IsOwned)
+            {
+                HideDetailInstallPanel();
+                return;
+            }
+
+            DownloadStateItem state = GetInstallSurfaceState(_currentDetail.GameId);
+            _currentDetail.InstallStatus = state.InstallStatus;
+            _currentDetail.InstallStatusText = state.InstallStatusText;
+            _currentDetail.InstallAccent = state.InstallAccent;
+            _currentDetail.ShowInstallProgress = state.ShowProgress;
+            _currentDetail.InstallProgressValue = state.ProgressValue;
+            _currentDetail.InstallProgressText = state.ProgressText;
+            _currentDetail.PrimaryInstallActionText = state.PrimaryActionText;
+            _currentDetail.SecondaryInstallActionText = state.SecondaryActionText;
+            _currentDetail.ShowSecondaryInstallAction = state.ShowSecondaryAction;
+            _currentDetail.InstallPath = state.InstallPath;
+
+            DetailInstallPanel.Visibility = Visibility.Visible;
+            txtDetailInstallState.Text = state.InstallStatusText;
+            txtDetailInstallState.Foreground = CreateBrush(state.InstallAccent);
+            txtDetailInstallSize.Text = string.IsNullOrWhiteSpace(state.SizeText)
+                ? "Kurulum boyutu hazırlanıyor"
+                : $"Kurulum boyutu {state.SizeText}";
+            txtDetailInstallProgress.Text = state.ShowProgress ? state.ProgressText : string.Empty;
+            txtDetailInstallProgress.Visibility = state.ShowProgress ? Visibility.Visible : Visibility.Collapsed;
+            pbDetailInstallProgress.Visibility = state.ShowProgress ? Visibility.Visible : Visibility.Collapsed;
+            pbDetailInstallProgress.Foreground = CreateBrush(state.InstallAccent);
+            pbDetailInstallProgress.Value = state.ProgressValue;
+            txtDetailInstallPath.Text = string.Empty;
+            txtDetailInstallPath.Visibility = Visibility.Collapsed;
+            btnDetailPrimaryInstallAction.Content = state.PrimaryActionText;
+            btnDetailSecondaryInstallAction.Content = state.SecondaryActionText;
+            btnDetailSecondaryInstallAction.Visibility = state.ShowSecondaryAction ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void HideDetailInstallPanel()
+        {
+            // sahiplik yoksa kurulum kutusunu gizle
+            DetailInstallPanel.Visibility = Visibility.Collapsed;
+            pbDetailInstallProgress.Value = 0;
+            txtDetailInstallProgress.Text = string.Empty;
+            txtDetailInstallPath.Text = string.Empty;
+        }
+
+        private void RefreshDownloadsPanel()
+        {
+            // indirmeler sayfası verisini yeniden bağla
+            foreach (DownloadQueueItem item in _downloadItems)
+            {
+                ApplyLaunchStateToDownloadItem(item);
+            }
+
+            icDownloads.ItemsSource = null;
+            icDownloads.ItemsSource = _downloadItems;
+
+            if (UserSession.IsGuest)
+            {
+                txtDownloadsResultInfo.Text = "İndirmeleri görmek için giriş yap";
+                txtDownloadsEmptyTitle.Text = "İndirmeler oturumla açılır";
+                txtDownloadsEmptyMessage.Text = "Kurulum başlattığın oyunlar burada görünür";
+            }
+            else if (_downloadItems.Count == 0)
+            {
+                txtDownloadsResultInfo.Text = "Henüz kurulum başlatılmadı";
+                txtDownloadsEmptyTitle.Text = "İndirme kuyruğu boş";
+                txtDownloadsEmptyMessage.Text = "Kütüphanendeki bir oyundan kurulumu başlattığında burada görünür";
+            }
+            else
+            {
+                txtDownloadsResultInfo.Text = _downloadItems.Count == 1
+                    ? "1 oyun indirme listesinde görünüyor"
+                    : $"{_downloadItems.Count} oyun indirme listesinde görünüyor";
+                txtDownloadsEmptyTitle.Text = "İndirme kuyruğu boş";
+                txtDownloadsEmptyMessage.Text = "Kütüphanendeki bir oyundan kurulumu başlattığında burada görünür";
+            }
+
+            EmptyDownloadsState.Visibility = _downloadItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+            DownloadsItemsScrollViewer.Visibility = _downloadItems.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void ShowInstallView(StoreGameDetail detail)
+        {
+            // kütüphane ve indirme için ayrı kurulum ekranı aç
+            _currentDetail = detail;
+            _isInstallViewActive = true;
+            _currentInstallHeroPreview = SelectInstallHeroPreview(detail);
+
+            StoreHeaderPanel.Visibility = Visibility.Visible;
+            StoreContentPanel.Visibility = Visibility.Collapsed;
+            LibraryContentPanel.Visibility = Visibility.Collapsed;
+            DownloadsContentPanel.Visibility = Visibility.Collapsed;
+            WalletContentPanel.Visibility = Visibility.Collapsed;
+            DetailHeaderPanel.Visibility = Visibility.Collapsed;
+            DetailContentPanel.Visibility = Visibility.Collapsed;
+            InstallContentPanel.Visibility = Visibility.Visible;
+
+            SetSidebarSelection(
+                _isDownloadsViewActive
+                    ? btnDownloadsNav
+                    : _isLibraryViewActive
+                        ? btnLibraryNav
+                        : btnStoreNav);
+            RefreshInstallViewSurface();
+        }
+
+        private void RefreshInstallViewSurface()
+        {
+            // ayrı kurulum ekranını seçili oyunla doldur
+            if (_currentDetail == null)
+            {
+                return;
+            }
+
+            DownloadStateItem state = GetInstallSurfaceState(_currentDetail.GameId);
+            LibraryGameItem? libraryItem = _libraryItems.FirstOrDefault(item => item.GameId == _currentDetail.GameId);
+            int totalPlaySeconds = GetDisplayPlaySeconds(_currentDetail.GameId);
+
+            imgInstallHero.Source = _currentInstallHeroPreview ?? _currentDetail.CoverPreview;
+            imgInstallCover.Source = _currentDetail.CoverPreview;
+            txtInstallTitle.Text = _currentDetail.Title;
+            txtInstallDescription.Text = DisplayOrFallback(_currentDetail.Description);
+            txtInstallPlaySummary.Text = $"Toplam Oynama süreniz: {BuildPlayTimeText(totalPlaySeconds)}";
+            txtInstallDeveloperValue.Text = string.IsNullOrWhiteSpace(libraryItem?.PurchasedAtText)
+                ? "-"
+                : libraryItem.PurchasedAtText;
+            txtInstallPublisherValue.Text = BuildPlayTimeText(totalPlaySeconds);
+            txtInstallReleaseValue.Text = DisplayOrFallback(_currentDetail.Publisher);
+            txtInstallLanguagesValue.Text = DisplayOrFallback(_currentDetail.SupportedLanguages);
+            txtInstallPlatformsValue.Text = _currentDetail.Platforms.Count == 0
+                ? "Belirtilmedi"
+                : string.Join("  •  ", _currentDetail.Platforms);
+
+            pbInstallProgress.Foreground = CreateBrush(state.InstallAccent);
+            pbInstallProgress.Value = state.ProgressValue;
+            pbInstallProgress.Visibility = state.ShowProgress ? Visibility.Visible : Visibility.Collapsed;
+
+            txtInstallProgress.Text = state.ProgressText;
+            txtInstallProgress.Visibility = state.ShowProgress ? Visibility.Visible : Visibility.Collapsed;
+
+            ApplyInstallPrimaryActionStyle(state);
+            ApplyInstallSecondaryActionStyle(state);
+            btnInstallSecondaryAction.Visibility = state.ShowSecondaryAction ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private BitmapImage? SelectInstallHeroPreview(StoreGameDetail detail)
+        {
+            // her giriste galeriden farkli bir hero sec
+            List<BitmapImage> previews = detail.MediaItems
+                .Where(item => !item.IsTrailer && item.Preview != null)
+                .Select(item => item.Preview!)
+                .ToList();
+
+            if (previews.Count == 0)
+            {
+                return detail.CoverPreview;
+            }
+
+            return previews[_installHeroRandom.Next(previews.Count)];
         }
 
         private void UpdateLibraryGridColumns()
@@ -2032,7 +2768,7 @@ namespace VOID_STORE.Views
             }
 
             // veri yoksa paneli serbest bırak
-            if (_libraryItems.Count == 0)
+            if (icLibraryGames.Items.Count == 0)
             {
                 icLibraryGames.Width = double.NaN;
                 return;
@@ -2048,14 +2784,18 @@ namespace VOID_STORE.Views
             StopTrailer();
             popCartMenu.IsOpen = false;
             _isLibraryViewActive = true;
+            _isDownloadsViewActive = false;
+            _isInstallViewActive = false;
 
             // sadece ilgili panelleri aç
             StoreHeaderPanel.Visibility = Visibility.Visible;
             StoreContentPanel.Visibility = Visibility.Collapsed;
             LibraryContentPanel.Visibility = Visibility.Visible;
+            DownloadsContentPanel.Visibility = Visibility.Collapsed;
             WalletContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
+            InstallContentPanel.Visibility = Visibility.Collapsed;
 
             // sidebar seçimini kütüphane yap
             SetSidebarSelection(btnLibraryNav);
@@ -2068,18 +2808,249 @@ namespace VOID_STORE.Views
             StopTrailer();
             popCartMenu.IsOpen = false;
             _isLibraryViewActive = false;
+            _isDownloadsViewActive = false;
+            _isInstallViewActive = false;
 
             // sadece cüzdan panelini aç
             StoreHeaderPanel.Visibility = Visibility.Visible;
             StoreContentPanel.Visibility = Visibility.Collapsed;
             LibraryContentPanel.Visibility = Visibility.Collapsed;
+            DownloadsContentPanel.Visibility = Visibility.Collapsed;
             WalletContentPanel.Visibility = Visibility.Visible;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
+            InstallContentPanel.Visibility = Visibility.Collapsed;
 
             // sidebar mevcut store seçimini koru
             SetSidebarSelection(btnStoreNav);
             RefreshWalletPage();
+        }
+
+        private void ShowDownloadsView()
+        {
+            // indirmeler ekranına geç
+            StopTrailer();
+            popCartMenu.IsOpen = false;
+            _isLibraryViewActive = false;
+            _isDownloadsViewActive = true;
+            _isInstallViewActive = false;
+
+            // yalnızca indirme panelini aç
+            StoreHeaderPanel.Visibility = Visibility.Visible;
+            StoreContentPanel.Visibility = Visibility.Collapsed;
+            LibraryContentPanel.Visibility = Visibility.Collapsed;
+            DownloadsContentPanel.Visibility = Visibility.Visible;
+            WalletContentPanel.Visibility = Visibility.Collapsed;
+            DetailHeaderPanel.Visibility = Visibility.Collapsed;
+            DetailContentPanel.Visibility = Visibility.Collapsed;
+            InstallContentPanel.Visibility = Visibility.Collapsed;
+
+            // sidebar seçimini indirmeler yap
+            SetSidebarSelection(btnDownloadsNav);
+            RefreshDownloadsPanel();
+        }
+
+        private async void DownloadQueueTimer_Tick(object? sender, EventArgs e)
+        {
+            // timer reentry durumunu kapat
+            if (_isDownloadTickRunning || UserSession.IsGuest)
+            {
+                return;
+            }
+
+            _isDownloadTickRunning = true;
+
+            try
+            {
+                // indirme kuyruğunu bir adım ilerlet
+                bool changed = await Task.Run(() => _downloadController.ProcessDownloadQueue(UserSession.UserId));
+                bool launchChanged = _launchController.SyncExitedGames(UserSession.UserId);
+
+                if (changed || launchChanged)
+                {
+                    RefreshDownloadState(false);
+                }
+                else if (_isInstallViewActive && _currentDetail != null && _launchController.IsRunning(_currentDetail.GameId))
+                {
+                    RefreshInstallViewSurface();
+                }
+            }
+            catch (Exception ex)
+            {
+                // arka plan hatasını tek noktada göster
+                CustomError.ShowDialog($"İndirme güncellenemedi {ex.Message}", "SISTEM HATASI", owner: this);
+            }
+            finally
+            {
+                _isDownloadTickRunning = false;
+            }
+        }
+
+        private void DownloadPrimaryActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            // listedeki oyuna göre temel aksiyonu çalıştır
+            if (sender is not Button button || !int.TryParse(button.Tag?.ToString(), out int gameId))
+            {
+                return;
+            }
+
+            ExecuteDownloadPrimaryAction(gameId);
+        }
+
+        private void DownloadSecondaryActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            // listedeki oyuna göre ikincil aksiyonu çalıştır
+            if (sender is not Button button || !int.TryParse(button.Tag?.ToString(), out int gameId))
+            {
+                return;
+            }
+
+            ExecuteDownloadSecondaryAction(gameId);
+        }
+
+        private void DetailPrimaryInstallActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            // detay ekranındaki ana kurulum aksiyonunu çalıştır
+            if (_currentDetail == null)
+            {
+                return;
+            }
+
+            ExecuteDownloadPrimaryAction(_currentDetail.GameId);
+        }
+
+        private void DetailSecondaryInstallActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            // detay ekranındaki ikincil kurulum aksiyonunu çalıştır
+            if (_currentDetail == null)
+            {
+                return;
+            }
+
+            ExecuteDownloadSecondaryAction(_currentDetail.GameId);
+        }
+
+        private void ExecuteDownloadPrimaryAction(int gameId)
+        {
+            // seçili duruma göre indirme akışını başlat
+            if (!EnsureAuthenticatedForCommerce())
+            {
+                return;
+            }
+
+            try
+            {
+                DownloadStateItem state = GetInstallSurfaceState(gameId);
+
+                switch (state.InstallStatus)
+                {
+                    case "downloading":
+                    case "queued":
+                        _downloadController.PauseDownload(UserSession.UserId, gameId);
+                        break;
+
+                    case "paused":
+                        _downloadController.ResumeDownload(UserSession.UserId, gameId);
+                        break;
+
+                    case "installed":
+                        if (_launchController.IsRunning(gameId))
+                        {
+                            _launchController.StopGame(UserSession.UserId, gameId);
+                        }
+                        else
+                        {
+                            _launchController.StartGame(
+                                UserSession.UserId,
+                                gameId,
+                                ResolveGameTitle(gameId),
+                                state.InstallPath);
+                        }
+
+                        break;
+
+                    default:
+                        _downloadController.QueueInstall(UserSession.UserId, gameId);
+                        break;
+                }
+
+                RefreshDownloadState(false);
+            }
+            catch (Exception ex)
+            {
+                // kullanıcıya net aksiyon hatası göster
+                CustomError.ShowDialog($"Kurulum işlemi tamamlanamadı {ex.Message}", "SISTEM HATASI", owner: this);
+            }
+        }
+
+        private void ExecuteDownloadSecondaryAction(int gameId)
+        {
+            // seçili duruma göre iptal veya kaldır çalıştır
+            if (!EnsureAuthenticatedForCommerce())
+            {
+                return;
+            }
+
+            try
+            {
+                DownloadStateItem state = GetInstallSurfaceState(gameId);
+
+                if (state.InstallStatus == "installed")
+                {
+                    if (_launchController.IsRunning(gameId))
+                    {
+                        CustomError.ShowDialog("Oyun çalışırken kaldırılamaz", "BILGI", owner: this);
+                        return;
+                    }
+
+                    if (!CustomConfirm.ShowDialog("Kaldır", "Bu oyunu sisteminizden silmek istediğinize emin misiniz", "Kaldır", this))
+                    {
+                        return;
+                    }
+
+                    _downloadController.Uninstall(UserSession.UserId, gameId);
+                }
+                else
+                {
+                    if (!CustomConfirm.ShowDialog("İptal", "Bu kurulum indirme listesinden çıkarılsın mı", "İptal", this))
+                    {
+                        return;
+                    }
+
+                    _downloadController.CancelDownload(UserSession.UserId, gameId);
+                }
+
+                RefreshDownloadState(false);
+            }
+            catch (Exception ex)
+            {
+                // ikincil aksiyon hatasını göster
+                CustomError.ShowDialog($"Kurulum değiştirilemedi {ex.Message}", "SISTEM HATASI", owner: this);
+            }
+        }
+
+        private void OpenInstalledFolder(string installPath)
+        {
+            // kurulu klasörü dosya gezgininde aç
+            if (string.IsNullOrWhiteSpace(installPath) || !Directory.Exists(installPath))
+            {
+                CustomError.ShowDialog("Kurulum klasörü bulunamadı", "BILGI", owner: this);
+                return;
+            }
+
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = installPath,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                // dosya gezgini acilmazsa bilgi ver
+                CustomError.ShowDialog($"Kurulum klasörü açılamadı {ex.Message}", "SISTEM HATASI", owner: this);
+            }
         }
 
         private bool EnsureAuthenticatedForCommerce()

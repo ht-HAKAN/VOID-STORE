@@ -7,11 +7,13 @@ namespace VOID_STORE.Models
     {
         public static void EnsureSchema()
         {
-            // hafta 7 alanlarini sira ile hazirla
+            // kullanici ticaret alanlarini sira ile hazirla
             EnsureBalanceColumn();
             EnsureWalletTransactionsTable();
             EnsureCartItemsTable();
             EnsureUserLibraryTable();
+            EnsureUserLibraryColumns();
+            EnsureUserDownloadsTable();
         }
 
         private static void EnsureBalanceColumn()
@@ -85,6 +87,50 @@ namespace VOID_STORE.Models
                         FOREIGN KEY (UserId) REFERENCES Users(UserId)
                         ON DELETE CASCADE,
                     CONSTRAINT FK_UserLibrary_Games
+                        FOREIGN KEY (GameId) REFERENCES Games(GameId)
+                        ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
+        }
+
+        private static void EnsureUserLibraryColumns()
+        {
+            // kutuphane istatistik kolonlarini kontrol et
+            if (!ColumnExists("UserLibrary", "TotalPlaySeconds"))
+            {
+                DatabaseManager.ExecuteNonQuery(
+                    "ALTER TABLE UserLibrary ADD COLUMN TotalPlaySeconds INT NOT NULL DEFAULT 0 AFTER PurchasedAt");
+            }
+
+            if (!ColumnExists("UserLibrary", "LastPlayedAt"))
+            {
+                DatabaseManager.ExecuteNonQuery(
+                    "ALTER TABLE UserLibrary ADD COLUMN LastPlayedAt DATETIME NULL AFTER TotalPlaySeconds");
+            }
+        }
+
+        private static void EnsureUserDownloadsTable()
+        {
+            // kurulum ve indirme durumunu kalici tut
+            DatabaseManager.ExecuteNonQuery(
+                @"CREATE TABLE IF NOT EXISTS UserDownloads (
+                    DownloadId INT NOT NULL AUTO_INCREMENT,
+                    UserId INT NOT NULL,
+                    GameId INT NOT NULL,
+                    InstallStatus VARCHAR(24) NOT NULL DEFAULT 'not_installed',
+                    ProgressPercent DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+                    DownloadedBytes BIGINT NOT NULL DEFAULT 0,
+                    TotalBytes BIGINT NOT NULL DEFAULT 0,
+                    InstallPath VARCHAR(500) NULL,
+                    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    CompletedAt DATETIME NULL,
+                    PRIMARY KEY (DownloadId),
+                    UNIQUE KEY UX_UserDownloads_UserGame (UserId, GameId),
+                    KEY IX_UserDownloads_UserStatus (UserId, InstallStatus),
+                    CONSTRAINT FK_UserDownloads_Users
+                        FOREIGN KEY (UserId) REFERENCES Users(UserId)
+                        ON DELETE CASCADE,
+                    CONSTRAINT FK_UserDownloads_Games
                         FOREIGN KEY (GameId) REFERENCES Games(GameId)
                         ON DELETE CASCADE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");

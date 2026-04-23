@@ -53,7 +53,7 @@
             </Setter>
         </Style>
         <Style x:Key="CategoryChipButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="MinWidth" Value="76"/><Setter Property="Background" Value="#101014"/><Setter Property="Foreground" Value="#E7EAF0"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="18,0"/><Setter Property="Margin" Value="0,0,12,12"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="7"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#15181E"/><Setter TargetName="Surface" Property="BorderBrush" Value="#353C47"/></Trigger><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="Surface" Property="Background" Value="#101014"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#FFFFFF"/></DataTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
-        <Style x:Key="StoreCardButton" TargetType="Button"><Setter Property="Width" Value="238"/><Setter Property="Margin" Value="8,0,8,26"/><Setter Property="Padding" Value="0"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="HorizontalAlignment" Value="Left"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="StoreCardButton" TargetType="Button"><Setter Property="Margin" Value="8,0,8,26"/><Setter Property="Padding" Value="0"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="HorizontalAlignment" Value="Stretch"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="GhostActionButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="Padding" Value="18,0"/><Setter Property="Background" Value="#111114"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#16161A"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2A2A31"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="48"/><Setter Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/><Setter Property="BorderBrush" Value="#FFFFFF"/><Setter Property="FontSize" Value="14"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="14"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.94"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="InstallHeroPrimaryActionButton" TargetType="Button" BasedOn="{StaticResource PrimaryActionButton}"><Setter Property="Height" Value="58"/><Setter Property="Padding" Value="26,0"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.92"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
@@ -933,34 +933,36 @@
                             </Grid>
                             <ScrollViewer x:Name="StoreGamesScrollViewer" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" SizeChanged="StoreGamesScrollViewer_SizeChanged">
                                 <Grid>
-                                    <ItemsControl x:Name="icStoreGames" HorizontalAlignment="Left">
+                                    <ItemsControl x:Name="icStoreGames" HorizontalAlignment="Stretch" Tag="4">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <WrapPanel/>
+                                                <UniformGrid Columns="{Binding Tag, RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Style="{StaticResource StoreCardButton}" Tag="{Binding GameId}" Click="StoreGameButton_Click" MouseEnter="StoreCard_MouseEnter" MouseLeave="StoreCard_MouseLeave">
                                                     <StackPanel>
-                                                        <Grid Height="318">
-                                                            <Border x:Name="CardGlow" Background="Transparent" CornerRadius="18" Opacity="0" IsHitTestVisible="False">
-                                                                <Border.Effect>
-                                                                    <DropShadowEffect Color="#FFFFFFFF" BlurRadius="26" ShadowDepth="0" Opacity="0.55"/>
-                                                                </Border.Effect>
-                                                            </Border>
-                                                            <Border x:Name="CardSurface" Background="#0F0F12" BorderBrush="#17171D" BorderThickness="1" CornerRadius="18" ClipToBounds="True" RenderTransformOrigin="0.5,0.5">
-                                                                <Grid>
-                                                                    <Image x:Name="CardCoverImage" Source="{Binding CoverPreview}" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5">
-                                                                        <Image.RenderTransform>
-                                                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                                        </Image.RenderTransform>
-                                                                    </Image>
-                                                                    <Border x:Name="CardHoverOverlay" Background="#18FFFFFF" Opacity="0"/>
-                                                                    <Border x:Name="CardHoverFrame" BorderBrush="#FFFFFF" BorderThickness="1" CornerRadius="18" Opacity="0"/>
-                                                                </Grid>
-                                                            </Border>
-                                                        </Grid>
+                                                        <Viewbox Stretch="Uniform">
+                                                            <Grid Width="238" Height="318">
+                                                                <Border x:Name="CardGlow" Background="Transparent" CornerRadius="18" Opacity="0" IsHitTestVisible="False">
+                                                                    <Border.Effect>
+                                                                        <DropShadowEffect Color="#FFFFFFFF" BlurRadius="26" ShadowDepth="0" Opacity="0.55"/>
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <Border x:Name="CardSurface" Background="#0F0F12" BorderBrush="#17171D" BorderThickness="1" CornerRadius="18" ClipToBounds="True" RenderTransformOrigin="0.5,0.5">
+                                                                    <Grid>
+                                                                        <Image x:Name="CardCoverImage" Source="{Binding CoverPreview}" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5">
+                                                                            <Image.RenderTransform>
+                                                                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                                            </Image.RenderTransform>
+                                                                        </Image>
+                                                                        <Border x:Name="CardHoverOverlay" Background="#18FFFFFF" Opacity="0"/>
+                                                                        <Border x:Name="CardHoverFrame" BorderBrush="#FFFFFF" BorderThickness="1" CornerRadius="18" Opacity="0"/>
+                                                                    </Grid>
+                                                                </Border>
+                                                            </Grid>
+                                                        </Viewbox>
                                                         <TextBlock Text="{Binding Category}" Foreground="#8F98A5" FontSize="12" Margin="0,14,0,0"/>
                                                         <TextBlock Text="{Binding Title}" Foreground="White" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,6,0,0"/>
                                                         <TextBlock x:Name="txtStoreCardStatus" Text="{Binding StatusText}" Foreground="#82E4B0" FontSize="11" FontWeight="SemiBold" Margin="0,10,0,0" TextWrapping="Wrap"/>
@@ -1015,34 +1017,36 @@
                             </ScrollViewer>
                             <ScrollViewer x:Name="LibraryGamesScrollViewer" Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" SizeChanged="LibraryGamesScrollViewer_SizeChanged">
                                 <Grid>
-                                    <ItemsControl x:Name="icLibraryGames" HorizontalAlignment="Left">
+                                    <ItemsControl x:Name="icLibraryGames" HorizontalAlignment="Stretch" Tag="4">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <WrapPanel/>
+                                                <UniformGrid Columns="{Binding Tag, RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Style="{StaticResource StoreCardButton}" Tag="{Binding GameId}" Click="StoreGameButton_Click" MouseEnter="StoreCard_MouseEnter" MouseLeave="StoreCard_MouseLeave">
                                                     <StackPanel>
-                                                        <Grid Height="318">
-                                                            <Border x:Name="CardGlow" Background="Transparent" CornerRadius="18" Opacity="0" IsHitTestVisible="False">
-                                                                <Border.Effect>
-                                                                    <DropShadowEffect Color="#FFFFFFFF" BlurRadius="26" ShadowDepth="0" Opacity="0.55"/>
-                                                                </Border.Effect>
-                                                            </Border>
-                                                            <Border x:Name="CardSurface" Background="#0F0F12" BorderBrush="#17171D" BorderThickness="1" CornerRadius="18" ClipToBounds="True" RenderTransformOrigin="0.5,0.5">
-                                                                <Grid>
-                                                                    <Image x:Name="CardCoverImage" Source="{Binding CoverPreview}" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5">
-                                                                        <Image.RenderTransform>
-                                                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                                        </Image.RenderTransform>
-                                                                    </Image>
-                                                                    <Border x:Name="CardHoverOverlay" Background="#18FFFFFF" Opacity="0"/>
-                                                                    <Border x:Name="CardHoverFrame" BorderBrush="#FFFFFF" BorderThickness="1" CornerRadius="18" Opacity="0"/>
-                                                                </Grid>
-                                                            </Border>
-                                                        </Grid>
+                                                        <Viewbox Stretch="Uniform">
+                                                            <Grid Width="238" Height="318">
+                                                                <Border x:Name="CardGlow" Background="Transparent" CornerRadius="18" Opacity="0" IsHitTestVisible="False">
+                                                                    <Border.Effect>
+                                                                        <DropShadowEffect Color="#FFFFFFFF" BlurRadius="26" ShadowDepth="0" Opacity="0.55"/>
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <Border x:Name="CardSurface" Background="#0F0F12" BorderBrush="#17171D" BorderThickness="1" CornerRadius="18" ClipToBounds="True" RenderTransformOrigin="0.5,0.5">
+                                                                    <Grid>
+                                                                        <Image x:Name="CardCoverImage" Source="{Binding CoverPreview}" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5">
+                                                                            <Image.RenderTransform>
+                                                                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                                            </Image.RenderTransform>
+                                                                        </Image>
+                                                                        <Border x:Name="CardHoverOverlay" Background="#18FFFFFF" Opacity="0"/>
+                                                                        <Border x:Name="CardHoverFrame" BorderBrush="#FFFFFF" BorderThickness="1" CornerRadius="18" Opacity="0"/>
+                                                                    </Grid>
+                                                                </Border>
+                                                            </Grid>
+                                                        </Viewbox>
                                                         <TextBlock Text="{Binding Category}" Foreground="#8F98A5" FontSize="12" Margin="0,14,0,0"/>
                                                         <TextBlock Text="{Binding Title}" Foreground="White" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,6,0,0"/>
                                                         <TextBlock Text="{Binding InstallStatusText}" Foreground="{Binding InstallAccent}" FontSize="12" FontWeight="SemiBold" Margin="0,10,0,0"/>

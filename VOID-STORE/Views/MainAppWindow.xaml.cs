@@ -897,7 +897,13 @@ namespace VOID_STORE.Views
                 return;
             }
 
-            icStoreGames.Width = Math.Max(0, viewportWidth - 4);
+            // kaç tane kart sığacağını hesapla (kart genişliği 238 + marginler 16 = 254)
+            int columns = (int)(viewportWidth / 254);
+            if (columns <= 0) columns = 1;
+
+            // Sütun sayısını Tag üzerinden UniformGrid'e bildir
+            icStoreGames.Tag = columns.ToString();
+            icStoreGames.Width = double.NaN; // Genişlik artık tüm alanı kaplayacak şekilde serbest
         }
 
         private void ShowDetailView(StoreGameDetail detail)
@@ -2979,8 +2985,13 @@ namespace VOID_STORE.Views
                 return;
             }
 
-            // wrap alanı sola yaslanacak kadar geniş olsun
-            icLibraryGames.Width = Math.Max(0, viewportWidth - 4);
+            // kaç tane kart sığacağını hesapla (kart genişliği 238 + marginler 16 = 254)
+            int columns = (int)(viewportWidth / 254);
+            if (columns <= 0) columns = 1;
+
+            // Sütun sayısını Tag üzerinden UniformGrid'e bildir
+            icLibraryGames.Tag = columns.ToString();
+            icLibraryGames.Width = double.NaN; // Genişlik artık tüm alanı kaplayacak şekilde serbest
         }
 
         private void ShowLibraryView()

@@ -1818,6 +1818,12 @@ namespace VOID_STORE.Views
                 : value.ToString(@"mm\:ss");
         }
 
+        private void Logo_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // logoya tıklandığında mağazaya dön
+            ShowStoreView();
+        }
+
         private void StoreNavButton_Click(object sender, RoutedEventArgs e)
         {
             // magazayi tekrar goster

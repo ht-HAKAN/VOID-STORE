@@ -1,4 +1,4 @@
-﻿<Window x:Class="VOID_STORE.Views.MainAppWindow"
+<Window x:Class="VOID_STORE.Views.MainAppWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -321,7 +321,8 @@
                 <Border Grid.Column="0" Background="#0B0B0D" CornerRadius="26" Margin="28,20,0,28" Padding="20,10">
                     <Grid>
                         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                        <Border Grid.Row="0" Width="100" Height="30" HorizontalAlignment="Center" Margin="0,18,0,0">
+                        <Border Grid.Row="0" Width="100" Height="30" HorizontalAlignment="Center" Margin="0,18,0,0"
+                                Cursor="Hand" MouseLeftButtonUp="Logo_MouseLeftButtonUp">
                             <Border.Background>
                                 <ImageBrush ImageSource="/voidstoreimages/VOIDSTORE_NOBG_LOGO.png"
                                             Stretch="Uniform"

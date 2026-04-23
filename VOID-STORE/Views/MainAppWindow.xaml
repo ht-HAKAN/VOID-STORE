@@ -57,6 +57,94 @@
         <Style x:Key="GhostActionButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="Padding" Value="18,0"/><Setter Property="Background" Value="#111114"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#16161A"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2A2A31"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="48"/><Setter Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/><Setter Property="BorderBrush" Value="#FFFFFF"/><Setter Property="FontSize" Value="14"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="14"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.94"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="InstallHeroPrimaryActionButton" TargetType="Button" BasedOn="{StaticResource PrimaryActionButton}"><Setter Property="Height" Value="58"/><Setter Property="Padding" Value="26,0"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.92"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="FriendsTabChipButton" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="Background" Value="#0E0F12"/>
+            <Setter Property="Foreground" Value="#C8CDD5"/>
+            <Setter Property="BorderBrush" Value="#1E2129"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Surface" Property="Background" Value="#14161B"/>
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="#3A4150"/>
+                            </Trigger>
+                            <Trigger Property="Tag" Value="active">
+                                <Setter TargetName="Surface" Property="Background" Value="#0E0F12"/>
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="FriendsSquareSecondaryButton" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="22,0"/>
+            <Setter Property="Background" Value="#0E0F12"/>
+            <Setter Property="Foreground" Value="#F4F7FB"/>
+            <Setter Property="BorderBrush" Value="#2A313D"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Surface" Property="Background" Value="#15181E"/>
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="FriendsSquarePrimaryButton" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="22,0"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="Foreground" Value="#0A0A0C"/>
+            <Setter Property="BorderBrush" Value="#FFFFFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Surface" Property="Opacity" Value="0.92"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="InstallHeroSecondaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="58"/><Setter Property="Padding" Value="26,0"/><Setter Property="Background" Value="#12161C"/><Setter Property="BorderBrush" Value="#2A313D"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#171C24"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="DownloadProgressBar" TargetType="ProgressBar">
             <Setter Property="Height" Value="8"/>
@@ -481,7 +569,334 @@
                                 </Button>
                             </Grid>
                             <Border Width="1" Height="26" Background="#24242A" Margin="0,0,18,0" VerticalAlignment="Center"/>
-                            <Button x:Name="btnFriends" Style="{StaticResource HeaderIconButton}" Click="FriendsButton_Click" Margin="0,0,14,0"><TextBlock Text="&#xE716;" FontFamily="Segoe MDL2 Assets" FontSize="18"/></Button>
+                            <Grid Margin="0,0,14,0">
+                                <Button x:Name="btnFriends" Style="{StaticResource HeaderIconButton}" Click="FriendsButton_Click">
+                                    <TextBlock Text="&#xE716;" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
+                                </Button>
+                                <Border x:Name="brdFriendsBadge"
+                                        Visibility="Collapsed"
+                                        Background="#E84855"
+                                        CornerRadius="9"
+                                        MinWidth="18"
+                                        Height="18"
+                                        Padding="5,0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Margin="0,-2,-2,0"
+                                        IsHitTestVisible="False">
+                                    <TextBlock x:Name="txtFriendsBadgeCount"
+                                               Text="0"
+                                               Foreground="White"
+                                               FontSize="11"
+                                               FontWeight="Bold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+                                <Popup x:Name="popFriendsMenu"
+                                       PlacementTarget="{Binding ElementName=btnFriends}"
+                                       Placement="Bottom"
+                                       StaysOpen="False"
+                                       AllowsTransparency="True"
+                                       PopupAnimation="Fade"
+                                       HorizontalOffset="-360"
+                                       VerticalOffset="10">
+                                    <Border Background="#0C0D11"
+                                            BorderBrush="#1A1F28"
+                                            BorderThickness="1"
+                                            CornerRadius="18"
+                                            Padding="22"
+                                            Width="430"
+                                            MinHeight="520">
+                                        <StackPanel>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="Arkadaşlar" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                <Button Grid.Column="1"
+                                                        x:Name="btnFriendsGoFullPage"
+                                                        Style="{StaticResource FriendsSquareSecondaryButton}"
+                                                        Height="34"
+                                                        Padding="14,0"
+                                                        FontSize="12"
+                                                        Content="Tümünü Gör"
+                                                        Click="FriendsGoFullPageButton_Click"/>
+                                            </Grid>
+                                            <Border Background="#0A0B0F"
+                                                    BorderBrush="#181B22"
+                                                    BorderThickness="1"
+                                                    CornerRadius="12"
+                                                    Margin="0,16,0,0">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid>
+                                                        <TextBlock x:Name="txtFriendsQuickSearchPlaceholder"
+                                                                   Text="Kullanıcı adı ile ara..."
+                                                                   Foreground="#5A626E"
+                                                                   FontSize="13"
+                                                                   VerticalAlignment="Center"
+                                                                   Margin="14,0,0,0"
+                                                                   IsHitTestVisible="False"/>
+                                                        <TextBox x:Name="txtFriendsQuickSearch"
+                                                                 Background="Transparent"
+                                                                 Foreground="#F4F7FB"
+                                                                 CaretBrush="#F4F7FB"
+                                                                 BorderThickness="0"
+                                                                 Padding="14,10"
+                                                                 FontSize="13"
+                                                                 VerticalContentAlignment="Center"
+                                                                 KeyDown="FriendsQuickSearchBox_KeyDown"
+                                                                 TextChanged="FriendsQuickSearchBox_TextChanged"/>
+                                                    </Grid>
+                                                    <Button Grid.Column="1"
+                                                            x:Name="btnFriendsQuickSearchClear"
+                                                            Width="34"
+                                                            Height="34"
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            Cursor="Hand"
+                                                            Visibility="Collapsed"
+                                                            Click="FriendsQuickSearchClearButton_Click"
+                                                            Margin="0,0,6,0">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="clearButtonBorder"
+                                                                        Background="Transparent"
+                                                                        CornerRadius="8">
+                                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                                                      VerticalAlignment="Center"/>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="clearButtonBorder" Property="Background" Value="#1A1F28"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsPressed" Value="True">
+                                                                        <Setter TargetName="clearButtonBorder" Property="Background" Value="#14181F"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                        <TextBlock Text="&#xE894;" FontFamily="Segoe MDL2 Assets" Foreground="#AAB2BD" FontSize="12"/>
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
+                                            <TextBlock x:Name="txtFriendsQuickSearchHint"
+                                                       Text="Kullanıcı adına göre ara"
+                                                       Foreground="#6F7A88"
+                                                       FontSize="11"
+                                                       Margin="4,8,0,0"/>
+                                            <ScrollViewer x:Name="FriendsQuickSearchScroll"
+                                                          MaxHeight="220"
+                                                          Margin="0,12,0,0"
+                                                          VerticalScrollBarVisibility="Auto"
+                                                          HorizontalScrollBarVisibility="Disabled"
+                                                          Visibility="Collapsed">
+                                                <ItemsControl x:Name="icFriendsQuickSearch">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Background="#0E1015"
+                                                                    BorderBrush="#181B22"
+                                                                    BorderThickness="1"
+                                                                    CornerRadius="12"
+                                                                    Padding="10"
+                                                                    Margin="0,0,0,8">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="12"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Grid Width="40" Height="40">
+                                                                        <Ellipse Fill="#1A1F28"/>
+                                                                        <TextBlock Text="{Binding AvatarLetter}" Foreground="White" FontSize="15" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        <Image Source="{Binding AvatarPreview}" Stretch="UniformToFill">
+                                                                            <Image.Clip>
+                                                                                <EllipseGeometry Center="20,20" RadiusX="20" RadiusY="20"/>
+                                                                            </Image.Clip>
+                                                                        </Image>
+                                                                    </Grid>
+                                                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                                        <TextBlock Text="{Binding Username}" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                                                                        <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusAccent}" FontSize="11" FontWeight="SemiBold" Margin="0,2,0,0"/>
+                                                                    </StackPanel>
+                                                                    <Button Grid.Column="3"
+                                                                            Tag="{Binding UserId}"
+                                                                            Style="{StaticResource FriendsSquarePrimaryButton}"
+                                                                            Height="36"
+                                                                            MinWidth="78"
+                                                                            Padding="18,0"
+                                                                            FontSize="12"
+                                                                            Content="Profil"
+                                                                            Click="FriendsQuickResultProfileButton_Click"/>
+                                                                </Grid>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                            <Border x:Name="FriendsQuickSearchEmpty" Visibility="Collapsed" Background="#0A0B0F" BorderBrush="#181B22" BorderThickness="1" CornerRadius="12" Padding="14" Margin="0,12,0,0">
+                                                <TextBlock x:Name="txtFriendsQuickSearchEmpty" Text="Eşleşen kullanıcı bulunamadı" Foreground="#8F98A5" FontSize="12" HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <Grid Margin="0,18,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="Gelen İstekler" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <Border Grid.Column="1" Background="#18FFFFFF" CornerRadius="9" Padding="8,2">
+                                                    <TextBlock x:Name="txtFriendsPopupIncomingCount" Text="0" Foreground="#F4F7FB" FontSize="11" FontWeight="SemiBold"/>
+                                                </Border>
+                                            </Grid>
+                                            <ScrollViewer MaxHeight="170" Margin="0,10,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                                <ItemsControl x:Name="icFriendsPopupIncoming">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Background="#0C0E13"
+                                                                    BorderBrush="#171C24"
+                                                                    BorderThickness="1"
+                                                                    CornerRadius="12"
+                                                                    Padding="10"
+                                                                    Margin="0,0,0,8">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="12"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="6"/>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Grid Width="36" Height="36">
+                                                                        <Ellipse Fill="#1A1F28"/>
+                                                                        <TextBlock Text="{Binding AvatarLetter}" Foreground="White" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        <Image Source="{Binding AvatarPreview}" Stretch="UniformToFill">
+                                                                            <Image.Clip>
+                                                                                <EllipseGeometry Center="18,18" RadiusX="18" RadiusY="18"/>
+                                                                            </Image.Clip>
+                                                                        </Image>
+                                                                    </Grid>
+                                                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                                        <TextBlock Text="{Binding Username}" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                                                                        <TextBlock Text="{Binding SentAtText}" Foreground="#6F7A88" FontSize="10" Margin="0,2,0,0"/>
+                                                                    </StackPanel>
+                                                                    <Button Grid.Column="3" Tag="{Binding UserId}" Width="32" Height="32" Background="#82E4B0" BorderThickness="0" Cursor="Hand" Click="FriendsPopupAcceptButton_Click">
+                                                                        <Button.Template>
+                                                                            <ControlTemplate TargetType="Button">
+                                                                                <Border x:Name="Surface" Background="{TemplateBinding Background}" CornerRadius="10">
+                                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                                </Border>
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter TargetName="Surface" Property="Background" Value="#6ED19B"/>
+                                                                                    </Trigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Button.Template>
+                                                                        <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" Foreground="#0A0A0C" FontSize="13"/>
+                                                                    </Button>
+                                                                    <Button Grid.Column="5" Tag="{Binding UserId}" Width="32" Height="32" Background="#1A1F28" BorderBrush="#2A313D" BorderThickness="1" Cursor="Hand" Click="FriendsPopupRejectButton_Click">
+                                                                        <Button.Template>
+                                                                            <ControlTemplate TargetType="Button">
+                                                                                <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10">
+                                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                                </Border>
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter TargetName="Surface" Property="Background" Value="#A4252A"/>
+                                                                                        <Setter TargetName="Surface" Property="BorderBrush" Value="#E0555F"/>
+                                                                                    </Trigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Button.Template>
+                                                                        <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" Foreground="#F5F7FA" FontSize="12"/>
+                                                                    </Button>
+                                                                </Grid>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                            <Border x:Name="FriendsPopupIncomingEmpty"
+                                                    Background="#0A0B0F"
+                                                    BorderBrush="#181B22"
+                                                    BorderThickness="1"
+                                                    CornerRadius="12"
+                                                    Padding="14,18"
+                                                    Margin="0,10,0,0"
+                                                    Visibility="Collapsed">
+                                                <StackPanel HorizontalAlignment="Center">
+                                                    <TextBlock Text="&#xE8FA;" FontFamily="Segoe MDL2 Assets" Foreground="#3A4150" FontSize="22" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="Yeni istek yok" Foreground="#AAB2BD" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                                                    <TextBlock Text="Gelen arkadaşlık istekleri burada görünecek" Foreground="#6F7A88" FontSize="11" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <Rectangle Height="1" Fill="#171C24" Margin="0,16,0,16"/>
+                                            <TextBlock Text="Arkadaşların" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                                            <ScrollViewer MaxHeight="180" Margin="0,10,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                                <ItemsControl x:Name="icFriendsPopupList">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Button Tag="{Binding UserId}"
+                                                                    Style="{StaticResource PopupMenuButton}"
+                                                                    Height="48"
+                                                                    Padding="8,0"
+                                                                    HorizontalContentAlignment="Stretch"
+                                                                    Click="FriendsPopupOpenProfileButton_Click">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="12"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Grid Width="34" Height="34">
+                                                                        <Ellipse Fill="#1A1F28"/>
+                                                                        <TextBlock Text="{Binding AvatarLetter}" Foreground="White" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        <Image Source="{Binding AvatarPreview}" Stretch="UniformToFill">
+                                                                            <Image.Clip>
+                                                                                <EllipseGeometry Center="17,17" RadiusX="17" RadiusY="17"/>
+                                                                            </Image.Clip>
+                                                                        </Image>
+                                                                    </Grid>
+                                                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                                        <TextBlock Text="{Binding Username}" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                                                                        <TextBlock Text="{Binding FriendsSinceText}" Foreground="#6F7A88" FontSize="10" Margin="0,2,0,0"/>
+                                                                    </StackPanel>
+                                                                </Grid>
+                                                            </Button>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                            <Border x:Name="FriendsPopupListEmpty"
+                                                    Background="#0A0B0F"
+                                                    BorderBrush="#181B22"
+                                                    BorderThickness="1"
+                                                    CornerRadius="12"
+                                                    Padding="14,22"
+                                                    Margin="0,10,0,0"
+                                                    Visibility="Collapsed">
+                                                <StackPanel HorizontalAlignment="Center">
+                                                    <TextBlock Text="&#xE716;" FontFamily="Segoe MDL2 Assets" Foreground="#3A4150" FontSize="24" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="Henüz arkadaşın yok" Foreground="#AAB2BD" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                                                    <TextBlock Text="Yukarıdan arama yaparak yeni arkadaşlar bul" Foreground="#6F7A88" FontSize="11" HorizontalAlignment="Center" Margin="0,2,0,8" TextWrapping="Wrap" TextAlignment="Center"/>
+                                                    <Button Style="{StaticResource FriendsSquareSecondaryButton}"
+                                                            Height="34"
+                                                            Padding="14,0"
+                                                            FontSize="11"
+                                                            Content="Tüm Arkadaşlar"
+                                                            Click="FriendsGoFullPageButton_Click"
+                                                            HorizontalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </Popup>
+                            </Grid>
                             <Grid>
                                 <Button x:Name="btnProfileMenu" Style="{StaticResource ProfileShellButton}" Click="ProfileMenuButton_Click">
                                     <Grid>
@@ -906,7 +1321,34 @@
                                                     </LinearGradientBrush>
                                                 </Border.Background>
                                             </Border>
-                                            <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,28,34,0">
+                                            <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,34,34">
+                                                <Button x:Name="btnProfileActionsMenu"
+                                                        Style="{StaticResource FriendsSquarePrimaryButton}"
+                                                        Height="52"
+                                                        MinWidth="190"
+                                                        Padding="34,0"
+                                                        FontSize="14"
+                                                        Content="Daha fazla..."
+                                                        Click="ProfileActionsMenuButton_Click"/>
+                                                <Popup x:Name="popProfileActionsMenu"
+                                                       PlacementTarget="{Binding ElementName=btnProfileActionsMenu}"
+                                                       Placement="Bottom"
+                                                       StaysOpen="False"
+                                                       AllowsTransparency="True"
+                                                       PopupAnimation="Fade"
+                                                       HorizontalOffset="0"
+                                                       VerticalOffset="10">
+                                                    <Border Background="#0C0D11"
+                                                            BorderBrush="#1A1F28"
+                                                            BorderThickness="1"
+                                                            CornerRadius="14"
+                                                            Padding="8"
+                                                            Width="240">
+                                                        <StackPanel x:Name="ProfileActionsMenuContent"/>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                            <Grid x:Name="ProfileOwnerActionsPanel" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,28,34,0">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto"/>
                                                     <RowDefinition Height="10"/>
@@ -917,11 +1359,10 @@
                                                     <ColumnDefinition Width="12"/>
                                                     <ColumnDefinition Width="106"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Button x:Name="btnProfilePageEdit" Grid.Row="0" Grid.ColumnSpan="3" Content="Profili Düzenle" Style="{StaticResource GhostActionButton}" Width="220" Height="44" HorizontalAlignment="Right" Click="ProfilePageEditButton_Click"/>
-                                                <Button x:Name="btnProfilePageSave" Grid.Row="0" Grid.Column="0" Content="Kaydet" Style="{StaticResource PrimaryActionButton}" Width="106" Height="42" Visibility="Collapsed" Click="ProfilePageSaveButton_Click"/>
-                                                <Button x:Name="btnProfilePageCancel" Grid.Row="0" Grid.Column="2" Content="İptal" Style="{StaticResource GhostActionButton}" Width="106" Height="42" Visibility="Collapsed" Click="ProfilePageCancelButton_Click"/>
-                                                <Button x:Name="btnProfileSelectAvatar" Grid.Row="2" Grid.Column="0" Content="Avatar Seç" Style="{StaticResource GhostActionButton}" Width="106" Height="40" Visibility="Collapsed" Click="ProfileSelectAvatarButton_Click"/>
-                                                <Button x:Name="btnProfileSelectBanner" Grid.Row="2" Grid.Column="2" Content="Banner Seç" Style="{StaticResource GhostActionButton}" Width="106" Height="40" Visibility="Collapsed" Click="ProfileSelectBannerButton_Click"/>
+                                                <Button x:Name="btnProfilePageSave" Grid.Row="0" Grid.Column="0" Content="Kaydet" Style="{StaticResource FriendsSquarePrimaryButton}" Width="106" Height="42" Visibility="Collapsed" Click="ProfilePageSaveButton_Click"/>
+                                                <Button x:Name="btnProfilePageCancel" Grid.Row="0" Grid.Column="2" Content="İptal" Style="{StaticResource FriendsSquareSecondaryButton}" Width="106" Height="42" Visibility="Collapsed" Click="ProfilePageCancelButton_Click"/>
+                                                <Button x:Name="btnProfileSelectAvatar" Grid.Row="2" Grid.Column="0" Content="Avatar Seç" Style="{StaticResource FriendsSquareSecondaryButton}" Width="106" Height="40" Visibility="Collapsed" Click="ProfileSelectAvatarButton_Click"/>
+                                                <Button x:Name="btnProfileSelectBanner" Grid.Row="2" Grid.Column="2" Content="Banner Seç" Style="{StaticResource FriendsSquareSecondaryButton}" Width="106" Height="40" Visibility="Collapsed" Click="ProfileSelectBannerButton_Click"/>
                                             </Grid>
                                         </Grid>
                                         <Grid Grid.Row="1" Margin="22,-58,34,0">
@@ -998,11 +1439,11 @@
                                     </Grid>
                                 </Border>
                                 <StackPanel Margin="0,34,0,0">
-                                    <TextBlock Text="Kullanıcının son etkinlikleri" Foreground="White" FontSize="30" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="txtProfileRecentActivityHeader" Text="Son Etkinlikler" Foreground="White" FontSize="30" FontWeight="SemiBold"/>
                                     <Border x:Name="EmptyRecentPlaysState" Background="#0E1218" BorderBrush="#1A1F27" BorderThickness="1" CornerRadius="26" Padding="28" Margin="0,24,0,0" Visibility="Collapsed">
                                         <StackPanel>
-                                            <TextBlock Text="Henüz oynama verisi oluşmadı" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
-                                            <TextBlock Text="Yüklü bir oyunu başlattığında son etkinlikler burada görünür" Foreground="#8F98A5" FontSize="13" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                                            <TextBlock x:Name="txtProfileRecentEmptyTitle" Text="Henüz oynama verisi oluşmadı" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                                            <TextBlock x:Name="txtProfileRecentEmptyHint" Text="Yüklü bir oyunu başlattığında son etkinlikler burada görünür" Foreground="#8F98A5" FontSize="13" Margin="0,10,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                     </Border>
                                     <ItemsControl x:Name="icProfileRecentPlays" Margin="0,28,0,0">
@@ -1109,6 +1550,296 @@
                                     </Border>
                                 </Grid>
                             </ScrollViewer>
+                        </Grid>
+                        <Grid x:Name="FriendsContentPanel" Visibility="Collapsed">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="18"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Arkadaşlar" Foreground="White" FontSize="26" FontWeight="Bold"/>
+                                <TextBlock x:Name="txtFriendsPageSummary" Text="Arkadaşlarını yönet, istekleri incele ve yeni kullanıcılar bul." Foreground="#8F98A5" FontSize="14" Margin="0,8,0,0"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,22,0,0">
+                                <Button x:Name="btnFriendsTabFriends" Tag="friends" Click="FriendsTabButton_Click" Style="{StaticResource FriendsTabChipButton}" Content="Arkadaşlarım" Margin="0,0,10,0"/>
+                                <Button x:Name="btnFriendsTabIncoming" Tag="incoming" Click="FriendsTabButton_Click" Style="{StaticResource FriendsTabChipButton}" Content="Gelen İstekler" Margin="0,0,10,0"/>
+                                <Button x:Name="btnFriendsTabOutgoing" Tag="outgoing" Click="FriendsTabButton_Click" Style="{StaticResource FriendsTabChipButton}" Content="Gönderdiklerim" Margin="0,0,10,0"/>
+                                <Button x:Name="btnFriendsTabSearch" Tag="search" Click="FriendsTabButton_Click" Style="{StaticResource FriendsTabChipButton}" Content="Kullanıcı Ara"/>
+                            </StackPanel>
+                            <Grid Grid.Row="3">
+                                <ScrollViewer x:Name="FriendsTabFriendsHost" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <Grid>
+                                        <ItemsControl x:Name="icFriendsPageFriends" HorizontalAlignment="Left">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Width="290" Margin="0,0,18,18" Background="#0F0F12" BorderBrush="#17171D" BorderThickness="1" CornerRadius="18" Padding="20">
+                                                        <StackPanel>
+                                                            <Grid Height="64">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="14"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <Grid Width="56" Height="56">
+                                                                    <Ellipse Fill="#1A1F28"/>
+                                                                    <TextBlock Text="{Binding AvatarLetter}" Foreground="White" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    <Image Source="{Binding AvatarPreview}" Stretch="UniformToFill">
+                                                                        <Image.Clip>
+                                                                            <EllipseGeometry Center="28,28" RadiusX="28" RadiusY="28"/>
+                                                                        </Image.Clip>
+                                                                    </Image>
+                                                                </Grid>
+                                                                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                                    <TextBlock Text="{Binding Username}" Foreground="White" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                                    <TextBlock Text="{Binding FriendsSinceText}" Foreground="#6F7A88" FontSize="11" Margin="0,4,0,0"/>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                            <TextBlock Text="{Binding Bio}" Foreground="#8F98A5" FontSize="12" Margin="0,14,0,0" TextWrapping="Wrap" MinHeight="32"/>
+                                                            <Grid Margin="0,16,0,0">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="10"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <Button Tag="{Binding UserId}" Style="{StaticResource FriendsSquarePrimaryButton}" Height="40" FontSize="12" Content="Profili Gör" Click="FriendsPageOpenProfileButton_Click"/>
+                                                                <Button Grid.Column="2" Tag="{Binding UserId}" Style="{StaticResource FriendsSquareSecondaryButton}" Height="40" FontSize="12" Content="Kaldır" Click="FriendsPageRemoveButton_Click"/>
+                                                            </Grid>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Border x:Name="FriendsTabFriendsEmpty" Visibility="Collapsed" Background="#0F0F12" BorderBrush="#19191E" BorderThickness="1" CornerRadius="24" Padding="32" Margin="0,8,0,0">
+                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="Henüz arkadaşın yok" Foreground="White" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="Kullanıcı Ara sekmesinden yeni arkadaşlar bul." Foreground="#8F98A5" FontSize="13" Margin="0,10,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </ScrollViewer>
+                                <ScrollViewer x:Name="FriendsTabIncomingHost" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <Grid>
+                                        <ItemsControl x:Name="icFriendsPageIncoming" HorizontalAlignment="Left">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Width="340" Margin="0,0,18,18" Background="#0F0F12" BorderBrush="#17171D" BorderThickness="1" CornerRadius="18" Padding="18">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="14"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid Width="56" Height="56">
+                                                                <Ellipse Fill="#1A1F28"/>
+                                                                <TextBlock Text="{Binding AvatarLetter}" Foreground="White" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                <Image Source="{Binding AvatarPreview}" Stretch="UniformToFill">
+                                                                    <Image.Clip>
+                                                                        <EllipseGeometry Center="28,28" RadiusX="28" RadiusY="28"/>
+                                                                    </Image.Clip>
+                                                                </Image>
+                                                            </Grid>
+                                                            <StackPanel Grid.Column="2">
+                                                                <TextBlock Text="{Binding Username}" Foreground="White" FontSize="15" FontWeight="SemiBold"/>
+                                                                <TextBlock Text="{Binding SentAtText}" Foreground="#6F7A88" FontSize="11" Margin="0,4,0,0"/>
+                                                                <Grid Margin="0,12,0,0">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="10"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Button Tag="{Binding UserId}" Style="{StaticResource FriendsSquarePrimaryButton}" Height="38" FontSize="12" Content="Kabul Et" Click="FriendsPageAcceptButton_Click"/>
+                                                                    <Button Grid.Column="2" Tag="{Binding UserId}" Style="{StaticResource FriendsSquareSecondaryButton}" Height="38" FontSize="12" Content="Reddet" Click="FriendsPageRejectButton_Click"/>
+                                                                </Grid>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Border x:Name="FriendsTabIncomingEmpty" Visibility="Collapsed" Background="#0F0F12" BorderBrush="#19191E" BorderThickness="1" CornerRadius="24" Padding="32" Margin="0,8,0,0">
+                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="Gelen istek yok" Foreground="White" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="Sana bir istek geldiğinde burada görünecek." Foreground="#8F98A5" FontSize="13" Margin="0,10,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </ScrollViewer>
+                                <ScrollViewer x:Name="FriendsTabOutgoingHost" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <Grid>
+                                        <ItemsControl x:Name="icFriendsPageOutgoing" HorizontalAlignment="Left">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Width="340" Margin="0,0,18,18" Background="#0F0F12" BorderBrush="#17171D" BorderThickness="1" CornerRadius="18" Padding="18">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="14"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid Width="56" Height="56">
+                                                                <Ellipse Fill="#1A1F28"/>
+                                                                <TextBlock Text="{Binding AvatarLetter}" Foreground="White" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                <Image Source="{Binding AvatarPreview}" Stretch="UniformToFill">
+                                                                    <Image.Clip>
+                                                                        <EllipseGeometry Center="28,28" RadiusX="28" RadiusY="28"/>
+                                                                    </Image.Clip>
+                                                                </Image>
+                                                            </Grid>
+                                                            <StackPanel Grid.Column="2">
+                                                                <TextBlock Text="{Binding Username}" Foreground="White" FontSize="15" FontWeight="SemiBold"/>
+                                                                <TextBlock Text="{Binding SentAtText}" Foreground="#6F7A88" FontSize="11" Margin="0,4,0,0"/>
+                                                                <Button Tag="{Binding UserId}" Style="{StaticResource FriendsSquareSecondaryButton}" Height="40" FontSize="12" Content="İsteği İptal Et" Margin="0,14,0,0" HorizontalAlignment="Stretch" Padding="0" Click="FriendsPageCancelButton_Click"/>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Border x:Name="FriendsTabOutgoingEmpty" Visibility="Collapsed" Background="#0F0F12" BorderBrush="#19191E" BorderThickness="1" CornerRadius="24" Padding="32" Margin="0,8,0,0">
+                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="Bekleyen isteğin yok" Foreground="White" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="Kullanıcı Ara sekmesinden istek gönderebilirsin." Foreground="#8F98A5" FontSize="13" Margin="0,10,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </ScrollViewer>
+                                <Grid x:Name="FriendsTabSearchHost" Visibility="Collapsed">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="14"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Background="#0A0B0F" BorderBrush="#181B22" BorderThickness="1" CornerRadius="8" Height="48">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" Foreground="#8F98A5" FontSize="14" Margin="18,0,12,0" VerticalAlignment="Center"/>
+                                                <Grid Grid.Column="1">
+                                                    <TextBlock x:Name="txtFriendsPageSearchPlaceholder"
+                                                               Text="Kullanıcı adı ile ara..."
+                                                               Foreground="#5A626E"
+                                                               FontSize="14"
+                                                               VerticalAlignment="Center"
+                                                               IsHitTestVisible="False"/>
+                                                    <TextBox x:Name="txtFriendsPageSearch"
+                                                             Background="Transparent"
+                                                             Foreground="#F4F7FB"
+                                                             CaretBrush="#F4F7FB"
+                                                             BorderThickness="0"
+                                                             Padding="0,0,14,0"
+                                                             FontSize="14"
+                                                             VerticalAlignment="Center"
+                                                             VerticalContentAlignment="Center"
+                                                             KeyDown="FriendsPageSearchBox_KeyDown"
+                                                             TextChanged="FriendsPageSearchBox_TextChanged"/>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                        <Button Grid.Column="2"
+                                                x:Name="btnFriendsPageSearch"
+                                                Style="{StaticResource FriendsSquarePrimaryButton}"
+                                                Height="48"
+                                                MinWidth="110"
+                                                Padding="28,0"
+                                                FontSize="14"
+                                                Content="Ara"
+                                                Click="FriendsPageSearchButton_Click"/>
+                                    </Grid>
+                                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <Grid>
+                                            <ItemsControl x:Name="icFriendsPageSearch" HorizontalAlignment="Left">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Width="290" Margin="0,0,18,18" Background="#0F0F12" BorderBrush="#17171D" BorderThickness="1" CornerRadius="18" Padding="20">
+                                                            <StackPanel>
+                                                                <Grid Height="64">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="14"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Grid Width="56" Height="56">
+                                                                        <Ellipse Fill="#1A1F28"/>
+                                                                        <TextBlock Text="{Binding AvatarLetter}" Foreground="White" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        <Image Source="{Binding AvatarPreview}" Stretch="UniformToFill">
+                                                                            <Image.Clip>
+                                                                                <EllipseGeometry Center="28,28" RadiusX="28" RadiusY="28"/>
+                                                                            </Image.Clip>
+                                                                        </Image>
+                                                                    </Grid>
+                                                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                                        <TextBlock Text="{Binding Username}" Foreground="White" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                                        <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusAccent}" FontSize="11" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                                                                    </StackPanel>
+                                                                </Grid>
+                                                                <Grid Margin="0,16,0,0">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="10"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Button Tag="{Binding UserId}"
+                                                                            Content="{Binding ActionButtonText}"
+                                                                            IsEnabled="{Binding IsActionEnabled}"
+                                                                            Background="{Binding ActionButtonBackground}"
+                                                                            Foreground="{Binding ActionButtonForeground}"
+                                                                            Style="{StaticResource FriendsSquarePrimaryButton}"
+                                                                            Height="40"
+                                                                            FontSize="12"
+                                                                            Click="FriendsPageSearchActionButton_Click"/>
+                                                                    <Button Grid.Column="2"
+                                                                            Tag="{Binding UserId}"
+                                                                            Content="Profil"
+                                                                            Style="{StaticResource FriendsSquarePrimaryButton}"
+                                                                            Height="40"
+                                                                            FontSize="12"
+                                                                            Click="FriendsPageSearchProfileButton_Click"/>
+                                                                </Grid>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                            <Border x:Name="FriendsTabSearchEmpty" Visibility="Collapsed" Background="#0F0F12" BorderBrush="#19191E" BorderThickness="1" CornerRadius="24" Padding="32" Margin="0,8,0,0">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBlock x:Name="txtFriendsTabSearchEmptyTitle" Text="Aramaya başla" Foreground="White" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                                    <TextBlock x:Name="txtFriendsTabSearchEmptyMessage" Text="Yeni arkadaşlar bulmak için kullanıcı adı gir." Foreground="#8F98A5" FontSize="13" Margin="0,10,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Grid>
                         </Grid>
                         <ScrollViewer x:Name="DetailContentPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel Margin="0,8,0,0">

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -23,12 +23,18 @@ namespace VOID_STORE.Controllers
 
         public ProfileController()
         {
-            // controller acilisini hafif tut
+            // controller'ı hafif tut
         }
 
         public ProfileSummary GetProfileSummary(int userId)
         {
-            // profilin temel alanlarini tek sorguda al
+            // kendi profil özetini getir
+            return GetProfileSummary(userId, userId);
+        }
+
+        public ProfileSummary GetProfileSummary(int viewerUserId, int targetUserId)
+        {
+            // temel profil bilgilerini çek
             DataTable table = DatabaseManager.ExecuteQuery(
                 @"SELECT
                     UserId,
@@ -39,7 +45,7 @@ namespace VOID_STORE.Controllers
                   FROM Users
                   WHERE UserId = @UserId
                   LIMIT 1;",
-                new SqlParameter("@UserId", userId));
+                new SqlParameter("@UserId", targetUserId));
 
             if (table.Rows.Count == 0)
             {
@@ -50,7 +56,9 @@ namespace VOID_STORE.Controllers
             string avatarPath = row["ProfileImagePath"]?.ToString() ?? string.Empty;
             string bannerPath = row["BannerImagePath"]?.ToString() ?? string.Empty;
 
-            // ekrana basilan profil ozetini kur
+            FriendshipController friendshipController = new FriendshipController();
+
+            // profil özetini oluştur
             return new ProfileSummary
             {
                 UserId = Convert.ToInt32(row["UserId"], CultureInfo.InvariantCulture),
@@ -61,16 +69,17 @@ namespace VOID_STORE.Controllers
                 BannerImagePath = bannerPath,
                 AvatarPreview = GameAssetManager.LoadBitmap(avatarPath),
                 BannerPreview = GameAssetManager.LoadBitmap(bannerPath),
-                OwnedGameCount = GetOwnedGameCount(userId),
-                WishlistCount = GetWishlistCount(userId),
-                TotalPlaySeconds = GetTotalPlaySeconds(userId),
-                FriendsCount = 0
+                OwnedGameCount = GetOwnedGameCount(targetUserId),
+                WishlistCount = GetWishlistCount(targetUserId),
+                TotalPlaySeconds = GetTotalPlaySeconds(targetUserId),
+                FriendsCount = friendshipController.GetFriendsCount(targetUserId),
+                ViewerRelationship = friendshipController.GetRelationship(viewerUserId, targetUserId)
             };
         }
 
         public IReadOnlyList<ProfileOwnedGameOptionItem> GetOwnedGameOptions(int userId)
         {
-            // vitrin seciminde sadece sahip olunan oyunlari kullan
+            // sadece sahip olunan oyunları getir
             DataTable table = DatabaseManager.ExecuteQuery(
                 @"SELECT
                     g.GameId,
@@ -85,7 +94,7 @@ namespace VOID_STORE.Controllers
             List<ProfileOwnedGameOptionItem> items = new();
             foreach (DataRow row in table.Rows)
             {
-                // secim kutusu icin tek satirlik metni kur
+                // seçim kutusu metnini oluştur
                 string title = row["Title"]?.ToString() ?? string.Empty;
                 string category = GameCategoryCatalog.Normalize(row["Category"]?.ToString());
                 items.Add(new ProfileOwnedGameOptionItem
@@ -103,7 +112,7 @@ namespace VOID_STORE.Controllers
 
         public IReadOnlyList<ProfileShowcaseItem> GetShowcaseItems(int userId, int slotCount = ShowcaseSlotCount)
         {
-            // vitrin slotlarini sahip olunan oyunlarla esle
+            // vitrin slotlarını oyunlarla eşle
             Dictionary<int, ProfileShowcaseItem> showcaseMap = DatabaseManager.ExecuteQuery(
                 @"SELECT
                     ps.SlotIndex,
@@ -162,7 +171,7 @@ namespace VOID_STORE.Controllers
 
         public IReadOnlyList<ProfileRecentPlayItem> GetRecentPlays(int userId, int take = 6)
         {
-            // son oynananlari tarih ve sureye gore sirala
+            // son oynananları sırala
             DataTable table = DatabaseManager.ExecuteQuery(
                 @"SELECT
                     g.GameId,
@@ -183,7 +192,7 @@ namespace VOID_STORE.Controllers
             List<ProfileRecentPlayItem> items = new();
             foreach (DataRow row in table.Rows)
             {
-                // etkinlik satirini ekranda kullanilacak modele cevir
+                // modeli ekrana hazırla
                 string coverPath = row["CoverImagePath"] == DBNull.Value
                     ? string.Empty
                     : row["CoverImagePath"]?.ToString() ?? string.Empty;
@@ -215,20 +224,20 @@ namespace VOID_STORE.Controllers
             string? avatarSourcePath,
             string? bannerSourcePath)
         {
-            // profil kaydi sadece girisli kullanicida calissin
+            // giriş kontrolü
             if (userId <= 0)
             {
                 throw new InvalidOperationException("Profil için giriş yapmanız gerekiyor");
             }
 
-            // bio uzunlugunu sinirla
+            // bio karakter sınırı
             string trimmedBio = (bio ?? string.Empty).Trim();
             if (trimmedBio.Length > 300)
             {
                 trimmedBio = trimmedBio[..300];
             }
 
-            // kullaniciya ait medya klasorunu hazirla
+            // medya klasörünü hazırla
             string profileRoot = GetProfileRoot(userId);
 
             using SqlConnection connection = DatabaseManager.GetConnection();
@@ -237,13 +246,13 @@ namespace VOID_STORE.Controllers
 
             try
             {
-                // eski medya yollarini koruyarak yeni secimleri isle
+                // medya seçimlerini işle
                 string currentAvatarPath = GetCurrentMediaPath(connection, transaction, userId, "ProfileImagePath");
                 string currentBannerPath = GetCurrentMediaPath(connection, transaction, userId, "BannerImagePath");
                 string avatarPath = CopyMediaIfNeeded(avatarSourcePath, profileRoot, "avatar", currentAvatarPath);
                 string bannerPath = SaveBannerMediaIfNeeded(bannerSourcePath, profileRoot, currentBannerPath);
 
-                // profil alanlarini tek transaction ile guncelle
+                // profil alanlarını güncelle (transaction)
                 ExecuteNonQuery(
                     connection,
                     transaction,
@@ -269,7 +278,7 @@ namespace VOID_STORE.Controllers
 
         private int GetOwnedGameCount(int userId)
         {
-            // kutuphanedeki toplam oyun sayisini al
+            // kütüphane sayısını al
             object? result = DatabaseManager.ExecuteScalar(
                 @"SELECT COUNT(*)
                   FROM UserLibrary
@@ -281,7 +290,7 @@ namespace VOID_STORE.Controllers
 
         private int GetWishlistCount(int userId)
         {
-            // satin alinmamis istek listesi adedini al
+            // istek listesi sayısını al
             object? result = DatabaseManager.ExecuteScalar(
                 @"SELECT COUNT(*)
                   FROM WishlistItems wi
@@ -297,7 +306,7 @@ namespace VOID_STORE.Controllers
 
         private int GetTotalPlaySeconds(int userId)
         {
-            // toplam oynama suresini birlestir
+            // toplam oynama süresini getir
             object? result = DatabaseManager.ExecuteScalar(
                 @"SELECT COALESCE(SUM(TotalPlaySeconds), 0)
                   FROM UserLibrary
@@ -309,7 +318,7 @@ namespace VOID_STORE.Controllers
 
         private string GetCurrentMediaPath(SqlConnection connection, SqlTransaction transaction, int userId, string columnName)
         {
-            // mevcut medya yolunu transaction icinde oku
+            // mevcut medya yolunu oku
             using SqlCommand command = new SqlCommand(
                 $@"SELECT COALESCE({columnName}, '')
                    FROM Users
@@ -324,7 +333,7 @@ namespace VOID_STORE.Controllers
 
         private string CopyMediaIfNeeded(string? sourcePath, string profileRoot, string fileNameWithoutExtension, string currentPath)
         {
-            // yeni secim yoksa eski yolu koru
+            // yeni seçim yoksa eskiyi koru
             if (string.IsNullOrWhiteSpace(sourcePath))
             {
                 return currentPath;
@@ -335,7 +344,7 @@ namespace VOID_STORE.Controllers
                 return currentPath;
             }
 
-            // secilen dosyayi profil klasorune kopyala
+            // dosyayı profile kopyala
             Directory.CreateDirectory(profileRoot);
             string extension = Path.GetExtension(sourcePath);
             string targetPath = Path.Combine(profileRoot, $"{fileNameWithoutExtension}{extension}");
@@ -345,7 +354,7 @@ namespace VOID_STORE.Controllers
 
         private string SaveBannerMediaIfNeeded(string? sourcePath, string profileRoot, string currentPath)
         {
-            // yeni banner yoksa eskiyi koru
+            // banner yoksa eskiyi koru
             if (string.IsNullOrWhiteSpace(sourcePath))
             {
                 return currentPath;
@@ -356,7 +365,7 @@ namespace VOID_STORE.Controllers
                 return currentPath;
             }
 
-            // banneri sabit en boy oraninda kaydet
+            // banner'ı kırp ve kaydet
             Directory.CreateDirectory(profileRoot);
             string targetPath = Path.Combine(profileRoot, "banner.jpg");
 
@@ -371,7 +380,7 @@ namespace VOID_STORE.Controllers
             Int32Rect cropRect = CalculateCenterCrop(source.PixelWidth, source.PixelHeight, BannerWidth, BannerHeight);
             CroppedBitmap cropped = new CroppedBitmap(source, cropRect);
 
-            // kirpilan gorseli hedef boyutta yeniden ciz
+            // görseli hedef boyutta çiz
             DrawingVisual visual = new DrawingVisual();
             using (DrawingContext context = visual.RenderOpen())
             {
@@ -395,7 +404,7 @@ namespace VOID_STORE.Controllers
 
         private Int32Rect CalculateCenterCrop(int sourceWidth, int sourceHeight, int targetWidth, int targetHeight)
         {
-            // banner icin merkez kirpma alani hesapla
+            // banner için merkez kırpma alanı
             double sourceRatio = (double)sourceWidth / sourceHeight;
             double targetRatio = (double)targetWidth / targetHeight;
 
@@ -413,7 +422,7 @@ namespace VOID_STORE.Controllers
 
         private string GetProfileRoot(int userId)
         {
-            // profil gorsellerini repo disinda tut
+            // profil klasör yolu (LocalAppData)
             string appDataRoot = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string profileRoot = Path.Combine(appDataRoot, "VOID STORE", "Profiles", $"user_{userId}");
             Directory.CreateDirectory(profileRoot);
@@ -422,7 +431,7 @@ namespace VOID_STORE.Controllers
 
         private string BuildPlayTimeText(int totalPlaySeconds)
         {
-            // saniyeyi okunur sure metnine cevir
+            // saniyeyi metne çevir
             if (totalPlaySeconds <= 0)
             {
                 return "-";
@@ -440,7 +449,7 @@ namespace VOID_STORE.Controllers
 
         private void ExecuteNonQuery(SqlConnection connection, SqlTransaction transaction, string query, params SqlParameter[] parameters)
         {
-            // ortak transaction icinde komut calistir
+            // transaction üzerinde komut çalıştır
             using SqlCommand command = new SqlCommand(query, connection, transaction);
             command.Parameters.AddRange(parameters);
             command.ExecuteNonQuery();

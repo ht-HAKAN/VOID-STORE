@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -214,6 +214,7 @@ namespace VOID_STORE.Views
         const video = document.getElementById('player');
         const centerToggle = document.getElementById('centerToggle');
         const tapFeedback = document.getElementById('tapFeedback');
+        // video ayarları (sağ tık, indirme vb. engelle)
         video.controls = false;
         video.disablePictureInPicture = true;
         video.setAttribute('controlsList', 'nodownload noplaybackrate noremoteplayback nofullscreen');
@@ -254,6 +255,7 @@ namespace VOID_STORE.Views
             }
         }
 
+        // video durumuna göre UI'ı güncelle
         function syncSurface() {
             const playing = !video.paused && !video.ended;
             shell.classList.toggle('is-playing', playing);
@@ -420,7 +422,7 @@ namespace VOID_STORE.Views
         private bool _isProfileEditMode;
         private string _pendingAvatarSourcePath = string.Empty;
 
-        // kaydedilmemis banner secimini tut
+        // geçici banner yolu
         private string _pendingBannerSourcePath = string.Empty;
         private readonly DispatcherTimer _trailerProgressTimer;
         private readonly DispatcherTimer _trailerOverlayTimer;
@@ -463,27 +465,32 @@ namespace VOID_STORE.Views
             sldTrailerVolume.Value = 0.7;
             sldTrailerProgress.IsEnabled = false;
 
+            // oturum kontrolü
             EnsureSession();
             ConfigureProfileArea();
             UpdateSearchPlaceholder();
             ShowStoreView();
+            // pencere ikonunu ayarla
             UpdateWindowGlyph();
 
             try
             {
-                // semalari guvenli blokta hazirla
+                // veritabanı şemalarını kontrol et
                 AdminGameSchemaManager.EnsureSchema();
                 UserCommerceSchemaManager.EnsureSchema();
+                FriendshipSchemaManager.EnsureSchema();
 
+                // ödeme ve indirme durumlarını yükle
                 InitializeCommerceState();
                 InitializeDownloadState();
                 BuildCategories();
+                // mağaza sayfasını yükle ve kolonları hizala
                 LoadStorePage();
                 Dispatcher.BeginInvoke(new Action(() => UpdateStoreGridColumns()), DispatcherPriority.Loaded);
             }
             catch (Exception ex)
             {
-                // veritabani yokken pencereyi dusurme
+                // veritabanı hatasını yakala
                 InitializeStoreFallbackState();
                 CustomError.ShowDialog($"Veritabanına bağlanılamadı: {ex.Message}", "Sistem Hatası", owner: this);
             }
@@ -491,7 +498,7 @@ namespace VOID_STORE.Views
 
         private void InitializeStoreFallbackState()
         {
-            // veritabani yoksa bos kabukla ac
+            // veritabanı yoksa boş başlat
             _categories = new List<StoreCategoryItem>
             {
                 new StoreCategoryItem { Name = "Tümü", IsSelected = true }
@@ -704,7 +711,7 @@ namespace VOID_STORE.Views
 
         private void EnsureSession()
         {
-            // oturum bilgisi yoksa misafir olarak baslat
+            // oturum yoksa misafir olarak başlat
             if (string.IsNullOrWhiteSpace(UserSession.DisplayName))
             {
                 UserSession.SetGuest();
@@ -713,7 +720,7 @@ namespace VOID_STORE.Views
 
         private void ConfigureProfileArea()
         {
-            // profil dairesindeki gosterimi hazirla
+            // profil alanı gösterimi
             txtProfileInitial.Text = UserSession.GetAvatarLetter();
             txtCategoryMenuLabel.Text = string.IsNullOrWhiteSpace(_selectedCategory) ? " Tümü" : $" {_selectedCategory}";
 
@@ -738,7 +745,7 @@ namespace VOID_STORE.Views
 
         private void BuildCategories()
         {
-            // kategori secim satirini doldur
+            // kategori listesini doldur
             _categories = new List<StoreCategoryItem>
             {
                 new StoreCategoryItem { Name = "Tümü", IsSelected = true }
@@ -756,14 +763,14 @@ namespace VOID_STORE.Views
 
         private void RefreshCategoryItems()
         {
-            // kategori chiplerini yenile
+            // kategorileri tazele
             icCategories.ItemsSource = null;
             icCategories.ItemsSource = _categories;
         }
 
         private void BuildLibraryCategories()
         {
-            // kutuphane tur secimini sahip olunan oyunlardan kur
+            // kütüphane kategorilerini oluştur
             List<string> categoryNames = _libraryItems
                 .Select(item => GameCategoryCatalog.Normalize(item.Category))
                 .Where(category => !string.IsNullOrWhiteSpace(category))
@@ -860,6 +867,7 @@ namespace VOID_STORE.Views
             DownloadsContentPanel.Visibility = Visibility.Collapsed;
             WalletContentPanel.Visibility = Visibility.Collapsed;
             ProfileContentPanel.Visibility = Visibility.Collapsed;
+            FriendsContentPanel.Visibility = Visibility.Collapsed;
             WishlistContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
@@ -943,6 +951,7 @@ namespace VOID_STORE.Views
             DownloadsContentPanel.Visibility = Visibility.Collapsed;
             WalletContentPanel.Visibility = Visibility.Collapsed;
             ProfileContentPanel.Visibility = Visibility.Collapsed;
+            FriendsContentPanel.Visibility = Visibility.Collapsed;
             WishlistContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Visible;
             DetailContentPanel.Visibility = Visibility.Visible;
@@ -1827,10 +1836,29 @@ namespace VOID_STORE.Views
             ShowDownloadsView();
         }
 
+        // arkadaslar popup'ini ac/kapat
         private void FriendsButton_Click(object sender, RoutedEventArgs e)
         {
-            // arkadas alani simdilik kabuk olarak durur
-            CustomError.ShowDialog("Arkadaş alanı henüz hazır değil.", "Bilgi", owner: this);
+            // misafire izin yok
+            if (UserSession.IsGuest)
+            {
+                CustomError.ShowDialog("Arkadaş özelliklerini kullanmak için giriş yapın.", "Bilgi", owner: this);
+                return;
+            }
+
+            // aciksa kapat
+            if (popFriendsMenu.IsOpen)
+            {
+                popFriendsMenu.IsOpen = false;
+                return;
+            }
+
+            // veriyi yenile, popup'i ac
+            RefreshFriendsPopup();
+            popFriendsMenu.IsOpen = true;
+
+            // arama kutusuna focus
+            _ = Dispatcher.BeginInvoke(new Action(() => txtFriendsQuickSearch.Focus()), DispatcherPriority.Input);
         }
 
         private void HeaderShellButton_Click(object sender, RoutedEventArgs e)
@@ -2002,6 +2030,19 @@ namespace VOID_STORE.Views
         // profil akışını yönet
         private readonly ProfileController _profileController = new();
 
+        // arkadaslik akislarini yonet
+        private readonly FriendshipController _friendshipController = new();
+
+        // baska profil aciksa id tutulur, null ise kendi profil
+        private int? _viewedProfileUserId;
+        private FriendshipRelationshipStatus _visitorRelationship = FriendshipRelationshipStatus.None;
+
+        // arkadaslar sayfasinda aktif tab
+        private string _friendsPageActiveTab = "friends";
+
+        // arkadaslar sayfasinda son yapilan arama metni
+        private string _friendsPageLastSearchQuery = string.Empty;
+
         // anlık sepet verisini tut
         private List<CartGameItem> _cartItems = new();
 
@@ -2126,6 +2167,7 @@ namespace VOID_STORE.Views
                 RefreshWalletPage();
                 RefreshProfilePage();
                 RefreshWishlistPage();
+                RefreshFriendsBadge();
             }
             catch (Exception ex)
             {
@@ -2837,6 +2879,7 @@ namespace VOID_STORE.Views
             DownloadsContentPanel.Visibility = Visibility.Collapsed;
             WalletContentPanel.Visibility = Visibility.Collapsed;
             ProfileContentPanel.Visibility = Visibility.Collapsed;
+            FriendsContentPanel.Visibility = Visibility.Collapsed;
             WishlistContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
@@ -2951,6 +2994,7 @@ namespace VOID_STORE.Views
             DownloadsContentPanel.Visibility = Visibility.Collapsed;
             WalletContentPanel.Visibility = Visibility.Collapsed;
             ProfileContentPanel.Visibility = Visibility.Collapsed;
+            FriendsContentPanel.Visibility = Visibility.Collapsed;
             WishlistContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
@@ -2978,6 +3022,7 @@ namespace VOID_STORE.Views
             DownloadsContentPanel.Visibility = Visibility.Collapsed;
             WalletContentPanel.Visibility = Visibility.Visible;
             ProfileContentPanel.Visibility = Visibility.Collapsed;
+            FriendsContentPanel.Visibility = Visibility.Collapsed;
             WishlistContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
@@ -3005,6 +3050,7 @@ namespace VOID_STORE.Views
             DownloadsContentPanel.Visibility = Visibility.Visible;
             WalletContentPanel.Visibility = Visibility.Collapsed;
             ProfileContentPanel.Visibility = Visibility.Collapsed;
+            FriendsContentPanel.Visibility = Visibility.Collapsed;
             WishlistContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
@@ -3237,10 +3283,12 @@ namespace VOID_STORE.Views
             // profil sayfasini tek akista ac
             StopTrailer();
             popCartMenu.IsOpen = false;
+            popFriendsMenu.IsOpen = false;
             _isLibraryViewActive = false;
             _isDownloadsViewActive = false;
             _isInstallViewActive = false;
             _isWishlistViewActive = false;
+            _viewedProfileUserId = null;
 
             StoreHeaderPanel.Visibility = Visibility.Visible;
             StoreContentPanel.Visibility = Visibility.Collapsed;
@@ -3248,6 +3296,7 @@ namespace VOID_STORE.Views
             DownloadsContentPanel.Visibility = Visibility.Collapsed;
             WalletContentPanel.Visibility = Visibility.Collapsed;
             WishlistContentPanel.Visibility = Visibility.Collapsed;
+            FriendsContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
             InstallContentPanel.Visibility = Visibility.Collapsed;
@@ -3274,6 +3323,7 @@ namespace VOID_STORE.Views
             DownloadsContentPanel.Visibility = Visibility.Collapsed;
             WalletContentPanel.Visibility = Visibility.Collapsed;
             ProfileContentPanel.Visibility = Visibility.Collapsed;
+            FriendsContentPanel.Visibility = Visibility.Collapsed;
             DetailHeaderPanel.Visibility = Visibility.Collapsed;
             DetailContentPanel.Visibility = Visibility.Collapsed;
             InstallContentPanel.Visibility = Visibility.Collapsed;
@@ -3316,7 +3366,21 @@ namespace VOID_STORE.Views
 
         private void RefreshProfilePage()
         {
-            // profil sayfasi verisini yenile
+            // baska kullanici profili mi kendi mi ayir
+            if (_viewedProfileUserId.HasValue && _viewedProfileUserId.Value != UserSession.UserId)
+            {
+                RenderVisitorProfilePage(_viewedProfileUserId.Value);
+                return;
+            }
+
+            // kendi profilini goster
+            ProfileOwnerActionsPanel.Visibility = Visibility.Visible;
+            btnProfileActionsMenu.Visibility = _isProfileEditMode ? Visibility.Collapsed : Visibility.Visible;
+            popProfileActionsMenu.IsOpen = false;
+            txtProfileRecentActivityHeader.Text = "Son Etkinlikler";
+            txtProfileRecentEmptyTitle.Text = "Henüz oynama verisi oluşmadı";
+            txtProfileRecentEmptyHint.Text = "Yüklü bir oyunu başlattığında son etkinlikler burada görünür";
+
             if (_profileSummary == null)
             {
                 // oturum ozetini varsayilan degerlerle doldur
@@ -3361,6 +3425,85 @@ namespace VOID_STORE.Views
             EmptyRecentPlaysState.Visibility = _profileRecentPlays.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private void RenderVisitorProfilePage(int targetUserId)
+        {
+            // ziyaretci modunda profil verisini getir
+            ProfileSummary summary;
+            List<ProfileRecentPlayItem> recentPlays;
+
+            try
+            {
+                summary = _profileController.GetProfileSummary(UserSession.UserId, targetUserId);
+                recentPlays = _profileController.GetRecentPlays(targetUserId).ToList();
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog($"Profil görüntülenemedi: {ex.Message}", "Sistem Hatası", owner: this);
+                _viewedProfileUserId = null;
+                ShowProfileView();
+                return;
+            }
+
+            // kendi duzenleme panelini kapat ve menu butonunu ziyaretci moduna al
+            ProfileOwnerActionsPanel.Visibility = Visibility.Collapsed;
+            btnProfileActionsMenu.Visibility = Visibility.Visible;
+            popProfileActionsMenu.IsOpen = false;
+            HideProfileOwnerControls();
+
+            txtProfilePageUsername.Text = summary.DisplayName;
+            txtProfilePageHandle.Text = $"@{summary.Username}";
+            txtProfilePageBio.Text = string.IsNullOrWhiteSpace(summary.Bio)
+                ? "Henüz profil açıklaması eklenmedi"
+                : summary.Bio;
+            txtProfilePageBioEdit.Text = string.Empty;
+            txtProfilePageBio.Visibility = Visibility.Visible;
+            txtProfilePageBioEdit.Visibility = Visibility.Collapsed;
+            txtProfileOwnedCount.Text = summary.OwnedGameCount.ToString();
+            txtProfilePlayTime.Text = BuildPlayTimeText(summary.TotalPlaySeconds);
+            txtProfileFriendsCount.Text = summary.FriendsCount.ToString();
+
+            ApplyProfileImagePreview(
+                imgProfileAvatarPage,
+                txtProfileAvatarInitial,
+                summary.AvatarPreview,
+                BuildAvatarLetterFromName(summary.DisplayName));
+            ApplyProfileBackdrop(summary.BannerPreview, summary.AvatarPreview);
+
+            // ziyaretci icin son etkinlikleri ve kisiye ozel metinleri goster
+            string visitorName = !string.IsNullOrWhiteSpace(summary.DisplayName)
+                ? summary.DisplayName
+                : summary.Username;
+            txtProfileRecentActivityHeader.Text = $"{visitorName} - Son Etkinlikler";
+            txtProfileRecentEmptyTitle.Text = $"{visitorName} henüz oyun oynamamış";
+            txtProfileRecentEmptyHint.Text = "Bu kullanıcı bir oyunu başlattığında etkinlikleri burada görünecek";
+
+            icProfileRecentPlays.ItemsSource = null;
+            icProfileRecentPlays.ItemsSource = recentPlays;
+            EmptyRecentPlaysState.Visibility = recentPlays.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            _visitorRelationship = summary.ViewerRelationship;
+        }
+
+        private void HideProfileOwnerControls()
+        {
+            // ziyaretci modunda duzenleme alanlarini gizle
+            btnProfilePageSave.Visibility = Visibility.Collapsed;
+            btnProfilePageCancel.Visibility = Visibility.Collapsed;
+            btnProfileSelectAvatar.Visibility = Visibility.Collapsed;
+            btnProfileSelectBanner.Visibility = Visibility.Collapsed;
+        }
+
+        private string BuildAvatarLetterFromName(string name)
+        {
+            // ziyaretci avatar fallback harfini hesapla
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return "?";
+            }
+
+            return name.Trim().Substring(0, 1).ToUpper(CultureInfo.GetCultureInfo("tr-TR"));
+        }
+
         private void ApplyProfileImagePreview(Image image, TextBlock fallbackText, BitmapImage? preview, string fallbackLetter)
         {
             // avatar yoksa harf goster
@@ -3392,9 +3535,20 @@ namespace VOID_STORE.Views
 
         private void EnterProfileEditMode(bool isEditMode)
         {
+            // ziyaretci modunda duzenleme acilamaz
+            if (_viewedProfileUserId.HasValue && _viewedProfileUserId.Value != UserSession.UserId)
+            {
+                _isProfileEditMode = false;
+                HideProfileOwnerControls();
+                txtProfilePageBio.Visibility = Visibility.Visible;
+                txtProfilePageBioEdit.Visibility = Visibility.Collapsed;
+                return;
+            }
+
             // profil alanini ayni sayfada duzenlenebilir yap
             _isProfileEditMode = isEditMode;
-            btnProfilePageEdit.Visibility = isEditMode ? Visibility.Collapsed : Visibility.Visible;
+            btnProfileActionsMenu.Visibility = isEditMode ? Visibility.Collapsed : Visibility.Visible;
+            popProfileActionsMenu.IsOpen = false;
             btnProfilePageSave.Visibility = isEditMode ? Visibility.Visible : Visibility.Collapsed;
             btnProfilePageCancel.Visibility = isEditMode ? Visibility.Visible : Visibility.Collapsed;
             btnProfileSelectAvatar.Visibility = isEditMode ? Visibility.Visible : Visibility.Collapsed;
@@ -3409,12 +3563,6 @@ namespace VOID_STORE.Views
             }
 
             RefreshProfilePage();
-        }
-
-        private void ProfilePageEditButton_Click(object sender, RoutedEventArgs e)
-        {
-            // profil duzenleme moduna gec
-            EnterProfileEditMode(true);
         }
 
         private void ProfilePageCancelButton_Click(object sender, RoutedEventArgs e)
@@ -3823,6 +3971,828 @@ namespace VOID_STORE.Views
         {
             // para formatını tek noktada sabitle
             return $"₺{amount.ToString("0.##", CultureInfo.GetCultureInfo("tr-TR"))}";
+        }
+
+        // popup listelerini + rozeti yenile
+        private void RefreshFriendsPopup()
+        {
+            if (UserSession.IsGuest)
+            {
+                UpdateFriendsBadge(0);
+                return;
+            }
+
+            try
+            {
+                IReadOnlyList<FriendRequestItem> incoming = _friendshipController.GetIncomingRequests(UserSession.UserId);
+                IReadOnlyList<FriendListItem> friends = _friendshipController.GetFriends(UserSession.UserId);
+
+                // popup icin kisa liste
+                List<FriendRequestItem> topIncoming = incoming.Take(3).ToList();
+                List<FriendListItem> topFriends = friends.Take(5).ToList();
+
+                // gelen istekler
+                icFriendsPopupIncoming.ItemsSource = null;
+                icFriendsPopupIncoming.ItemsSource = topIncoming;
+                txtFriendsPopupIncomingCount.Text = incoming.Count.ToString();
+                FriendsPopupIncomingEmpty.Visibility = topIncoming.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+
+                // arkadas listesi
+                icFriendsPopupList.ItemsSource = null;
+                icFriendsPopupList.ItemsSource = topFriends;
+                FriendsPopupListEmpty.Visibility = topFriends.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+
+                UpdateFriendsBadge(incoming.Count);
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog($"Arkadaş bilgileri alınamadı: {ex.Message}", "Sistem Hatası", owner: this);
+            }
+        }
+
+        // rozet sayısını tazele
+        private void RefreshFriendsBadge()
+        {
+            if (UserSession.IsGuest)
+            {
+                UpdateFriendsBadge(0);
+                return;
+            }
+
+            try
+            {
+                int count = _friendshipController.GetIncomingRequestCount(UserSession.UserId);
+                UpdateFriendsBadge(count);
+            }
+            catch
+            {
+                // hata durumunda sıfırla
+                UpdateFriendsBadge(0);
+            }
+        }
+
+        // bildirim rozetini güncelle (9+ sınırı)
+        private void UpdateFriendsBadge(int incomingCount)
+        {
+            if (incomingCount <= 0)
+            {
+                brdFriendsBadge.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            txtFriendsBadgeCount.Text = incomingCount > 9 ? "9+" : incomingCount.ToString();
+            brdFriendsBadge.Visibility = Visibility.Visible;
+        }
+
+        // enter ile hizli arama tetikle
+        private void FriendsQuickSearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                e.Handled = true;
+                PerformQuickFriendsSearch();
+            }
+        }
+
+        // arama kutusu placeholder ve temizle butonu yönetimi
+        private void FriendsQuickSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            bool empty = string.IsNullOrEmpty(txtFriendsQuickSearch.Text);
+
+            btnFriendsQuickSearchClear.Visibility = empty ? Visibility.Collapsed : Visibility.Visible;
+            txtFriendsQuickSearchPlaceholder.Visibility = empty ? Visibility.Visible : Visibility.Collapsed;
+
+            // alan temizlenince sonuçları gizle
+            if (string.IsNullOrWhiteSpace(txtFriendsQuickSearch.Text))
+            {
+                FriendsQuickSearchScroll.Visibility = Visibility.Collapsed;
+                FriendsQuickSearchEmpty.Visibility = Visibility.Collapsed;
+                txtFriendsQuickSearchHint.Text = "Kullanıcı adına göre ara";
+            }
+        }
+
+        // tam sayfa arama placeholder yonetimi
+        private void FriendsPageSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            txtFriendsPageSearchPlaceholder.Visibility = string.IsNullOrEmpty(txtFriendsPageSearch.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        // arama kutusunu sifirla
+        private void FriendsQuickSearchClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            txtFriendsQuickSearch.Text = string.Empty;
+            FriendsQuickSearchScroll.Visibility = Visibility.Collapsed;
+            FriendsQuickSearchEmpty.Visibility = Visibility.Collapsed;
+            txtFriendsQuickSearch.Focus();
+        }
+
+        // hızlı arama (max 6 sonuç)
+        private void PerformQuickFriendsSearch()
+        {
+            string query = (txtFriendsQuickSearch.Text ?? string.Empty).Trim();
+
+            // en az 2 karakter
+            if (query.Length < 2)
+            {
+                FriendsQuickSearchScroll.Visibility = Visibility.Collapsed;
+                FriendsQuickSearchEmpty.Visibility = Visibility.Visible;
+                txtFriendsQuickSearchEmpty.Text = "En az 2 karakter gir";
+                return;
+            }
+
+            try
+            {
+                IReadOnlyList<FriendSearchResultItem> results = _friendshipController
+                    .SearchUsers(UserSession.UserId, query, 6);
+
+                icFriendsQuickSearch.ItemsSource = null;
+                icFriendsQuickSearch.ItemsSource = results;
+
+                // sonuç durumuna göre görünürlük ayarla
+                if (results.Count == 0)
+                {
+                    FriendsQuickSearchScroll.Visibility = Visibility.Collapsed;
+                    FriendsQuickSearchEmpty.Visibility = Visibility.Visible;
+                    txtFriendsQuickSearchEmpty.Text = "Eşleşen kullanıcı bulunamadı";
+                }
+                else
+                {
+                    FriendsQuickSearchScroll.Visibility = Visibility.Visible;
+                    FriendsQuickSearchEmpty.Visibility = Visibility.Collapsed;
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog($"Arama başarısız: {ex.Message}", "Sistem Hatası", owner: this);
+            }
+        }
+
+        // hizli arama karti -> profil sayfasi
+        private void FriendsQuickResultProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is int userId)
+            {
+                popFriendsMenu.IsOpen = false;
+                OpenUserProfile(userId);
+            }
+        }
+
+        // popup icinden kabul
+        private void FriendsPopupAcceptButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button button || button.Tag is not int requesterId)
+            {
+                return;
+            }
+
+            try
+            {
+                _friendshipController.AcceptRequest(UserSession.UserId, requesterId);
+                RefreshFriendsPopup();
+
+                // ana sayfa açıksa orayı da tazele
+                if (FriendsContentPanel.Visibility == Visibility.Visible)
+                {
+                    LoadFriendsTab(_friendsPageActiveTab);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        // popup icinden reddet
+        private void FriendsPopupRejectButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button button || button.Tag is not int requesterId)
+            {
+                return;
+            }
+
+            try
+            {
+                _friendshipController.RejectRequest(UserSession.UserId, requesterId);
+                RefreshFriendsPopup();
+                if (FriendsContentPanel.Visibility == Visibility.Visible)
+                {
+                    LoadFriendsTab(_friendsPageActiveTab);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        private void FriendsPopupOpenProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            // arkada kartından profil aç
+            if (sender is Button button && button.Tag is int userId)
+            {
+                popFriendsMenu.IsOpen = false;
+                OpenUserProfile(userId);
+            }
+        }
+
+        private void FriendsGoFullPageButton_Click(object sender, RoutedEventArgs e)
+        {
+            // tam sayfaya geç
+            popFriendsMenu.IsOpen = false;
+            ShowFriendsView();
+        }
+
+        private void ShowFriendsView()
+        {
+            // arkadaş yönetim sayfasını aç
+            if (UserSession.IsGuest)
+            {
+                CustomError.ShowDialog("Arkadaş özelliklerini kullanmak için giriş yapın.", "Bilgi", owner: this);
+                return;
+            }
+
+            StopTrailer();
+            popCartMenu.IsOpen = false;
+            popFriendsMenu.IsOpen = false;
+            _isLibraryViewActive = false;
+            _isDownloadsViewActive = false;
+            _isInstallViewActive = false;
+            _isWishlistViewActive = false;
+            _viewedProfileUserId = null;
+
+            StoreHeaderPanel.Visibility = Visibility.Visible;
+            StoreContentPanel.Visibility = Visibility.Collapsed;
+            LibraryContentPanel.Visibility = Visibility.Collapsed;
+            DownloadsContentPanel.Visibility = Visibility.Collapsed;
+            WalletContentPanel.Visibility = Visibility.Collapsed;
+            WishlistContentPanel.Visibility = Visibility.Collapsed;
+            ProfileContentPanel.Visibility = Visibility.Collapsed;
+            DetailHeaderPanel.Visibility = Visibility.Collapsed;
+            DetailContentPanel.Visibility = Visibility.Collapsed;
+            InstallContentPanel.Visibility = Visibility.Collapsed;
+            FriendsContentPanel.Visibility = Visibility.Visible;
+
+            ClearSidebarSelection();
+            _friendsPageActiveTab = "friends";
+            LoadFriendsTab(_friendsPageActiveTab);
+        }
+
+        private void FriendsTabButton_Click(object sender, RoutedEventArgs e)
+        {
+            // aktif sekmeyi belirle
+            if (sender is Button button)
+            {
+                string tag = button.Name switch
+                {
+                    "btnFriendsTabFriends" => "friends",
+                    "btnFriendsTabIncoming" => "incoming",
+                    "btnFriendsTabOutgoing" => "outgoing",
+                    "btnFriendsTabSearch" => "search",
+                    _ => "friends"
+                };
+
+                _friendsPageActiveTab = tag;
+                LoadFriendsTab(tag);
+            }
+        }
+
+        private void LoadFriendsTab(string tab)
+        {
+            // sekmeye göre listeyi yükle
+            UpdateFriendsTabVisibility(tab);
+            UpdateFriendsTabButtonsAppearance(tab);
+
+            try
+            {
+                switch (tab)
+                {
+                    case "friends":
+                        RefreshFriendsPageFriends();
+                        break;
+                    case "incoming":
+                        RefreshFriendsPageIncoming();
+                        break;
+                    case "outgoing":
+                        RefreshFriendsPageOutgoing();
+                        break;
+                    case "search":
+                        RefreshFriendsPageSearch();
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog($"Arkadaş verileri yüklenemedi: {ex.Message}", "Sistem Hatası", owner: this);
+            }
+        }
+
+        private void UpdateFriendsTabVisibility(string tab)
+        {
+            // aktif sekme içeriğini göster
+            FriendsTabFriendsHost.Visibility = tab == "friends" ? Visibility.Visible : Visibility.Collapsed;
+            FriendsTabIncomingHost.Visibility = tab == "incoming" ? Visibility.Visible : Visibility.Collapsed;
+            FriendsTabOutgoingHost.Visibility = tab == "outgoing" ? Visibility.Visible : Visibility.Collapsed;
+            FriendsTabSearchHost.Visibility = tab == "search" ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void UpdateFriendsTabButtonsAppearance(string tab)
+        {
+            // aktif sekme butonu görünümü
+            foreach ((string tag, Button button) in new (string, Button)[]
+            {
+                ("friends", btnFriendsTabFriends),
+                ("incoming", btnFriendsTabIncoming),
+                ("outgoing", btnFriendsTabOutgoing),
+                ("search", btnFriendsTabSearch)
+            })
+            {
+                button.Tag = string.Equals(tag, tab, StringComparison.Ordinal) ? "active" : tag;
+            }
+        }
+
+        private void RefreshFriendsPageFriends()
+        {
+            // arkadaşlarım listesi
+            IReadOnlyList<FriendListItem> friends = _friendshipController.GetFriends(UserSession.UserId);
+            icFriendsPageFriends.ItemsSource = null;
+            icFriendsPageFriends.ItemsSource = friends;
+            FriendsTabFriendsEmpty.Visibility = friends.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void RefreshFriendsPageIncoming()
+        {
+            // gelen istekler listesi
+            IReadOnlyList<FriendRequestItem> incoming = _friendshipController.GetIncomingRequests(UserSession.UserId);
+            icFriendsPageIncoming.ItemsSource = null;
+            icFriendsPageIncoming.ItemsSource = incoming;
+            FriendsTabIncomingEmpty.Visibility = incoming.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+            UpdateFriendsBadge(incoming.Count);
+        }
+
+        private void RefreshFriendsPageOutgoing()
+        {
+            // gönderilen istekler listesi
+            IReadOnlyList<FriendRequestItem> outgoing = _friendshipController.GetOutgoingRequests(UserSession.UserId);
+            icFriendsPageOutgoing.ItemsSource = null;
+            icFriendsPageOutgoing.ItemsSource = outgoing;
+            FriendsTabOutgoingEmpty.Visibility = outgoing.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void RefreshFriendsPageSearch()
+        {
+            // arama sekmesi sonuçları
+            if (string.IsNullOrWhiteSpace(_friendsPageLastSearchQuery))
+            {
+                icFriendsPageSearch.ItemsSource = null;
+                FriendsTabSearchEmpty.Visibility = Visibility.Visible;
+                txtFriendsTabSearchEmptyTitle.Text = "Aramaya başla";
+                txtFriendsTabSearchEmptyMessage.Text = "Yeni arkadaşlar bulmak için kullanıcı adı gir.";
+                return;
+            }
+
+            IReadOnlyList<FriendSearchResultItem> results = _friendshipController
+                .SearchUsers(UserSession.UserId, _friendsPageLastSearchQuery, 40);
+            icFriendsPageSearch.ItemsSource = null;
+            icFriendsPageSearch.ItemsSource = results;
+
+            if (results.Count == 0)
+            {
+                FriendsTabSearchEmpty.Visibility = Visibility.Visible;
+                txtFriendsTabSearchEmptyTitle.Text = "Sonuç bulunamadı";
+                txtFriendsTabSearchEmptyMessage.Text = "Farklı bir kullanıcı adı dene.";
+            }
+            else
+            {
+                FriendsTabSearchEmpty.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void FriendsPageSearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            // enter ile ara
+            if (e.Key == Key.Enter)
+            {
+                e.Handled = true;
+                ExecuteFriendsPageSearch();
+            }
+        }
+
+        private void FriendsPageSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            ExecuteFriendsPageSearch();
+        }
+
+        private void ExecuteFriendsPageSearch()
+        {
+            // aramayı çalıştır
+            string query = (txtFriendsPageSearch.Text ?? string.Empty).Trim();
+            if (query.Length < 2)
+            {
+                CustomError.ShowDialog("Aramak için en az 2 karakter gir.", "Bilgi", owner: this);
+                return;
+            }
+
+            _friendsPageLastSearchQuery = query;
+            RefreshFriendsPageSearch();
+        }
+
+        private void FriendsPageOpenProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            // profil aç
+            if (sender is Button button && button.Tag is int userId)
+            {
+                OpenUserProfile(userId);
+            }
+        }
+
+        private void FriendsPageRemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            // arkadaşlıktan çıkar
+            if (sender is not Button button || button.Tag is not int userId)
+            {
+                return;
+            }
+
+            try
+            {
+                _friendshipController.RemoveFriend(UserSession.UserId, userId);
+                RefreshFriendsPageFriends();
+                RefreshFriendsPopup();
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        private void FriendsPageAcceptButton_Click(object sender, RoutedEventArgs e)
+        {
+            // isteği kabul et
+            if (sender is not Button button || button.Tag is not int requesterId)
+            {
+                return;
+            }
+
+            try
+            {
+                _friendshipController.AcceptRequest(UserSession.UserId, requesterId);
+                RefreshFriendsPageIncoming();
+                RefreshFriendsPopup();
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        private void FriendsPageRejectButton_Click(object sender, RoutedEventArgs e)
+        {
+            // gelen istegi sil
+            if (sender is not Button button || button.Tag is not int requesterId)
+            {
+                return;
+            }
+
+            try
+            {
+                _friendshipController.RejectRequest(UserSession.UserId, requesterId);
+                RefreshFriendsPageIncoming();
+                RefreshFriendsPopup();
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        private void FriendsPageCancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            // isteği iptal et
+            if (sender is not Button button || button.Tag is not int targetUserId)
+            {
+                return;
+            }
+
+            try
+            {
+                _friendshipController.CancelOutgoingRequest(UserSession.UserId, targetUserId);
+                RefreshFriendsPageOutgoing();
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        private void FriendsPageSearchActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            // arama sonucu aksiyonu
+            if (sender is not Button button || button.Tag is not int userId)
+            {
+                return;
+            }
+
+            try
+            {
+                FriendshipRelationshipStatus status = _friendshipController.GetRelationship(UserSession.UserId, userId);
+                switch (status)
+                {
+                    case FriendshipRelationshipStatus.None:
+                        _friendshipController.SendRequest(UserSession.UserId, userId);
+                        break;
+                    case FriendshipRelationshipStatus.PendingSent:
+                        _friendshipController.CancelOutgoingRequest(UserSession.UserId, userId);
+                        break;
+                    case FriendshipRelationshipStatus.PendingReceived:
+                        _friendshipController.AcceptRequest(UserSession.UserId, userId);
+                        break;
+                    default:
+                        return;
+                }
+
+                RefreshFriendsPageSearch();
+                RefreshFriendsPopup();
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        private void FriendsPageSearchProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            // profile git
+            if (sender is Button button && button.Tag is int userId)
+            {
+                OpenUserProfile(userId);
+            }
+        }
+
+        private void OpenUserProfile(int userId)
+        {
+            // başka kullanıcı profilini aç (salt-okunur)
+            if (userId <= 0)
+            {
+                return;
+            }
+
+            if (userId == UserSession.UserId)
+            {
+                ShowProfileView();
+                return;
+            }
+
+            _viewedProfileUserId = userId;
+
+            StopTrailer();
+            popCartMenu.IsOpen = false;
+            popFriendsMenu.IsOpen = false;
+            _isLibraryViewActive = false;
+            _isDownloadsViewActive = false;
+            _isInstallViewActive = false;
+            _isWishlistViewActive = false;
+
+            StoreHeaderPanel.Visibility = Visibility.Visible;
+            StoreContentPanel.Visibility = Visibility.Collapsed;
+            LibraryContentPanel.Visibility = Visibility.Collapsed;
+            DownloadsContentPanel.Visibility = Visibility.Collapsed;
+            WalletContentPanel.Visibility = Visibility.Collapsed;
+            WishlistContentPanel.Visibility = Visibility.Collapsed;
+            FriendsContentPanel.Visibility = Visibility.Collapsed;
+            DetailHeaderPanel.Visibility = Visibility.Collapsed;
+            DetailContentPanel.Visibility = Visibility.Collapsed;
+            InstallContentPanel.Visibility = Visibility.Collapsed;
+            ProfileContentPanel.Visibility = Visibility.Visible;
+
+            ClearSidebarSelection();
+            RefreshProfilePage();
+        }
+
+        // aksiyon menüsünü aç
+        private void ProfileActionsMenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            BuildProfileActionsMenu();
+            popProfileActionsMenu.IsOpen = true;
+        }
+
+        // menü öğelerini oluştur
+        private void BuildProfileActionsMenu()
+        {
+            ProfileActionsMenuContent.Children.Clear();
+
+            // ziyaretçi kontrolü
+            bool isVisitor = _viewedProfileUserId.HasValue && _viewedProfileUserId.Value != UserSession.UserId;
+            if (isVisitor)
+            {
+                switch (_visitorRelationship)
+                {
+                    // iliski yok -> arkadas ekle
+                    case FriendshipRelationshipStatus.None:
+                        ProfileActionsMenuContent.Children.Add(CreateProfileMenuItem("\uE8FA", "Arkadaş Ekle", "#82E4B0", ProfileMenuSendRequest_Click));
+                        break;
+
+                    // giden istek -> iptal et
+                    case FriendshipRelationshipStatus.PendingSent:
+                        ProfileActionsMenuContent.Children.Add(CreateProfileMenuItem("\uE711", "İsteği İptal Et", "#E0555F", ProfileMenuCancelRequest_Click));
+                        break;
+
+                    // gelen istek -> kabul / reddet
+                    case FriendshipRelationshipStatus.PendingReceived:
+                        ProfileActionsMenuContent.Children.Add(CreateProfileMenuItem("\uE73E", "İsteği Kabul Et", "#82E4B0", ProfileMenuAcceptRequest_Click));
+                        ProfileActionsMenuContent.Children.Add(CreateProfileMenuItem("\uE711", "İsteği Reddet", "#E0555F", ProfileMenuRejectRequest_Click));
+                        break;
+
+                    // arkadaşlıktan çıkar
+                    case FriendshipRelationshipStatus.Friends:
+                        ProfileActionsMenuContent.Children.Add(CreateProfileMenuItem("\uE8BB", "Arkadaşı Kaldır", "#E0555F", ProfileMenuRemoveFriend_Click));
+                        break;
+                }
+                return;
+            }
+
+            // kendi profili -> duzenle
+            ProfileActionsMenuContent.Children.Add(CreateProfileMenuItem("\uE70F", "Profili Düzenle", "#F4F7FB", ProfileMenuEdit_Click));
+        }
+
+        // menü öğesi oluşturucu
+        private Button CreateProfileMenuItem(string icon, string text, string accentHex, RoutedEventHandler handler)
+        {
+            Button button = new Button
+            {
+                Style = (Style)FindResource("PopupMenuButton"),
+                Height = 40,
+                HorizontalContentAlignment = System.Windows.HorizontalAlignment.Stretch,
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+
+            // ikon ve metin paneli
+            StackPanel row = new StackPanel { Orientation = Orientation.Horizontal };
+
+            // ikon (vurgu renginde)
+            TextBlock iconBlock = new TextBlock
+            {
+                Text = icon,
+                FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"),
+                FontSize = 14,
+                Margin = new Thickness(0, 0, 12, 0),
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                Foreground = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString(accentHex)!
+            };
+
+            // metin (her zaman beyaz)
+            TextBlock textBlock = new TextBlock
+            {
+                Text = text,
+                FontSize = 13,
+                FontWeight = FontWeights.SemiBold,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                Foreground = System.Windows.Media.Brushes.White
+            };
+
+            row.Children.Add(iconBlock);
+            row.Children.Add(textBlock);
+            button.Content = row;
+            button.Click += handler;
+            return button;
+        }
+
+        // düzenleme moduna geç
+        private void ProfileMenuEdit_Click(object sender, RoutedEventArgs e)
+        {
+            popProfileActionsMenu.IsOpen = false;
+            EnterProfileEditMode(true);
+        }
+
+        // istek gönder
+        private void ProfileMenuSendRequest_Click(object sender, RoutedEventArgs e)
+        {
+            popProfileActionsMenu.IsOpen = false;
+            if (!_viewedProfileUserId.HasValue)
+            {
+                return;
+            }
+
+            int targetUserId = _viewedProfileUserId.Value;
+            try
+            {
+                _friendshipController.SendRequest(UserSession.UserId, targetUserId);
+                RefreshProfilePage();
+                RefreshFriendsPopup();
+                CustomError.ShowDialog("Arkadaşlık isteği gönderildi.", "Arkadaşlık", isSuccess: true, owner: this);
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        // gönderilen isteği iptal et
+        private void ProfileMenuCancelRequest_Click(object sender, RoutedEventArgs e)
+        {
+            popProfileActionsMenu.IsOpen = false;
+            if (!_viewedProfileUserId.HasValue)
+            {
+                return;
+            }
+
+            if (!CustomConfirm.ShowDialog("Arkadaşlık İsteği", "Gönderdiğin arkadaşlık isteğini iptal etmek istediğine emin misin?", "İptal Et", owner: this))
+            {
+                return;
+            }
+
+            int targetUserId = _viewedProfileUserId.Value;
+            try
+            {
+                _friendshipController.CancelOutgoingRequest(UserSession.UserId, targetUserId);
+                RefreshProfilePage();
+                RefreshFriendsPopup();
+                CustomError.ShowDialog("Arkadaşlık isteği iptal edildi.", "Arkadaşlık", isSuccess: true, owner: this);
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        // gelen istegi kabul et
+        private void ProfileMenuAcceptRequest_Click(object sender, RoutedEventArgs e)
+        {
+            popProfileActionsMenu.IsOpen = false;
+            if (!_viewedProfileUserId.HasValue)
+            {
+                return;
+            }
+
+            int targetUserId = _viewedProfileUserId.Value;
+            try
+            {
+                _friendshipController.AcceptRequest(UserSession.UserId, targetUserId);
+                RefreshProfilePage();
+                RefreshFriendsPopup();
+                CustomError.ShowDialog("Artık arkadaşsınız.", "Arkadaşlık", isSuccess: true, owner: this);
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        // isteği reddet
+        private void ProfileMenuRejectRequest_Click(object sender, RoutedEventArgs e)
+        {
+            popProfileActionsMenu.IsOpen = false;
+            if (!_viewedProfileUserId.HasValue)
+            {
+                return;
+            }
+
+            if (!CustomConfirm.ShowDialog("Arkadaşlık İsteği", "Gelen arkadaşlık isteğini reddetmek istediğine emin misin?", "Reddet", owner: this))
+            {
+                return;
+            }
+
+            int targetUserId = _viewedProfileUserId.Value;
+            try
+            {
+                _friendshipController.RejectRequest(UserSession.UserId, targetUserId);
+                RefreshProfilePage();
+                RefreshFriendsPopup();
+                CustomError.ShowDialog("Arkadaşlık isteği reddedildi.", "Arkadaşlık", isSuccess: true, owner: this);
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
+        }
+
+        // arkadaşlıktan çıkar
+        private void ProfileMenuRemoveFriend_Click(object sender, RoutedEventArgs e)
+        {
+            popProfileActionsMenu.IsOpen = false;
+            if (!_viewedProfileUserId.HasValue)
+            {
+                return;
+            }
+
+            if (!CustomConfirm.ShowDialog("Arkadaşı Kaldır", "Bu kişiyi arkadaş listenden kaldırmak istediğine emin misin?", "Kaldır", owner: this))
+            {
+                return;
+            }
+
+            int targetUserId = _viewedProfileUserId.Value;
+            try
+            {
+                _friendshipController.RemoveFriend(UserSession.UserId, targetUserId);
+                RefreshProfilePage();
+                RefreshFriendsPopup();
+                CustomError.ShowDialog("Kişi arkadaş listenden kaldırıldı.", "Arkadaşlık", isSuccess: true, owner: this);
+            }
+            catch (Exception ex)
+            {
+                CustomError.ShowDialog(ex.Message, "Bilgi", owner: this);
+            }
         }
     }
 }

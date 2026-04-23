@@ -31,5 +31,8 @@ namespace VOID_STORE.Models
         public int TotalPlaySeconds { get; set; }
 
         public int FriendsCount { get; set; }
+
+        // baska profilin goruntulendigi durumda mevcut durumunu tasir
+        public FriendshipRelationshipStatus ViewerRelationship { get; set; } = FriendshipRelationshipStatus.Self;
     }
 }

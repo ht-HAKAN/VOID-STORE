@@ -313,6 +313,10 @@ namespace VOID_STORE.Controllers
                 }
 
                 // mevcut durum kontrolleri
+                string existingStatus = existing["Status"]?.ToString() ?? string.Empty;
+                int existingRequester = Convert.ToInt32(existing["RequesterUserId"], CultureInfo.InvariantCulture);
+
+                // zaten arkadaş
                 if (existingStatus == StatusAccepted)
                 {
                     throw new InvalidOperationException("Bu kullanıcı zaten arkadaşınız.");
@@ -481,7 +485,8 @@ namespace VOID_STORE.Controllers
             return items;
         }
 
-        // satır verisini ilişki durumuna çevir        private FriendshipRelationshipStatus ResolveRelationshipFromRow(DataRow row, int viewerUserId, int targetUserId)
+        // satır verisini ilişki durumuna çevir
+        private FriendshipRelationshipStatus ResolveRelationshipFromRow(DataRow row, int viewerUserId, int targetUserId)
         {
             // arama alias (RelStatus/RelRequester) ya da direkt kolon adi
             string statusColumn = row.Table.Columns.Contains("Status") ? "Status" : "RelStatus";

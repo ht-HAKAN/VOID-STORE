@@ -3748,6 +3748,13 @@ namespace VOID_STORE.Views
 
         private void WalletMenuButton_Click(object sender, RoutedEventArgs e)
         {
+            // misafir kullanıcı bakiye işlemlerine giremez
+            if (UserSession.IsGuest)
+            {
+                CustomError.ShowDialog("Bakiye işlemleri için giriş yapmalısınız.", "Bilgi", owner: this);
+                return;
+            }
+
             // header bakiye alanından sayfaya git
             ShowWalletView();
         }

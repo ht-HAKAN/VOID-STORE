@@ -15,48 +15,105 @@
         <Style x:Key="ProfileShellButton" TargetType="Button" BasedOn="{StaticResource HeaderIconButton}">
             <Setter Property="Padding" Value="0"/>
         </Style>
-        <Style x:Key="PopupMenuButton" TargetType="Button"><Setter Property="Height" Value="38"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#F3F4F6"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="14,0"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="10"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#17171C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
-        <Style x:Key="CategoryMenuItemButton" TargetType="Button"><Setter Property="Height" Value="40"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#F3F4F6"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="14,0"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Margin" Value="0,0,0,6"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="12"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#17171C"/></Trigger><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></DataTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
-        <Style x:Key="SidebarButton" TargetType="Button"><Setter Property="Height" Value="46"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#C8CDD5"/><Setter Property="BorderThickness" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Padding" Value="18,0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" CornerRadius="15"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/></Border></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="PopupMenuButton" TargetType="Button"><Setter Property="Height" Value="38"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#F3F4F6"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="14,0"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="4"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#17171C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="CategoryMenuItemButton" TargetType="Button"><Setter Property="Height" Value="40"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#F3F4F6"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="14,0"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Margin" Value="0,0,0,6"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="4"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#17171C"/></Trigger><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></DataTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="SidebarButton" TargetType="Button"><Setter Property="Height" Value="46"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#C8CDD5"/><Setter Property="BorderThickness" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Padding" Value="18,0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" CornerRadius="4"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/></Border></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="TopNavButton" TargetType="Button"><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#E7EAF0"/><Setter Property="BorderThickness" Value="0"/><Setter Property="FontSize" Value="15"/><Setter Property="FontWeight" Value="Medium"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="0"/><Setter Property="Margin" Value="0,0,24,0"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Background="Transparent" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="#FFFFFF"/></Trigger></Style.Triggers></Style>
         <Style x:Key="CategoryMenuFlatButton" TargetType="Button" BasedOn="{StaticResource TopNavButton}"><Setter Property="Margin" Value="0,0,24,0"/><Setter Property="Padding" Value="0"/></Style>
         <Style x:Key="TopActionIconButton" TargetType="Button"><Setter Property="Width" Value="28"/><Setter Property="Height" Value="28"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#D8DCE3"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Background="Transparent"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="#FFFFFF"/></Trigger></Style.Triggers></Style>
         <Style x:Key="HeaderBalanceButton" TargetType="Button">
             <Setter Property="Height" Value="42"/>
             <Setter Property="Padding" Value="14,0"/>
-            <Setter Property="Background" Value="#151519"/>
             <Setter Property="Foreground" Value="#F6F7FB"/>
-            <Setter Property="BorderBrush" Value="#1E1E24"/>
-            <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Surface"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="10">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              Margin="{TemplateBinding Padding}"/>
-                        </Border>
+                        <Grid>
+                            <Border x:Name="Surface" CornerRadius="4" Background="#151519" BorderBrush="#1E1E24" BorderThickness="1"/>
+                            <Border x:Name="HoverGlow" CornerRadius="4" Background="#1C1C22" BorderBrush="#353C47" BorderThickness="1" Opacity="0"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                        </Grid>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Surface" Property="Background" Value="#19191D"/>
-                                <Setter TargetName="Surface" Property="BorderBrush" Value="#26262D"/>
-                            </Trigger>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="HoverGlow" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="HoverGlow" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="CategoryChipButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="MinWidth" Value="76"/><Setter Property="Background" Value="#101014"/><Setter Property="Foreground" Value="#E7EAF0"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="18,0"/><Setter Property="Margin" Value="0,0,12,12"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="7"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#15181E"/><Setter TargetName="Surface" Property="BorderBrush" Value="#353C47"/></Trigger><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="Surface" Property="Background" Value="#101014"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#FFFFFF"/></DataTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
-        <Style x:Key="StoreCardButton" TargetType="Button"><Setter Property="Margin" Value="8,0,8,26"/><Setter Property="Padding" Value="0"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="HorizontalAlignment" Value="Stretch"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style>
-        <Style x:Key="GhostActionButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="Padding" Value="18,0"/><Setter Property="Background" Value="#111114"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#16161A"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2A2A31"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
-        <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="48"/><Setter Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/><Setter Property="BorderBrush" Value="#FFFFFF"/><Setter Property="FontSize" Value="14"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="14"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.94"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
-        <Style x:Key="InstallHeroPrimaryActionButton" TargetType="Button" BasedOn="{StaticResource PrimaryActionButton}"><Setter Property="Height" Value="58"/><Setter Property="Padding" Value="26,0"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.92"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="CategoryChipButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="MinWidth" Value="76"/><Setter Property="Background" Value="#101014"/><Setter Property="Foreground" Value="#E7EAF0"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="18,0"/><Setter Property="Margin" Value="0,0,12,12"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#15181E"/><Setter TargetName="Surface" Property="BorderBrush" Value="#353C47"/></Trigger><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter TargetName="Surface" Property="Background" Value="#101014"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#FFFFFF"/></DataTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="StoreCardButton" TargetType="Button">
+            <Setter Property="Margin" Value="8,0,8,26"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border RenderTransformOrigin="0.5,0.5" Background="Transparent">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.03" Duration="0:0:0.15">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.03" Duration="0:0:0.15">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.25">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.25">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="GhostActionButton" TargetType="Button"><Setter Property="Height" Value="42"/><Setter Property="Padding" Value="18,0"/><Setter Property="Background" Value="#111114"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Grid><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4"/><Border x:Name="HoverLayer" Background="#FFFFFF" Opacity="0" CornerRadius="4"/><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Grid><ControlTemplate.Triggers><EventTrigger RoutedEvent="MouseEnter"><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="HoverLayer" Storyboard.TargetProperty="Opacity" To="0.06" Duration="0:0:0.15"/></Storyboard></BeginStoryboard></EventTrigger><EventTrigger RoutedEvent="MouseLeave"><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="HoverLayer" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3"/></Storyboard></BeginStoryboard></EventTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="48"/><Setter Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/><Setter Property="BorderBrush" Value="#FFFFFF"/><Setter Property="FontSize" Value="14"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Grid><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4"/><Border x:Name="HoverLayer" Background="#000000" Opacity="0" CornerRadius="4"/><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Grid><ControlTemplate.Triggers><EventTrigger RoutedEvent="MouseEnter"><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="HoverLayer" Storyboard.TargetProperty="Opacity" To="0.1" Duration="0:0:0.15"/></Storyboard></BeginStoryboard></EventTrigger><EventTrigger RoutedEvent="MouseLeave"><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="HoverLayer" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3"/></Storyboard></BeginStoryboard></EventTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="InstallHeroPrimaryActionButton" TargetType="Button" BasedOn="{StaticResource PrimaryActionButton}"><Setter Property="Height" Value="58"/><Setter Property="Padding" Value="26,0"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Grid><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4"/><Border x:Name="HoverLayer" Background="#000000" Opacity="0" CornerRadius="4"/><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Grid><ControlTemplate.Triggers><EventTrigger RoutedEvent="MouseEnter"><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="HoverLayer" Storyboard.TargetProperty="Opacity" To="0.1" Duration="0:0:0.15"/></Storyboard></BeginStoryboard></EventTrigger><EventTrigger RoutedEvent="MouseLeave"><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="HoverLayer" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3"/></Storyboard></BeginStoryboard></EventTrigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="FriendsTabChipButton" TargetType="Button">
             <Setter Property="Height" Value="42"/>
             <Setter Property="Padding" Value="20,0"/>
@@ -71,7 +128,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -103,7 +160,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -130,7 +187,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -145,7 +202,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="InstallHeroSecondaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="58"/><Setter Property="Padding" Value="26,0"/><Setter Property="Background" Value="#12161C"/><Setter Property="BorderBrush" Value="#2A313D"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#171C24"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style x:Key="InstallHeroSecondaryActionButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Height" Value="58"/><Setter Property="Padding" Value="26,0"/><Setter Property="Background" Value="#12161C"/><Setter Property="BorderBrush" Value="#2A313D"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#171C24"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
         <Style x:Key="DownloadProgressBar" TargetType="ProgressBar">
             <Setter Property="Height" Value="8"/>
             <Setter Property="Foreground" Value="#FFFFFF"/>
@@ -211,12 +268,12 @@
             </Setter>
         </Style>
         <Style x:Key="PageButton" TargetType="Button" BasedOn="{StaticResource GhostActionButton}"><Setter Property="Width" Value="42"/><Setter Property="Padding" Value="0"/></Style>
-        <Style x:Key="TagChipBorder" TargetType="Border"><Setter Property="Background" Value="#11151C"/><Setter Property="BorderBrush" Value="#232B36"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="18"/><Setter Property="Padding" Value="16,9"/><Setter Property="Margin" Value="0,0,12,12"/></Style>
+        <Style x:Key="TagChipBorder" TargetType="Border"><Setter Property="Background" Value="#11151C"/><Setter Property="BorderBrush" Value="#232B36"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="4"/><Setter Property="Padding" Value="16,9"/><Setter Property="Margin" Value="0,0,12,12"/></Style>
         <Style x:Key="DetailSectionTitle" TargetType="TextBlock"><Setter Property="Foreground" Value="White"/><Setter Property="FontSize" Value="26"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
         <Style x:Key="DetailBodyText" TargetType="TextBlock"><Setter Property="Foreground" Value="#CCD3DD"/><Setter Property="FontSize" Value="14"/><Setter Property="LineHeight" Value="24"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
         <Style x:Key="DetailMetaLabel" TargetType="TextBlock"><Setter Property="Foreground" Value="#6F7783"/><Setter Property="FontSize" Value="11"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
         <Style x:Key="DetailMetaValue" TargetType="TextBlock"><Setter Property="Foreground" Value="#F4F7FB"/><Setter Property="FontSize" Value="14"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
-        <Style x:Key="ProfileStatBorder" TargetType="Border"><Setter Property="Background" Value="#9110151D"/><Setter Property="BorderBrush" Value="#2A313C"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="16"/><Setter Property="Padding" Value="18,16"/><Setter Property="Margin" Value="0,0,16,16"/></Style>
+        <Style x:Key="ProfileStatBorder" TargetType="Border"><Setter Property="Background" Value="#9110151D"/><Setter Property="BorderBrush" Value="#2A313C"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="4"/><Setter Property="Padding" Value="18,16"/><Setter Property="Margin" Value="0,0,16,16"/></Style>
         <Style x:Key="ProfileInputTextBox" TargetType="TextBox">
             <Setter Property="Background" Value="#101216"/>
             <Setter Property="Foreground" Value="#F4F7FB"/>
@@ -249,7 +306,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Surface"
                                 Background="Transparent"
-                                CornerRadius="22">
+                                CornerRadius="4">
                             <ContentPresenter Margin="{TemplateBinding Padding}"/>
                         </Border>
                     </ControlTemplate>
@@ -274,7 +331,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="10">
+                                CornerRadius="4">
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"/>
                         </Border>
@@ -304,7 +361,8 @@
         <Style TargetType="Thumb"><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Thumb"><Border Background="#1F2026" CornerRadius="6"/></ControlTemplate></Setter.Value></Setter></Style>
         <Style TargetType="ScrollBar"><Setter Property="Background" Value="#0A0A0D"/><Setter Property="Width" Value="12"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ScrollBar"><Border Background="#0A0A0D" CornerRadius="6" Padding="2"><Track x:Name="PART_Track" IsDirectionReversed="True"><Track.DecreaseRepeatButton><RepeatButton/></Track.DecreaseRepeatButton><Track.Thumb><Thumb/></Track.Thumb><Track.IncreaseRepeatButton><RepeatButton/></Track.IncreaseRepeatButton></Track></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="Orientation" Value="Horizontal"><Setter Property="Height" Value="12"/><Setter Property="Width" Value="Auto"/></Trigger></Style.Triggers></Style>
     </Window.Resources>
-    <Border Background="#09090B" BorderBrush="#17171B" BorderThickness="1" CornerRadius="16">
+    <!-- ana pencere cercevesi keskin modern gorunum icin kose ovalligi kaldirildi -->
+    <Border Background="#09090B" BorderBrush="#17171B" BorderThickness="1" CornerRadius="0">
         <Grid>
             <Grid.RowDefinitions><RowDefinition Height="34"/><RowDefinition Height="*"/></Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="12,0,10,0" Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
@@ -553,18 +611,19 @@
                                     </Border>
                                 </Popup>
                             </Grid>
-                            <Grid Margin="0,0,18,0">
+                            <Grid Margin="0,0,14,0">
                                 <Button x:Name="btnWalletMenu" Style="{StaticResource HeaderBalanceButton}" Click="WalletMenuButton_Click">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <TextBlock Text="Bakiye"
                                                    FontSize="12"
                                                    FontWeight="SemiBold"
-                                                   Foreground="#AAB2BD"
+                                                   Foreground="#7E8796"
                                                    Margin="0,0,10,0"
                                                    VerticalAlignment="Center"/>
                                         <TextBlock x:Name="txtWalletBalance"
-                                                   FontSize="13"
+                                                   FontSize="14"
                                                    FontWeight="Bold"
+                                                   Foreground="#F6F7FB"
                                                    VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Button>

@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterOwner"
         Background="Transparent"
         Topmost="True">
-    <Border Background="#0A0A0C" BorderBrush="#23232A" BorderThickness="1" CornerRadius="8">
+    <Border Background="#0A0A0C" BorderBrush="#23232A" BorderThickness="1" CornerRadius="0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="34"/>
@@ -37,7 +37,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
-                                        <Border x:Name="Surface" Background="Transparent" CornerRadius="0,8,0,0">
+                                        <Border x:Name="Surface" Background="Transparent" CornerRadius="0">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
@@ -88,7 +88,7 @@
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="4">
+                                    CornerRadius="0">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>

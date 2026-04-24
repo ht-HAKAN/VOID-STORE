@@ -1,4 +1,4 @@
-﻿<Window x:Class="VOID_STORE.Views.AdminDashboard"
+<Window x:Class="VOID_STORE.Views.AdminDashboard"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -62,11 +62,11 @@
                             <Border Width="3"
                                     Margin="0,12,0,12"
                                     Background="Transparent"
-                                    CornerRadius="3"/>
+                                    CornerRadius="0"/>
                             <Border x:Name="Surface"
                                     Grid.Column="1"
                                     Background="Transparent"
-                                    CornerRadius="14">
+                                    CornerRadius="0">
                                 <ContentPresenter Margin="{TemplateBinding Padding}"
                                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                   VerticalAlignment="Center"/>
@@ -96,11 +96,11 @@
                             <Border Width="3"
                                     Margin="0,12,0,12"
                                     Background="#FFFFFF"
-                                    CornerRadius="3"/>
+                                    CornerRadius="0"/>
                             <Border x:Name="Surface"
                                     Grid.Column="1"
                                     Background="#17171C"
-                                    CornerRadius="14">
+                                    CornerRadius="0">
                                 <ContentPresenter Margin="{TemplateBinding Padding}"
                                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                   VerticalAlignment="Center"/>
@@ -186,7 +186,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="22"
+                                CornerRadius="0"
                                 Padding="{TemplateBinding Padding}">
                             <Border.RenderTransform>
                                 <TranslateTransform x:Name="TileLift" Y="0"/>
@@ -296,7 +296,7 @@
                         Background="#0F0F13"
                         BorderBrush="#18181D"
                         BorderThickness="1"
-                        CornerRadius="24"
+                        CornerRadius="0"
                         Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -410,7 +410,7 @@
                             Background="#101013"
                             BorderBrush="#1B1B20"
                             BorderThickness="1"
-                            CornerRadius="28"
+                            CornerRadius="0"
                             Padding="26"
                             Margin="0,0,0,18">
                         <Grid>
@@ -443,28 +443,28 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Border Grid.Column="0" Background="#141418" CornerRadius="18" Padding="18,16" MinWidth="118">
+                                <Border Grid.Column="0" Background="#141418" CornerRadius="0" Padding="18,16" MinWidth="118">
                                     <StackPanel>
                                         <TextBlock Text="Toplam Oyun" Foreground="#85909D" FontSize="11"/>
                                         <TextBlock x:Name="txtTotalGamesValue" Text="0" Foreground="White" FontSize="30" FontWeight="Bold" Margin="0,10,0,0"/>
                                     </StackPanel>
                                 </Border>
 
-                                <Border Grid.Column="2" Background="#141418" CornerRadius="18" Padding="18,16" MinWidth="118">
+                                <Border Grid.Column="2" Background="#141418" CornerRadius="0" Padding="18,16" MinWidth="118">
                                     <StackPanel>
                                         <TextBlock Text="Onay Bekleyen" Foreground="#85909D" FontSize="11"/>
                                         <TextBlock x:Name="txtPendingGamesValue" Text="0" Foreground="#63A7FF" FontSize="30" FontWeight="Bold" Margin="0,10,0,0"/>
                                     </StackPanel>
                                 </Border>
 
-                                <Border Grid.Column="4" Background="#141418" CornerRadius="18" Padding="18,16" MinWidth="118">
+                                <Border Grid.Column="4" Background="#141418" CornerRadius="0" Padding="18,16" MinWidth="118">
                                     <StackPanel>
                                         <TextBlock Text="Listelenmiş Oyun" Foreground="#85909D" FontSize="11"/>
                                         <TextBlock x:Name="txtActiveGamesValue" Text="0" Foreground="#35BC67" FontSize="30" FontWeight="Bold" Margin="0,10,0,0"/>
                                     </StackPanel>
                                 </Border>
 
-                                <Border Grid.Column="6" Background="#141418" CornerRadius="18" Padding="18,16" MinWidth="118">
+                                <Border Grid.Column="6" Background="#141418" CornerRadius="0" Padding="18,16" MinWidth="118">
                                     <StackPanel>
                                         <TextBlock Text="Liste Dışı Oyun" Foreground="#85909D" FontSize="11"/>
                                         <TextBlock x:Name="txtPassiveGamesValue" Text="0" Foreground="#E07C87" FontSize="30" FontWeight="Bold" Margin="0,10,0,0"/>
@@ -477,7 +477,7 @@
                             Background="#0E0E12"
                             BorderBrush="#18181D"
                             BorderThickness="1"
-                            CornerRadius="28"
+                            CornerRadius="0"
                             Padding="28">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -513,7 +513,7 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <Border Width="60" Height="60" Background="#131317" CornerRadius="18" HorizontalAlignment="Left">
+                                        <Border Width="60" Height="60" Background="#131317" CornerRadius="0" HorizontalAlignment="Left">
                                             <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="26" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Row="1" Margin="0,22,0,0">
@@ -538,7 +538,7 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <Border Width="60" Height="60" Background="#131317" CornerRadius="18" HorizontalAlignment="Left">
+                                        <Border Width="60" Height="60" Background="#131317" CornerRadius="0" HorizontalAlignment="Left">
                                             <TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="26" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Row="1" Margin="0,22,0,0">
@@ -563,7 +563,7 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <Border Width="60" Height="60" Background="#131317" CornerRadius="18" HorizontalAlignment="Left">
+                                        <Border Width="60" Height="60" Background="#131317" CornerRadius="0" HorizontalAlignment="Left">
                                             <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="26" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Row="1" Margin="0,22,0,0">

@@ -55,7 +55,7 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="12">
+                                CornerRadius="0">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -107,7 +107,7 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="12">
+                                CornerRadius="0">
                             <ScrollViewer x:Name="PART_ContentHost"/>
                         </Border>
                     </ControlTemplate>
@@ -174,7 +174,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="12"
+                                CornerRadius="0"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -198,7 +198,7 @@
             <Setter Property="Background" Value="#111114"/>
             <Setter Property="BorderBrush" Value="#1D1D22"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="CornerRadius" Value="0"/>
             <Setter Property="Padding" Value="16,0"/>
             <Setter Property="Height" Value="44"/>
         </Style>
@@ -207,7 +207,7 @@
             <Setter Property="Background" Value="#0F0F12"/>
             <Setter Property="BorderBrush" Value="#19191E"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="24"/>
+            <Setter Property="CornerRadius" Value="0"/>
             <Setter Property="Padding" Value="28"/>
         </Style>
 
@@ -228,7 +228,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="12"
+                                CornerRadius="0"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -506,7 +506,7 @@
                                         <Border Background="#101014"
                                                 BorderBrush="#1D1D22"
                                                 BorderThickness="1"
-                                                CornerRadius="14"
+                                                CornerRadius="0"
                                                 Padding="16,14">
                                             <TextBlock x:Name="txtTrailerStatus"
                                                        Text="Fragman seçilmedi"
@@ -595,7 +595,7 @@
                                         Background="#0D0D10"
                                         BorderBrush="#1D1D22"
                                         BorderThickness="1"
-                                        CornerRadius="22"
+                                        CornerRadius="0"
                                         MinHeight="360"
                                         Padding="18">
                                     <Grid>
@@ -645,7 +645,7 @@
                                             Background="#0D0D10"
                                             BorderBrush="#1D1D22"
                                             BorderThickness="1"
-                                            CornerRadius="18"
+                                            CornerRadius="0"
                                             Padding="18">
                                         <StackPanel>
                                             <TextBlock Text="Ana Görsel" Foreground="#8F98A5" FontSize="11"/>
@@ -657,7 +657,7 @@
                                             Background="#0D0D10"
                                             BorderBrush="#1D1D22"
                                             BorderThickness="1"
-                                            CornerRadius="18"
+                                            CornerRadius="0"
                                             Padding="18">
                                         <StackPanel>
                                             <TextBlock Text="Fragman" Foreground="#8F98A5" FontSize="11"/>
@@ -670,7 +670,7 @@
                                             Background="#0D0D10"
                                             BorderBrush="#1D1D22"
                                             BorderThickness="1"
-                                            CornerRadius="18"
+                                            CornerRadius="0"
                                             Padding="18">
                                         <StackPanel>
                                             <TextBlock Text="Galeri Durumu" Foreground="#8F98A5" FontSize="11"/>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -274,9 +274,9 @@ namespace VOID_STORE.Views
         private void ApplyTabButtonStyle(Button button, bool isActive)
         {
         // secili sekme gorunumunu uygula
-            button.Background = CreateBrush(isActive ? "#FFFFFF" : "#111114");
-            button.BorderBrush = CreateBrush(isActive ? "#FFFFFF" : "#1C1C22");
-            button.Foreground = CreateBrush(isActive ? "#09090B" : "#FFFFFF");
+            button.Background = Brushes.Transparent;
+            button.BorderBrush = isActive ? Brushes.White : Brushes.Transparent;
+            button.Foreground = isActive ? Brushes.White : CreateBrush("#8F98A5");
         }
 
         private void LoadItems(int preserveGameId = 0)
@@ -462,7 +462,7 @@ namespace VOID_STORE.Views
                     Background = CreateBrush("#111114"),
                     BorderBrush = CreateBrush("#1C1C22"),
                     BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(12),
+                    CornerRadius = new CornerRadius(0),
                     Padding = new Thickness(12, 6, 12, 6),
                     Margin = new Thickness(0, 0, 10, 10)
                 };

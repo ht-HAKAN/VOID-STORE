@@ -67,13 +67,38 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border RenderTransformOrigin="0.5,0.5" Background="Transparent">
+                        <Border x:Name="RootBorder" RenderTransformOrigin="0.5,0.5" Background="Transparent" Opacity="0">
                             <Border.RenderTransform>
-                                <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1"/>
+                                <TransformGroup>
+                                    <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1"/>
+                                    <TranslateTransform x:Name="EntranceTransform" Y="25"/>
+                                </TransformGroup>
                             </Border.RenderTransform>
                             <ContentPresenter/>
                         </Border>
                         <ControlTemplate.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="RootBorder" 
+                                                         Storyboard.TargetProperty="Opacity" 
+                                                         To="1" 
+                                                         Duration="0:0:0.6">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetName="RootBorder"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)" 
+                                                         To="0" 
+                                                         Duration="0:0:0.8">
+                                            <DoubleAnimation.EasingFunction>
+                                                <ExponentialEase Exponent="7" EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
                             <EventTrigger RoutedEvent="MouseEnter">
                                 <BeginStoryboard>
                                     <Storyboard>

@@ -10,17 +10,34 @@ namespace VOID_STORE.Views
         {
             InitializeComponent();
 
-        // basligi oldugu gibi goster
-            txtTitle.Text = title?.Trim() ?? string.Empty;
+            txtTitle.Text = title?.Trim() ?? "BİLGİ";
             txtMessage.Text = message;
 
             if (isSuccess)
             {
-        // basarili islemleri canli yesille goster
-                Brush successBrush = new SolidColorBrush(Color.FromRgb(0x00, 0xCC, 0x00));
+                // Sadece başarılı işlemlerde yeşil buton
+                Brush successBrush = new SolidColorBrush(Color.FromRgb(0x00, 0xAA, 0x00));
                 txtTitle.Foreground = successBrush;
                 btnOk.Background = successBrush;
                 btnOk.BorderBrush = successBrush;
+                btnOk.Foreground = Brushes.White;
+            }
+            else if (string.Equals(txtTitle.Text, "Bilgi", System.StringComparison.OrdinalIgnoreCase))
+            {
+                // Bilgi/Uyarı mesajlarında beyaz buton
+                btnOk.Background = Brushes.White;
+                btnOk.BorderBrush = Brushes.White;
+                btnOk.Foreground = (Brush)new BrushConverter().ConvertFromString("#09090B")!;
+                txtTitle.Foreground = Brushes.White;
+            }
+            else
+            {
+                // Hata durumlarında kırmızı buton
+                Brush errorBrush = new SolidColorBrush(Color.FromRgb(0xE8, 0x11, 0x23));
+                txtTitle.Foreground = errorBrush;
+                btnOk.Background = errorBrush;
+                btnOk.BorderBrush = errorBrush;
+                btnOk.Foreground = Brushes.White;
             }
         }
 

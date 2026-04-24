@@ -22,8 +22,8 @@
         <Style x:Key="CategoryMenuFlatButton" TargetType="Button" BasedOn="{StaticResource TopNavButton}"><Setter Property="Margin" Value="0,0,24,0"/><Setter Property="Padding" Value="0"/></Style>
         <Style x:Key="TopActionIconButton" TargetType="Button"><Setter Property="Width" Value="28"/><Setter Property="Height" Value="28"/><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#D8DCE3"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Background="Transparent"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="#FFFFFF"/></Trigger></Style.Triggers></Style>
         <Style x:Key="HeaderBalanceButton" TargetType="Button">
-            <Setter Property="Height" Value="38"/>
-            <Setter Property="Padding" Value="2,0,14,0"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="0"/>
             <Setter Property="Foreground" Value="#F6F7FB"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -31,27 +31,12 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid>
-                            <Border x:Name="Surface" CornerRadius="6" BorderBrush="#1E1E24" BorderThickness="1">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="#151519" Offset="0"/>
-                                        <GradientStop Color="#0D0D11" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                            </Border>
-                            <Border x:Name="HoverGlow" CornerRadius="6" BorderBrush="#454D5A" BorderThickness="1" Opacity="0">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                        <GradientStop Color="#1AFFFFFF" Offset="0"/>
-                                        <GradientStop Color="#00FFFFFF" Offset="0.4"/>
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                            </Border>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                            <Border x:Name="Surface" CornerRadius="16" Background="#0A0A0C" BorderBrush="#1F1F24" BorderThickness="1"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="HoverGlow" Property="Opacity" Value="1"/>
+                                <Setter TargetName="Surface" Property="Background" Value="#111114"/>
                                 <Setter TargetName="Surface" Property="BorderBrush" Value="#2A2A32"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -642,11 +627,11 @@
                             </Grid>
                             <Grid Margin="0,0,14,0">
                                 <Button x:Name="btnWalletMenu" Style="{StaticResource HeaderBalanceButton}" Click="WalletMenuButton_Click">
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Border Background="#1C1C22" CornerRadius="4" Padding="8,4" Margin="2,0,10,0">
-                                            <TextBlock Text="CÜZDAN" Foreground="#9BA5B2" FontSize="9" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" Margin="3,0,12,0">
+                                        <Border Background="White" CornerRadius="13" Padding="10,0" Height="26" VerticalAlignment="Center">
+                                            <TextBlock Text="BAKİYE" Foreground="Black" FontSize="9" FontWeight="ExtraBold" VerticalAlignment="Center"/>
                                         </Border>
-                                        <TextBlock x:Name="txtWalletBalance" Foreground="White" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="txtWalletBalance" Foreground="White" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
                                     </StackPanel>
                                 </Button>
                             </Grid>

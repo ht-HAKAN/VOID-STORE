@@ -306,24 +306,47 @@ namespace VOID_STORE.Views
             UpdateNavigationState();
         }
 
+        private void tglIsFree_Click(object sender, RoutedEventArgs e)
+        {
+            bool isFree = tglIsFree.IsChecked == true;
+            gridPriceInput.IsEnabled = !isFree;
+            borderDiscount.IsEnabled = !isFree;
+
+            if (isFree)
+            {
+                txtPrice.Text = "0";
+                txtDiscountRate.Text = "0";
+                txtDiscountStart.Clear();
+                txtDiscountEnd.Clear();
+            }
+            
+            UpdateNavigationState();
+        }
+
+        private void OnlyNumbers_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
+        }
+
         private void UpdateNavigationState()
         {
             if (TabItemGenel == null || TabItemMedya == null || TabItemSistem == null) return;
 
             // Step 1 Validation (Temel Bilgiler)
+            bool isPriceValid = tglIsFree.IsChecked == true || !string.IsNullOrWhiteSpace(txtPrice.Text);
             bool isStep1Valid = !string.IsNullOrWhiteSpace(txtTitle.Text) &&
-                               !string.IsNullOrWhiteSpace(txtPrice.Text) &&
+                               isPriceValid &&
                                lstCategory.SelectedItem != null &&
                                !string.IsNullOrWhiteSpace(txtDeveloper.Text) &&
-                               !string.IsNullOrWhiteSpace(txtPublisher.Text);
+                               !string.IsNullOrWhiteSpace(txtPublisher.Text) &&
+                               !string.IsNullOrWhiteSpace(txtReleaseDate.Text);
 
-            TabItemGenel.Tag = isStep1Valid ? "Valid" : null;
+            // Step 1 Validation
             TabItemMedya.IsEnabled = isStep1Valid;
 
-            // Step 2 Validation (Medya - Kapak gorseli sart)
+            // Step 2 Validation
             bool isStep2Valid = !string.IsNullOrWhiteSpace(_selectedCoverPath);
 
-            TabItemMedya.Tag = isStep2Valid ? "Valid" : null;
             TabItemSistem.IsEnabled = isStep1Valid && isStep2Valid;
         }
 
@@ -374,6 +397,24 @@ namespace VOID_STORE.Views
         // tarih girisini sinirla
             string nextValue = GetNextText(txtReleaseDate.Text, e.Text, txtReleaseDate.SelectionStart, txtReleaseDate.SelectionLength);
             e.Handled = !Regex.IsMatch(nextValue, @"^\d{0,2}(\.\d{0,2}(\.\d{0,4})?)?$");
+        }
+
+        private void ReleaseDateTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (txtReleaseDate.Text == "GG.AA.YYYY")
+            {
+                txtReleaseDate.Text = "";
+                txtReleaseDate.Foreground = System.Windows.Media.Brushes.White;
+            }
+        }
+
+        private void ReleaseDateTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtReleaseDate.Text))
+            {
+                txtReleaseDate.Text = "GG.AA.YYYY";
+                txtReleaseDate.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(85, 85, 85));
+            }
         }
 
         private void ReleaseDateTextBox_OnPaste(object sender, DataObjectPastingEventArgs e)
@@ -445,6 +486,15 @@ namespace VOID_STORE.Views
             txtMinimumRequirements.Text = state.MinimumRequirements;
             txtRecommendedRequirements.Text = state.RecommendedRequirements;
             txtSupportedLanguages.Text = state.SupportedLanguages;
+            
+            // Yeni Alanlar
+            tglIsFree.IsChecked = state.IsFree;
+            gridPriceInput.IsEnabled = !state.IsFree;
+            borderDiscount.IsEnabled = !state.IsFree;
+            txtDiscountRate.Text = state.DiscountRate.ToString();
+            txtDiscountStart.Text = state.DiscountStartDate?.ToString("dd.MM.yyyy") ?? string.Empty;
+            txtDiscountEnd.Text = state.DiscountEndDate?.ToString("dd.MM.yyyy") ?? string.Empty;
+
             lstFeatures.UnselectAll();
 
             tglWindows.IsChecked = state.Platforms.Any(platform => platform.Equals("Windows", StringComparison.OrdinalIgnoreCase));
@@ -498,7 +548,9 @@ namespace VOID_STORE.Views
                 txtTitleError.Visibility = Visibility.Collapsed;
             }
 
-            if (string.IsNullOrWhiteSpace(txtPrice.Text))
+            // Fiyat
+            bool isPriceRequired = tglIsFree.IsChecked != true;
+            if (isPriceRequired && string.IsNullOrWhiteSpace(txtPrice.Text))
             {
                 txtPriceError.Visibility = Visibility.Visible;
                 isValid = false;
@@ -536,6 +588,17 @@ namespace VOID_STORE.Views
             else
             {
                 txtPublisherError.Visibility = Visibility.Collapsed;
+            }
+
+            // Çıkış Tarihi
+            if (string.IsNullOrWhiteSpace(txtReleaseDate.Text))
+            {
+                txtReleaseDateError.Visibility = Visibility.Visible;
+                isValid = false;
+            }
+            else
+            {
+                txtReleaseDateError.Visibility = Visibility.Collapsed;
             }
 
             if (!isValid)
@@ -613,8 +676,24 @@ namespace VOID_STORE.Views
                 CoverImageSourcePath = _selectedCoverPath,
                 Platforms = GetSelectedPlatforms(),
                 Features = GetSelectedFeatures(),
-                GalleryImageSourcePaths = _selectedGalleryPaths.ToList()
+                GalleryImageSourcePaths = _selectedGalleryPaths.ToList(),
+
+                // Yeni Alanlar
+                IsFree = tglIsFree.IsChecked == true,
+                DiscountRate = int.TryParse(txtDiscountRate.Text, out int rate) ? rate : 0,
+                DiscountStartDate = ParseOptionalDate(txtDiscountStart.Text),
+                DiscountEndDate = ParseOptionalDate(txtDiscountEnd.Text)
             };
+        }
+
+        private DateTime? ParseOptionalDate(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return null;
+            if (DateTime.TryParseExact(text.Trim(), "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
+            {
+                return result;
+            }
+            return null;
         }
 
         private List<string> GetSelectedPlatforms()

@@ -1,6 +1,5 @@
-using System;
-using SqlParameter = MySql.Data.MySqlClient.MySqlParameter;
 using VOID_STORE.Models;
+using SqlParameter = MySql.Data.MySqlClient.MySqlParameter;
 
 namespace VOID_STORE.Controllers
 {

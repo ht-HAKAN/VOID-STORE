@@ -158,6 +158,50 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="ModernSwitch" TargetType="ToggleButton">
+            <Setter Property="Width" Value="54"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Background" Value="#17171B"/>
+            <Setter Property="BorderBrush" Value="#282830"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid>
+                                <Border x:Name="Dot" HorizontalAlignment="Left" Width="20" Height="20" Background="#3F444D" Margin="3,0,0,0">
+                                    <Border.RenderTransform>
+                                        <TranslateTransform X="0"/>
+                                    </Border.RenderTransform>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#FFFFFF"/>
+                                <Setter TargetName="Dot" Property="Background" Value="#0A0A0C"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Dot" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="26" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Dot" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="0" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Storyboard x:Key="FadeInAnimation">
             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
         </Storyboard>
@@ -255,7 +299,7 @@
                                 <!-- Tab 1: Genel Bilgiler -->
                                 <TabItem x:Name="TabItemGenel" Header="GENEL BİLGİLER">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                        <Border Style="{StaticResource SectionCard}" Margin="0,0,12,0">
+                                        <Border Style="{StaticResource SectionCard}">
                                             <StackPanel>
                                                 <Grid Margin="0,0,0,20">
                                                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="200"/></Grid.ColumnDefinitions>
@@ -265,8 +309,14 @@
                                                         <TextBlock x:Name="txtTitleError" Text="* Oyun adı boş bırakılamaz" Foreground="#FF5555" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="2">
-                                                        <TextBlock Text="Fiyat" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                                                        <Grid>
+                                                        <Grid Margin="0,0,0,8" VerticalAlignment="Center">
+                                                            <TextBlock Text="Fiyat" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0" VerticalAlignment="Center"/>
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                                <TextBlock Text="Oynaması Ücretsiz" Foreground="#7F8690" FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                                <ToggleButton x:Name="tglIsFree" Style="{StaticResource ModernSwitch}" VerticalAlignment="Center" Click="tglIsFree_Click"/>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                        <Grid x:Name="gridPriceInput">
                                                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                                             <TextBox x:Name="txtPrice" Style="{StaticResource InputTextBox}" PreviewTextInput="PriceTextBox_PreviewTextInput" LostFocus="PriceTextBox_LostFocus" TextChanged="Input_Changed"/>
                                                             <Border Grid.Column="2" Background="#111114" BorderBrush="#1D1D22" BorderThickness="1" Padding="12,0" Height="44"><TextBlock Text="&#x20BA;" Foreground="White" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/></Border>
@@ -295,6 +345,43 @@
                                                     </StackPanel>
                                                 </Grid>
 
+                                                <StackPanel Margin="0,0,0,20">
+                                                    <TextBlock Text="Çıkış Tarihi" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                                    <TextBox x:Name="txtReleaseDate" Style="{StaticResource InputTextBox}" PreviewTextInput="ReleaseDateTextBox_PreviewTextInput" GotFocus="ReleaseDateTextBox_GotFocus" LostFocus="ReleaseDateTextBox_LostFocus" TextChanged="Input_Changed"/>
+                                                    <TextBlock x:Name="txtReleaseDateError" Text="* Geçerli bir tarih girin" Foreground="#FF5555" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed"/>
+                                                </StackPanel>
+
+                                                <!-- İndirim Yönetimi -->
+                                                <Border x:Name="borderDiscount" BorderBrush="#1D1D22" BorderThickness="0,1,0,0" Margin="0,0,0,20" Padding="0,20,0,0">
+                                                    <StackPanel>
+                                                        <TextBlock Text="İNDİRİM YÖNETİMİ" Foreground="White" FontSize="13" FontWeight="Bold" Margin="0,0,0,14"/>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="130"/>
+                                                                <ColumnDefinition Width="20"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="20"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            
+                                                            <StackPanel Grid.Column="0">
+                                                                <TextBlock Text="İndirim Oranı (%)" Foreground="#D6D9DE" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                                                <TextBox x:Name="txtDiscountRate" Style="{StaticResource InputTextBox}" Text="0" MaxLength="3" PreviewTextInput="OnlyNumbers_PreviewTextInput" TextChanged="Input_Changed"/>
+                                                            </StackPanel>
+
+                                                            <StackPanel Grid.Column="2">
+                                                                <TextBlock Text="Başlangıç Tarihi" Foreground="#D6D9DE" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                                                <TextBox x:Name="txtDiscountStart" Style="{StaticResource InputTextBox}" PreviewTextInput="ReleaseDateTextBox_PreviewTextInput" TextChanged="Input_Changed"/>
+                                                            </StackPanel>
+
+                                                            <StackPanel Grid.Column="4">
+                                                                <TextBlock Text="Bitiş Tarihi" Foreground="#D6D9DE" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                                                <TextBox x:Name="txtDiscountEnd" Style="{StaticResource InputTextBox}" PreviewTextInput="ReleaseDateTextBox_PreviewTextInput" TextChanged="Input_Changed"/>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </Border>
+
                                                 <StackPanel>
                                                     <TextBlock Text="Açıklama" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
                                                     <TextBox x:Name="txtDescription" Style="{StaticResource InputTextBox}" Height="240" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
@@ -306,7 +393,7 @@
 
                                 <!-- Tab 2: Medya Yönetimi -->
                                 <TabItem x:Name="TabItemMedya" Header="MEDYA YÖNETİMİ" IsEnabled="False">
-                                    <Grid Margin="0,0,12,0">
+                                    <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="300"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
                                             <Border Background="#0D0D10" BorderBrush="#1D1D22" BorderThickness="1" MinHeight="400" Padding="12">
@@ -355,7 +442,7 @@
                                 <!-- Tab 3: Sistem & Platform -->
                                 <TabItem x:Name="TabItemSistem" Header="SİSTEM &amp; PLATFORM" IsEnabled="False">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                        <StackPanel Margin="0,0,12,0">
+                                        <StackPanel>
                                             <Border Style="{StaticResource SectionCard}">
                                                 <StackPanel>
                                                     <Grid Margin="0,0,0,20">
@@ -371,9 +458,8 @@
                                                     </Grid>
 
                                                     <Grid Margin="0,0,0,20">
-                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                                        <StackPanel Grid.Column="0"><TextBlock Text="Çıkış Tarihi" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/><TextBox x:Name="txtReleaseDate" Style="{StaticResource InputTextBox}" PreviewTextInput="ReleaseDateTextBox_PreviewTextInput"/></StackPanel>
-                                                        <StackPanel Grid.Column="2"><TextBlock Text="Desteklenen Diller" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/><TextBox x:Name="txtSupportedLanguages" Style="{StaticResource InputTextBox}" Height="Auto" MinHeight="44" TextWrapping="Wrap" Padding="12,10"/></StackPanel>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <StackPanel Grid.Column="0"><TextBlock Text="Desteklenen Diller" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/><TextBox x:Name="txtSupportedLanguages" Style="{StaticResource InputTextBox}" Height="Auto" MinHeight="44" TextWrapping="Wrap" Padding="12,10"/></StackPanel>
                                                     </Grid>
 
                                                     <Grid>

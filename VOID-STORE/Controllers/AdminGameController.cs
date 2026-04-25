@@ -16,7 +16,7 @@ namespace VOID_STORE.Controllers
         public const int MinGalleryImageCount = 3;
         public const int MaxGalleryImageCount = 8;
 
-        private static readonly Regex PriceValidationRegex = new(@"^(?:[1-9]\d{0,3})(?:[.,]\d{1,2})?$");
+        private static readonly Regex PriceValidationRegex = new(@"^(?:0|[1-9]\d{0,3})(?:[.,]\d{1,2})?$");
 
         public void EnsureSchema()
         {
@@ -41,7 +41,8 @@ namespace VOID_STORE.Controllers
                 request.RecommendedRequirements,
                 request.SupportedLanguages,
                 request.CoverImageSourcePath,
-                request.GalleryImageSourcePaths);
+                request.GalleryImageSourcePaths,
+                request.IsFree);
 
             if (!string.IsNullOrWhiteSpace(validationMessage))
             {
@@ -67,9 +68,9 @@ namespace VOID_STORE.Controllers
             {
                 using MySqlCommand insertGameCommand = new MySqlCommand(
                     @"INSERT INTO Games
-                        (Title, Category, Description, Price, CoverImagePath, Developer, Publisher, ReleaseDate, IsActive, ApprovalStatus, TrailerUrl, TrailerVideoPath, MinimumRequirements, RecommendedRequirements, SupportedLanguages, GameFeatures)
+                        (Title, Category, Description, Price, IsFree, DiscountRate, DiscountStartDate, DiscountEndDate, CoverImagePath, Developer, Publisher, ReleaseDate, IsActive, ApprovalStatus, TrailerUrl, TrailerVideoPath, MinimumRequirements, RecommendedRequirements, SupportedLanguages, GameFeatures)
                       VALUES
-                        (@Title, @Category, @Description, @Price, NULL, @Developer, @Publisher, @ReleaseDate, 1, 'pending', NULL, NULL, @MinimumRequirements, @RecommendedRequirements, @SupportedLanguages, @GameFeatures);",
+                        (@Title, @Category, @Description, @Price, @IsFree, @DiscountRate, @DiscountStartDate, @DiscountEndDate, NULL, @Developer, @Publisher, @ReleaseDate, 1, 'pending', NULL, NULL, @MinimumRequirements, @RecommendedRequirements, @SupportedLanguages, @GameFeatures);",
                     connection,
                     transaction);
 
@@ -77,6 +78,10 @@ namespace VOID_STORE.Controllers
                 insertGameCommand.Parameters.AddWithValue("@Category", GameCategoryCatalog.Normalize(request.Category));
                 insertGameCommand.Parameters.AddWithValue("@Description", request.Description.Trim());
                 insertGameCommand.Parameters.AddWithValue("@Price", price);
+                insertGameCommand.Parameters.AddWithValue("@IsFree", request.IsFree ? 1 : 0);
+                insertGameCommand.Parameters.AddWithValue("@DiscountRate", request.DiscountRate);
+                insertGameCommand.Parameters.AddWithValue("@DiscountStartDate", (object?)request.DiscountStartDate ?? DBNull.Value);
+                insertGameCommand.Parameters.AddWithValue("@DiscountEndDate", (object?)request.DiscountEndDate ?? DBNull.Value);
                 insertGameCommand.Parameters.AddWithValue("@Developer", request.Developer.Trim());
                 insertGameCommand.Parameters.AddWithValue("@Publisher", request.Publisher.Trim());
                 insertGameCommand.Parameters.AddWithValue("@ReleaseDate", releaseDate);
@@ -360,7 +365,11 @@ namespace VOID_STORE.Controllers
                     RecommendedRequirements,
                     SupportedLanguages,
                     GameFeatures,
-                    DraftStatus
+                    DraftStatus,
+                    IsFree,
+                    DiscountRate,
+                    DiscountStartDate,
+                    DiscountEndDate
                   FROM GameDrafts
                   WHERE GameId = @GameId
                     AND DraftStatus = 'pending'
@@ -392,7 +401,11 @@ namespace VOID_STORE.Controllers
                     CoverImageSourcePath = GameAssetManager.GetAbsoluteAssetPath(draftRow["CoverImagePath"] == DBNull.Value ? string.Empty : draftRow["CoverImagePath"]?.ToString() ?? string.Empty),
                     Platforms = GetDraftPlatforms(draftId),
                     GalleryImageSourcePaths = GameAssetManager.GetGalleryImagePaths(gameId, true).ToList(),
-                    HasPendingDraft = true
+                    HasPendingDraft = true,
+                    IsFree = Convert.ToBoolean(draftRow["IsFree"]),
+                    DiscountRate = Convert.ToInt32(draftRow["DiscountRate"]),
+                    DiscountStartDate = draftRow["DiscountStartDate"] == DBNull.Value ? null : Convert.ToDateTime(draftRow["DiscountStartDate"]),
+                    DiscountEndDate = draftRow["DiscountEndDate"] == DBNull.Value ? null : Convert.ToDateTime(draftRow["DiscountEndDate"])
                 };
             }
 
@@ -411,7 +424,11 @@ namespace VOID_STORE.Controllers
                     MinimumRequirements,
                     RecommendedRequirements,
                     SupportedLanguages,
-                    GameFeatures
+                    GameFeatures,
+                    IsFree,
+                    DiscountRate,
+                    DiscountStartDate,
+                    DiscountEndDate
                   FROM Games
                   WHERE GameId = @GameId
                     AND ApprovalStatus = 'approved'
@@ -445,7 +462,11 @@ namespace VOID_STORE.Controllers
                 CoverImageSourcePath = GameAssetManager.GetAbsoluteAssetPath(gameRow["CoverImagePath"] == DBNull.Value ? string.Empty : gameRow["CoverImagePath"]?.ToString() ?? string.Empty),
                 Platforms = GetGamePlatforms(gameId),
                 GalleryImageSourcePaths = GameAssetManager.GetGalleryImagePaths(gameId, false).ToList(),
-                HasPendingDraft = HasPendingDraft(gameId)
+                HasPendingDraft = HasPendingDraft(gameId),
+                IsFree = Convert.ToBoolean(gameRow["IsFree"]),
+                DiscountRate = Convert.ToInt32(gameRow["DiscountRate"]),
+                DiscountStartDate = gameRow["DiscountStartDate"] == DBNull.Value ? null : Convert.ToDateTime(gameRow["DiscountStartDate"]),
+                DiscountEndDate = gameRow["DiscountEndDate"] == DBNull.Value ? null : Convert.ToDateTime(gameRow["DiscountEndDate"])
             };
         }
 
@@ -466,7 +487,8 @@ namespace VOID_STORE.Controllers
                 request.RecommendedRequirements,
                 request.SupportedLanguages,
                 request.CoverImageSourcePath,
-                request.GalleryImageSourcePaths);
+                request.GalleryImageSourcePaths,
+                request.IsFree);
 
             if (!string.IsNullOrWhiteSpace(validationMessage))
             {
@@ -519,6 +541,10 @@ namespace VOID_STORE.Controllers
                               RecommendedRequirements = @RecommendedRequirements,
                               SupportedLanguages = @SupportedLanguages,
                               GameFeatures = @GameFeatures,
+                              IsFree = @IsFree,
+                              DiscountRate = @DiscountRate,
+                              DiscountStartDate = @DiscountStartDate,
+                              DiscountEndDate = @DiscountEndDate,
                               DraftStatus = 'pending'
                           WHERE GameDraftId = @GameDraftId;",
                         connection,
@@ -539,6 +565,10 @@ namespace VOID_STORE.Controllers
                     updateDraftCommand.Parameters.AddWithValue("@RecommendedRequirements", request.RecommendedRequirements.Trim());
                     updateDraftCommand.Parameters.AddWithValue("@SupportedLanguages", request.SupportedLanguages.Trim());
                     updateDraftCommand.Parameters.AddWithValue("@GameFeatures", SerializeFeatures(request.Features));
+                    updateDraftCommand.Parameters.AddWithValue("@IsFree", request.IsFree ? 1 : 0);
+                    updateDraftCommand.Parameters.AddWithValue("@DiscountRate", request.DiscountRate);
+                    updateDraftCommand.Parameters.AddWithValue("@DiscountStartDate", (object?)request.DiscountStartDate ?? DBNull.Value);
+                    updateDraftCommand.Parameters.AddWithValue("@DiscountEndDate", (object?)request.DiscountEndDate ?? DBNull.Value);
                     updateDraftCommand.Parameters.AddWithValue("@GameDraftId", gameDraftId);
                     updateDraftCommand.ExecuteNonQuery();
                 }
@@ -546,9 +576,9 @@ namespace VOID_STORE.Controllers
                 {
                     using MySqlCommand insertDraftCommand = new MySqlCommand(
                         @"INSERT INTO GameDrafts
-                            (GameId, Title, Category, Description, Price, CoverImagePath, Developer, Publisher, ReleaseDate, TrailerUrl, TrailerVideoPath, MinimumRequirements, RecommendedRequirements, SupportedLanguages, GameFeatures, DraftStatus)
+                            (GameId, Title, Category, Description, Price, IsFree, DiscountRate, DiscountStartDate, DiscountEndDate, CoverImagePath, Developer, Publisher, ReleaseDate, TrailerUrl, TrailerVideoPath, MinimumRequirements, RecommendedRequirements, SupportedLanguages, GameFeatures, DraftStatus)
                           VALUES
-                            (@GameId, @Title, @Category, @Description, @Price, @CoverImagePath, @Developer, @Publisher, @ReleaseDate, NULL, @TrailerVideoPath, @MinimumRequirements, @RecommendedRequirements, @SupportedLanguages, @GameFeatures, 'pending');",
+                            (@GameId, @Title, @Category, @Description, @Price, @IsFree, @DiscountRate, @DiscountStartDate, @DiscountEndDate, @CoverImagePath, @Developer, @Publisher, @ReleaseDate, NULL, @TrailerVideoPath, @MinimumRequirements, @RecommendedRequirements, @SupportedLanguages, @GameFeatures, 'pending');",
                         connection,
                         transaction);
 
@@ -568,6 +598,10 @@ namespace VOID_STORE.Controllers
                     insertDraftCommand.Parameters.AddWithValue("@RecommendedRequirements", request.RecommendedRequirements.Trim());
                     insertDraftCommand.Parameters.AddWithValue("@SupportedLanguages", request.SupportedLanguages.Trim());
                     insertDraftCommand.Parameters.AddWithValue("@GameFeatures", SerializeFeatures(request.Features));
+                    insertDraftCommand.Parameters.AddWithValue("@IsFree", request.IsFree ? 1 : 0);
+                    insertDraftCommand.Parameters.AddWithValue("@DiscountRate", request.DiscountRate);
+                    insertDraftCommand.Parameters.AddWithValue("@DiscountStartDate", (object?)request.DiscountStartDate ?? DBNull.Value);
+                    insertDraftCommand.Parameters.AddWithValue("@DiscountEndDate", (object?)request.DiscountEndDate ?? DBNull.Value);
                     insertDraftCommand.ExecuteNonQuery();
 
                     gameDraftId = Convert.ToInt32(insertDraftCommand.LastInsertedId);
@@ -746,7 +780,11 @@ namespace VOID_STORE.Controllers
                     MinimumRequirements,
                     RecommendedRequirements,
                     SupportedLanguages,
-                    GameFeatures
+                    GameFeatures,
+                    IsFree,
+                    DiscountRate,
+                    DiscountStartDate,
+                    DiscountEndDate
                   FROM GameDrafts
                   WHERE GameId = @GameId
                     AND DraftStatus = 'pending'
@@ -789,6 +827,10 @@ namespace VOID_STORE.Controllers
                           RecommendedRequirements = @RecommendedRequirements,
                           SupportedLanguages = @SupportedLanguages,
                           GameFeatures = @GameFeatures,
+                          IsFree = @IsFree,
+                          DiscountRate = @DiscountRate,
+                          DiscountStartDate = @DiscountStartDate,
+                          DiscountEndDate = @DiscountEndDate,
                           ApprovalStatus = 'approved'
                       WHERE GameId = @GameId
                         AND ApprovalStatus = 'approved';",
@@ -806,8 +848,12 @@ namespace VOID_STORE.Controllers
                 updateGameCommand.Parameters.AddWithValue("@TrailerVideoPath", string.IsNullOrWhiteSpace(liveTrailerPath) ? DBNull.Value : liveTrailerPath);
                 updateGameCommand.Parameters.AddWithValue("@MinimumRequirements", draftRow["MinimumRequirements"] == DBNull.Value ? DBNull.Value : draftRow["MinimumRequirements"]?.ToString() ?? string.Empty);
                 updateGameCommand.Parameters.AddWithValue("@RecommendedRequirements", draftRow["RecommendedRequirements"] == DBNull.Value ? DBNull.Value : draftRow["RecommendedRequirements"]?.ToString() ?? string.Empty);
-                updateGameCommand.Parameters.AddWithValue("@SupportedLanguages", draftRow["SupportedLanguages"] == DBNull.Value ? DBNull.Value : draftRow["SupportedLanguages"]?.ToString() ?? string.Empty);
-                updateGameCommand.Parameters.AddWithValue("@GameFeatures", draftRow["GameFeatures"] == DBNull.Value ? DBNull.Value : draftRow["GameFeatures"]?.ToString() ?? string.Empty);
+                updateGameCommand.Parameters.AddWithValue("@SupportedLanguages", draftRow["SupportedLanguages"] == DBNull.Value ? string.Empty : draftRow["SupportedLanguages"]?.ToString() ?? string.Empty);
+                updateGameCommand.Parameters.AddWithValue("@GameFeatures", draftRow["GameFeatures"] == DBNull.Value ? string.Empty : draftRow["GameFeatures"]?.ToString());
+                updateGameCommand.Parameters.AddWithValue("@IsFree", Convert.ToInt32(draftRow["IsFree"]));
+                updateGameCommand.Parameters.AddWithValue("@DiscountRate", Convert.ToInt32(draftRow["DiscountRate"]));
+                updateGameCommand.Parameters.AddWithValue("@DiscountStartDate", draftRow["DiscountStartDate"]);
+                updateGameCommand.Parameters.AddWithValue("@DiscountEndDate", draftRow["DiscountEndDate"]);
                 updateGameCommand.Parameters.AddWithValue("@GameId", gameId);
                 updateGameCommand.ExecuteNonQuery();
 
@@ -880,7 +926,8 @@ namespace VOID_STORE.Controllers
             string recommendedRequirements,
             string supportedLanguages,
             string coverImageSourcePath,
-            IReadOnlyCollection<string> galleryImageSourcePaths)
+            IReadOnlyCollection<string> galleryImageSourcePaths,
+            bool isFree)
         {
         // form verisini kurallara gore denetle
             if (string.IsNullOrWhiteSpace(title))
@@ -902,14 +949,21 @@ namespace VOID_STORE.Controllers
             {
                 decimal price = ParsePrice(priceText);
 
-                if (price < 1 || price > 9999)
+                if (isFree)
                 {
-                    return "Fiyat 1 ile 9999 arasında olmalıdır.";
+                    if (price != 0) return "Ücretsiz oyunların fiyatı 0 olmalıdır.";
+                }
+                else
+                {
+                    if (price < 1 || price > 9999)
+                    {
+                        return "Fiyat 1 ile 9999 arasında olmalıdır.";
+                    }
                 }
             }
             catch
             {
-                return "Fiyat alanına 1 ile 9999 arasında geçerli bir tutar girin.";
+                return "Fiyat alanına geçerli bir tutar girin.";
             }
 
             if (string.IsNullOrWhiteSpace(description))
@@ -1202,7 +1256,11 @@ namespace VOID_STORE.Controllers
                     MinimumRequirements,
                     RecommendedRequirements,
                     SupportedLanguages,
-                    GameFeatures
+                    GameFeatures,
+                    IsFree,
+                    DiscountRate,
+                    DiscountStartDate,
+                    DiscountEndDate
                   FROM GameDrafts
                   WHERE GameId = @GameId
                     AND DraftStatus = 'pending'

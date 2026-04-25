@@ -37,5 +37,11 @@ namespace VOID_STORE.Models
         public List<string> Features { get; set; } = new();
 
         public List<string> GalleryImageSourcePaths { get; set; } = new();
+
+        // Yeni Alanlar (Ucretsiz & Indirim)
+        public bool IsFree { get; set; }
+        public int DiscountRate { get; set; }
+        public System.DateTime? DiscountStartDate { get; set; }
+        public System.DateTime? DiscountEndDate { get; set; }
     }
 }

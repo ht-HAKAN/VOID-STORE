@@ -25,6 +25,11 @@ namespace VOID_STORE.Models
             EnsureDraftSupportedLanguagesColumn();
             EnsureDraftGameFeaturesColumn();
             EnsureGameDraftPlatformsTable();
+
+            // Yeni Kolonlar (Ucretsiz & Indirim)
+            EnsureFreeGameColumns();
+            EnsureDiscountColumns();
+
             NormalizeExistingGames();
         }
 
@@ -243,6 +248,54 @@ namespace VOID_STORE.Models
 
             DatabaseManager.ExecuteNonQuery(
                 "UPDATE GameDrafts SET Category = 'Aksiyon' WHERE Category IS NULL OR TRIM(Category) = ''");
+
+            DatabaseManager.ExecuteNonQuery(
+                "UPDATE Games SET IsFree = 0 WHERE IsFree IS NULL");
+            DatabaseManager.ExecuteNonQuery(
+                "UPDATE GameDrafts SET IsFree = 0 WHERE IsFree IS NULL");
+        }
+
+        private static void EnsureFreeGameColumns()
+        {
+            if (!ColumnExists("Games", "IsFree"))
+            {
+                DatabaseManager.ExecuteNonQuery("ALTER TABLE Games ADD COLUMN IsFree TINYINT(1) NOT NULL DEFAULT 0 AFTER Price");
+            }
+            if (!ColumnExists("GameDrafts", "IsFree"))
+            {
+                DatabaseManager.ExecuteNonQuery("ALTER TABLE GameDrafts ADD COLUMN IsFree TINYINT(1) NOT NULL DEFAULT 0 AFTER Price");
+            }
+        }
+
+        private static void EnsureDiscountColumns()
+        {
+            // Games tablosu
+            if (!ColumnExists("Games", "DiscountRate"))
+            {
+                DatabaseManager.ExecuteNonQuery("ALTER TABLE Games ADD COLUMN DiscountRate INT NOT NULL DEFAULT 0 AFTER IsFree");
+            }
+            if (!ColumnExists("Games", "DiscountStartDate"))
+            {
+                DatabaseManager.ExecuteNonQuery("ALTER TABLE Games ADD COLUMN DiscountStartDate DATETIME NULL AFTER DiscountRate");
+            }
+            if (!ColumnExists("Games", "DiscountEndDate"))
+            {
+                DatabaseManager.ExecuteNonQuery("ALTER TABLE Games ADD COLUMN DiscountEndDate DATETIME NULL AFTER DiscountStartDate");
+            }
+
+            // GameDrafts tablosu
+            if (!ColumnExists("GameDrafts", "DiscountRate"))
+            {
+                DatabaseManager.ExecuteNonQuery("ALTER TABLE GameDrafts ADD COLUMN DiscountRate INT NOT NULL DEFAULT 0 AFTER IsFree");
+            }
+            if (!ColumnExists("GameDrafts", "DiscountStartDate"))
+            {
+                DatabaseManager.ExecuteNonQuery("ALTER TABLE GameDrafts ADD COLUMN DiscountStartDate DATETIME NULL AFTER DiscountRate");
+            }
+            if (!ColumnExists("GameDrafts", "DiscountEndDate"))
+            {
+                DatabaseManager.ExecuteNonQuery("ALTER TABLE GameDrafts ADD COLUMN DiscountEndDate DATETIME NULL AFTER DiscountStartDate");
+            }
         }
 
         private static bool ColumnExists(string tableName, string columnName)

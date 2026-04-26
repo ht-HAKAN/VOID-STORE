@@ -11,11 +11,11 @@
     <Window.Resources>
         <Style x:Key="TitleBarButton" TargetType="Button">
             <Setter Property="Width" Value="42"/><Setter Property="Height" Value="30"/><Setter Property="Foreground" Value="#F5F7FA"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="0" RenderTransformOrigin="0.5,0.5"><Border.RenderTransform><ScaleTransform ScaleX="1" ScaleY="1"/></Border.RenderTransform><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#151519"/><Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.1" Duration="0:0:0.1"/><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.1" Duration="0:0:0.1"/></Storyboard></BeginStoryboard></Trigger.EnterActions><Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/></Storyboard></BeginStoryboard></Trigger.ExitActions></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
         </Style>
         <Style x:Key="GhostButton" TargetType="Button">
             <Setter Property="Height" Value="42"/><Setter Property="Padding" Value="18,0"/><Setter Property="Background" Value="#111114"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" RenderTransformOrigin="0.5,0.5"><Border.RenderTransform><ScaleTransform ScaleX="1" ScaleY="1"/></Border.RenderTransform><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.02" Duration="0:0:0.1"/><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.02" Duration="0:0:0.1"/></Storyboard></BeginStoryboard></Trigger.EnterActions><Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/></Storyboard></BeginStoryboard></Trigger.ExitActions></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" RenderTransformOrigin="0.5,0.5"><Border.RenderTransform><ScaleTransform ScaleX="1" ScaleY="1"/></Border.RenderTransform><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.02" Duration="0:0:0.1"/><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.02" Duration="0:0:0.1"/></Storyboard></BeginStoryboard></Trigger.EnterActions><Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/></Storyboard></BeginStoryboard></Trigger.ExitActions></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
             <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#17171B"/><Setter Property="BorderBrush" Value="#282830"/></Trigger></Style.Triggers>
         </Style>
         <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
@@ -24,7 +24,7 @@
         </Style>
         <Style x:Key="InputTextBox" TargetType="TextBox">
             <Setter Property="Foreground" Value="White"/><Setter Property="Background" Value="#0D0D10"/><Setter Property="BorderBrush" Value="#1D1D22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="14"/><Setter Property="Padding" Value="14,12"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0"><ScrollViewer x:Name="PART_ContentHost"/></Border></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12"><ScrollViewer x:Name="PART_ContentHost"/></Border></ControlTemplate></Setter.Value></Setter>
         </Style>
         <Style x:Key="InputComboBox" TargetType="ComboBox">
             <Setter Property="Foreground" Value="White"/><Setter Property="Background" Value="#0D0D10"/><Setter Property="BorderBrush" Value="#1D1D22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="14"/><Setter Property="Padding" Value="14,10"/><Setter Property="Height" Value="48"/>
@@ -39,65 +39,20 @@
         </Style>
         <Style x:Key="CategoryListItemStyle" TargetType="ListBoxItem">
             <Setter Property="Foreground" Value="#F2F4F7"/><Setter Property="Background" Value="#0D0D10"/><Setter Property="BorderBrush" Value="#1D1D22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="16,12"/><Setter Property="Margin" Value="0,0,12,12"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2B2B32"/></Trigger><Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2B2B32"/></Trigger><Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
         </Style>
-        <Style x:Key="SectionCard" TargetType="Border"><Setter Property="Background" Value="#0F0F12"/><Setter Property="BorderBrush" Value="#19191E"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="0"/><Setter Property="Padding" Value="28"/></Style>
+        <Style x:Key="SectionCard" TargetType="Border"><Setter Property="Background" Value="#0F0F12"/><Setter Property="BorderBrush" Value="#19191E"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="16"/><Setter Property="Padding" Value="28"/></Style>
         <Style x:Key="PlatformToggleButton" TargetType="ToggleButton">
             <Setter Property="Background" Value="#0D0D10"/><Setter Property="Foreground" Value="#F2F4F7"/><Setter Property="BorderBrush" Value="#1D1D22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="16,12"/><Setter Property="Margin" Value="0,0,12,12"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ToggleButton"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2B2B32"/></Trigger><Trigger Property="IsChecked" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ToggleButton"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2B2B32"/></Trigger><Trigger Property="IsChecked" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
         </Style>
         <Style x:Key="GameListItemStyle" TargetType="ListBoxItem">
             <Setter Property="Background" Value="#0C0C10"/><Setter Property="BorderBrush" Value="#17171C"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="16"/><Setter Property="Margin" Value="0,0,0,12"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#111116"/><Setter TargetName="Surface" Property="BorderBrush" Value="#23232B"/></Trigger><Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="#15151B"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="16" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#111116"/><Setter TargetName="Surface" Property="BorderBrush" Value="#23232B"/></Trigger><Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="#15151B"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
         </Style>
-        <Style TargetType="RepeatButton">
-            <Setter Property="Focusable" Value="False"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RepeatButton">
-                        <Border Background="Transparent"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="Thumb">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Thumb">
-                        <Border Background="#1F2026" CornerRadius="6"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="ScrollBar">
-            <Setter Property="Background" Value="#0A0A0D"/>
-            <Setter Property="Width" Value="12"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ScrollBar">
-                        <Border Background="#0A0A0D" CornerRadius="6" Padding="2">
-                            <Track x:Name="PART_Track" IsDirectionReversed="True">
-                                <Track.DecreaseRepeatButton>
-                                    <RepeatButton/>
-                                </Track.DecreaseRepeatButton>
-                                <Track.Thumb>
-                                    <Thumb/>
-                                </Track.Thumb>
-                                <Track.IncreaseRepeatButton>
-                                    <RepeatButton/>
-                                </Track.IncreaseRepeatButton>
-                            </Track>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="Orientation" Value="Horizontal">
-                    <Setter Property="Height" Value="12"/>
-                    <Setter Property="Width" Value="Auto"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+        <Style TargetType="RepeatButton"><Setter Property="Focusable" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></Setter.Value></Setter></Style>
+        <Style TargetType="Thumb"><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Thumb"><Border Background="#1F2026" CornerRadius="6"/></ControlTemplate></Setter.Value></Setter></Style>
+        <Style TargetType="ScrollBar"><Setter Property="Background" Value="#0A0A0D"/><Setter Property="Width" Value="12"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ScrollBar"><Border Background="#0A0A0D" CornerRadius="6" Padding="2"><Track x:Name="PART_Track" IsDirectionReversed="True"><Track.DecreaseRepeatButton><RepeatButton/></Track.DecreaseRepeatButton><Track.Thumb><Thumb/></Track.Thumb><Track.IncreaseRepeatButton><RepeatButton/></Track.IncreaseRepeatButton></Track></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="Orientation" Value="Horizontal"><Setter Property="Height" Value="12"/><Setter Property="Width" Value="Auto"/></Trigger></Style.Triggers></Style>
         <Style TargetType="TabControl">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -132,7 +87,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
-                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Margin="0" Padding="{TemplateBinding Padding}">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Margin="0" Padding="{TemplateBinding Padding}" CornerRadius="12">
                             <ContentPresenter x:Name="Content" ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -206,7 +161,7 @@
             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
         </Storyboard>
     </Window.Resources>
-    <Border Background="#09090B" BorderBrush="#17171B" BorderThickness="1" CornerRadius="16">
+    <Border Background="#09090B" BorderBrush="#17171B" BorderThickness="1" CornerRadius="24">
         <Grid>
             <Grid.RowDefinitions><RowDefinition Height="34"/><RowDefinition Height="*"/></Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="12,0,10,0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
@@ -231,7 +186,7 @@
                         <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="18"/><RowDefinition Height="Auto"/><RowDefinition Height="18"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                             <StackPanel><TextBlock Text="Oyun Listesi" Foreground="White" FontSize="22" FontWeight="SemiBold"/><TextBlock Text="Bu listede yalnızca yayındaki oyunlar yer alır" Foreground="#8F98A5" FontSize="13" Margin="0,8,0,0"/></StackPanel>
                             <TextBox x:Name="txtSearch" Grid.Row="2" Style="{StaticResource InputTextBox}" TextChanged="SearchTextBox_TextChanged"/>
-                            <ListBox x:Name="lstGames" Grid.Row="4" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource GameListItemStyle}" SelectionChanged="GamesList_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox x:Name="lstGames" Grid.Row="4" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource GameListItemStyle}" SelectionChanged="GamesList_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,0,0,0" Padding="0,0,20,0">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -254,10 +209,16 @@
                                                     </Border>
                                                 </Grid>
                                                 <TextBlock Text="{Binding Publisher}" Foreground="#8F98A5" FontSize="12" Margin="0,8,0,0"/>
-                                                <TextBlock Text="{Binding StatusText}" Foreground="#D7DDE5" FontSize="11" Margin="0,8,0,0"/>
+                                                <TextBlock x:Name="StatusTextDisplay" Text="{Binding StatusText}" Foreground="#D7DDE5" FontSize="11" Margin="0,8,0,0"/>
                                             </StackPanel>
                                         </Grid>
                                         <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding StatusText}" Value="Yayında">
+                                                <Setter TargetName="StatusTextDisplay" Property="Foreground" Value="#2ECC71"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding StatusText}" Value="Sürüm Bekliyor">
+                                                <Setter TargetName="StatusTextDisplay" Property="Foreground" Value="#63A7FF"/>
+                                            </DataTrigger>
                                             <DataTrigger Binding="{Binding HasPendingDraft}" Value="True">
                                                 <Setter TargetName="DraftBadge" Property="Visibility" Value="Visible"/>
                                             </DataTrigger>
@@ -312,16 +273,47 @@
                                                         <Grid Margin="0,0,0,8" VerticalAlignment="Center">
                                                             <TextBlock Text="Fiyat" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0" VerticalAlignment="Center"/>
                                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                                                <TextBlock Text="Oynaması Ücretsiz" Foreground="#7F8690" FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                                <TextBlock x:Name="lblIsFree" Text="Oynaması Ücretsiz" FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0">
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Setter Property="Foreground" Value="#7F8690"/>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsChecked, ElementName=tglIsFree}" Value="True">
+                                                                                    <Setter Property="Foreground" Value="#2ECC71"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
                                                                 <ToggleButton x:Name="tglIsFree" Style="{StaticResource ModernSwitch}" VerticalAlignment="Center" Click="tglIsFree_Click"/>
                                                             </StackPanel>
                                                         </Grid>
                                                         <Grid x:Name="gridPriceInput">
+                                                            <Grid.Style>
+                                                                <Style TargetType="Grid">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsChecked, ElementName=tglIsFree}" Value="True">
+                                                                            <Setter Property="Opacity" Value="0.4"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Grid.Style>
                                                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                                             <TextBox x:Name="txtPrice" Style="{StaticResource InputTextBox}" PreviewTextInput="PriceTextBox_PreviewTextInput" LostFocus="PriceTextBox_LostFocus" TextChanged="Input_Changed"/>
-                                                            <Border Grid.Column="2" Background="#111114" BorderBrush="#1D1D22" BorderThickness="1" Padding="12,0" Height="44"><TextBlock Text="&#x20BA;" Foreground="White" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/></Border>
+                                                            <Border Grid.Column="2" Background="#111114" BorderBrush="#1D1D22" BorderThickness="1" Padding="12,0" Height="44" CornerRadius="12"><TextBlock Text="&#x20BA;" Foreground="White" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/></Border>
                                                         </Grid>
                                                         <TextBlock x:Name="txtPriceError" Text="* Geçerli bir fiyat girin" Foreground="#FF5555" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed"/>
+                                                        <TextBlock x:Name="txtFreeWarning" Text="Oynaması ücretsiz oyunlara fiyat bilgisi girilemez" Foreground="#7F8690" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsChecked, ElementName=tglIsFree}" Value="True">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
                                                     </StackPanel>
                                                 </Grid>
 

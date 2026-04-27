@@ -26,7 +26,7 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5">
+                                CornerRadius="0">
                             <ScrollViewer x:Name="PART_ContentHost"/>
                         </Border>
                     </ControlTemplate>
@@ -72,7 +72,7 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5">
+                                CornerRadius="0">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -96,7 +96,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Surface" Background="Transparent" CornerRadius="8">
+                        <Border x:Name="Surface" Background="Transparent" CornerRadius="0">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -128,7 +128,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
-                                        <Border x:Name="Surface" Background="Transparent" CornerRadius="8">
+                                        <Border x:Name="Surface" Background="Transparent" CornerRadius="0">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <ControlTemplate.Triggers>

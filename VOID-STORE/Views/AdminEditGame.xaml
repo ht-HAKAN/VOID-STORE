@@ -11,11 +11,11 @@
     <Window.Resources>
         <Style x:Key="TitleBarButton" TargetType="Button">
             <Setter Property="Width" Value="42"/><Setter Property="Height" Value="30"/><Setter Property="Foreground" Value="#F5F7FA"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="0"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
         </Style>
         <Style x:Key="GhostButton" TargetType="Button">
             <Setter Property="Height" Value="42"/><Setter Property="Padding" Value="18,0"/><Setter Property="Background" Value="#111114"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#1C1C22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" RenderTransformOrigin="0.5,0.5"><Border.RenderTransform><ScaleTransform ScaleX="1" ScaleY="1"/></Border.RenderTransform><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.02" Duration="0:0:0.1"/><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.02" Duration="0:0:0.1"/></Storyboard></BeginStoryboard></Trigger.EnterActions><Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/></Storyboard></BeginStoryboard></Trigger.ExitActions></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" RenderTransformOrigin="0.5,0.5"><Border.RenderTransform><ScaleTransform ScaleX="1" ScaleY="1"/></Border.RenderTransform><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.02" Duration="0:0:0.1"/><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.02" Duration="0:0:0.1"/></Storyboard></BeginStoryboard></Trigger.EnterActions><Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/><DoubleAnimation Storyboard.TargetName="Surface" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/></Storyboard></BeginStoryboard></Trigger.ExitActions></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
             <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#17171B"/><Setter Property="BorderBrush" Value="#282830"/></Trigger></Style.Triggers>
         </Style>
         <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
@@ -24,7 +24,7 @@
         </Style>
         <Style x:Key="InputTextBox" TargetType="TextBox">
             <Setter Property="Foreground" Value="White"/><Setter Property="Background" Value="#0D0D10"/><Setter Property="BorderBrush" Value="#1D1D22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="14"/><Setter Property="Padding" Value="14,12"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12"><ScrollViewer x:Name="PART_ContentHost"/></Border></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0"><ScrollViewer x:Name="PART_ContentHost"/></Border></ControlTemplate></Setter.Value></Setter>
         </Style>
         <Style x:Key="InputComboBox" TargetType="ComboBox">
             <Setter Property="Foreground" Value="White"/><Setter Property="Background" Value="#0D0D10"/><Setter Property="BorderBrush" Value="#1D1D22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="14"/><Setter Property="Padding" Value="14,10"/><Setter Property="Height" Value="48"/>
@@ -39,20 +39,86 @@
         </Style>
         <Style x:Key="CategoryListItemStyle" TargetType="ListBoxItem">
             <Setter Property="Foreground" Value="#F2F4F7"/><Setter Property="Background" Value="#0D0D10"/><Setter Property="BorderBrush" Value="#1D1D22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="16,12"/><Setter Property="Margin" Value="0,0,12,12"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2B2B32"/></Trigger><Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2B2B32"/></Trigger><Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
         </Style>
-        <Style x:Key="SectionCard" TargetType="Border"><Setter Property="Background" Value="#0F0F12"/><Setter Property="BorderBrush" Value="#19191E"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="16"/><Setter Property="Padding" Value="28"/></Style>
+        <Style x:Key="SectionCard" TargetType="Border"><Setter Property="Background" Value="#0F0F12"/><Setter Property="BorderBrush" Value="#19191E"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="0"/><Setter Property="Padding" Value="24"/></Style>
         <Style x:Key="PlatformToggleButton" TargetType="ToggleButton">
             <Setter Property="Background" Value="#0D0D10"/><Setter Property="Foreground" Value="#F2F4F7"/><Setter Property="BorderBrush" Value="#1D1D22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="16,12"/><Setter Property="Margin" Value="0,0,12,12"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ToggleButton"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2B2B32"/></Trigger><Trigger Property="IsChecked" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ToggleButton"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#141418"/><Setter TargetName="Surface" Property="BorderBrush" Value="#2B2B32"/></Trigger><Trigger Property="IsChecked" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
         </Style>
         <Style x:Key="GameListItemStyle" TargetType="ListBoxItem">
             <Setter Property="Background" Value="#0C0C10"/><Setter Property="BorderBrush" Value="#17171C"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="16"/><Setter Property="Margin" Value="0,0,0,12"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="16" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#111116"/><Setter TargetName="Surface" Property="BorderBrush" Value="#23232B"/></Trigger><Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="#15151B"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#111116"/><Setter TargetName="Surface" Property="BorderBrush" Value="#23232B"/></Trigger><Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="#15151B"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
         </Style>
+
+
+        <!-- DatePickerTextBox: Readonly - kullanıcı yazamaz, sadece takvimden seçer -->
+        <Style TargetType="DatePickerTextBox">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePickerTextBox">
+                        <Border Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"
+                                          VerticalAlignment="Center"
+                                          Foreground="White"
+                                          Background="Transparent"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernDatePicker" TargetType="DatePicker">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#111115"/>
+            <Setter Property="BorderBrush" Value="#1C1C22"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePicker">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0">
+                            <Grid x:Name="PART_Root">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+                                <DatePickerTextBox x:Name="PART_TextBox" Grid.Column="0" Focusable="False" IsReadOnly="True"/>
+                                <Button x:Name="PART_Button" Grid.Column="1" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                    <TextBlock Text="&#xE787;" FontFamily="Segoe MDL2 Assets" Foreground="#8F98A5" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"/>
+                                </Button>
+                                <Popup x:Name="PART_Popup" AllowsTransparency="True" Placement="Bottom" StaysOpen="False"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CategoryToggleStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="#111114"/><Setter Property="Foreground" Value="#8F98A5"/><Setter Property="BorderBrush" Value="#1D1D22"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="16,8"/><Setter Property="Margin" Value="0,0,8,8"/><Setter Property="FontSize" Value="12"/><Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ToggleButton"><Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#1A1A20"/><Setter TargetName="Surface" Property="BorderBrush" Value="#3F444D"/></Trigger><Trigger Property="IsChecked" Value="True"><Setter TargetName="Surface" Property="Background" Value="#FFFFFF"/><Setter TargetName="Surface" Property="BorderBrush" Value="#FFFFFF"/><Setter Property="Foreground" Value="#0A0A0C"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+        </Style>
+
         <Style TargetType="RepeatButton"><Setter Property="Focusable" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></Setter.Value></Setter></Style>
-        <Style TargetType="Thumb"><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Thumb"><Border Background="#1F2026" CornerRadius="6"/></ControlTemplate></Setter.Value></Setter></Style>
-        <Style TargetType="ScrollBar"><Setter Property="Background" Value="#0A0A0D"/><Setter Property="Width" Value="12"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ScrollBar"><Border Background="#0A0A0D" CornerRadius="6" Padding="2"><Track x:Name="PART_Track" IsDirectionReversed="True"><Track.DecreaseRepeatButton><RepeatButton/></Track.DecreaseRepeatButton><Track.Thumb><Thumb/></Track.Thumb><Track.IncreaseRepeatButton><RepeatButton/></Track.IncreaseRepeatButton></Track></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="Orientation" Value="Horizontal"><Setter Property="Height" Value="12"/><Setter Property="Width" Value="Auto"/></Trigger></Style.Triggers></Style>
+        <Style TargetType="Thumb"><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Thumb"><Border Background="#1F2026" CornerRadius="0"/></ControlTemplate></Setter.Value></Setter></Style>
+        <Style TargetType="ScrollBar"><Setter Property="Background" Value="#0A0A0D"/><Setter Property="Width" Value="12"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ScrollBar"><Border Background="#0A0A0D" CornerRadius="0" Padding="2"><Track x:Name="PART_Track" IsDirectionReversed="True"><Track.DecreaseRepeatButton><RepeatButton/></Track.DecreaseRepeatButton><Track.Thumb><Thumb/></Track.Thumb><Track.IncreaseRepeatButton><RepeatButton/></Track.IncreaseRepeatButton></Track></Border></ControlTemplate></Setter.Value></Setter><Style.Triggers><Trigger Property="Orientation" Value="Horizontal"><Setter Property="Height" Value="12"/><Setter Property="Width" Value="Auto"/></Trigger></Style.Triggers></Style>
         <Style TargetType="TabControl">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -87,7 +153,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
-                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Margin="0" Padding="{TemplateBinding Padding}" CornerRadius="12">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Margin="0" Padding="{TemplateBinding Padding}" CornerRadius="0">
                             <ContentPresenter x:Name="Content" ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -160,8 +226,75 @@
         <Storyboard x:Key="FadeInAnimation">
             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
         </Storyboard>
+
+        <!-- Calendar Premium Dark Style - mavi highlight kaldır -->
+        <Style TargetType="CalendarDayButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#D6D9DE"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CalendarDayButton">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1A1A22"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#FFFFFF"/>
+                                <Setter Property="Foreground" Value="#0A0A0C"/>
+                            </Trigger>
+                            <Trigger Property="IsToday" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#D6D9DE"/>
+                                <Setter TargetName="Bd" Property="BorderThickness" Value="1"/>
+                            </Trigger>
+                            <Trigger Property="IsBlackedOut" Value="True">
+                                <Setter Property="Foreground" Value="#333340"/>
+                            </Trigger>
+                            <Trigger Property="IsInactive" Value="True">
+                                <Setter Property="Foreground" Value="#464650"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="CalendarButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#D6D9DE"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CalendarButton">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1A1A22"/>
+                            </Trigger>
+                            <Trigger Property="HasSelectedDays" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#FFFFFF"/>
+                                <Setter Property="Foreground" Value="#0A0A0C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Calendar">
+            <Setter Property="Background" Value="#0F0F13"/>
+            <Setter Property="BorderBrush" Value="#1C1C22"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#D6D9DE"/>
+        </Style>
     </Window.Resources>
-    <Border Background="#09090B" BorderBrush="#17171B" BorderThickness="1" CornerRadius="24">
+    <Border Background="#09090B" BorderBrush="#17171B" BorderThickness="1" CornerRadius="0">
         <Grid>
             <Grid.RowDefinitions><RowDefinition Height="34"/><RowDefinition Height="*"/></Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="12,0,10,0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
@@ -170,7 +303,7 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button Style="{StaticResource TitleBarButton}" Click="MinimizeButton_Click"><TextBlock Text="&#xE921;" FontFamily="Segoe MDL2 Assets" FontSize="10"/></Button>
                     <Button Style="{StaticResource TitleBarButton}" Click="ToggleWindowStateButton_Click"><TextBlock Text="&#xE922;" FontFamily="Segoe MDL2 Assets" FontSize="10"/></Button>
-                    <Button Click="CloseButton_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource TitleBarButton}"><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="8"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#E81123"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style></Button.Style><TextBlock Text="&#xE8BB;" FontFamily="Segoe MDL2 Assets" FontSize="10"/></Button>
+                    <Button Click="CloseButton_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource TitleBarButton}"><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Surface" Background="Transparent" CornerRadius="0"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#E81123"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style></Button.Style><TextBlock Text="&#xE8BB;" FontFamily="Segoe MDL2 Assets" FontSize="10"/></Button>
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="1" Margin="28,24,28,28">
@@ -258,133 +391,80 @@
                             <!-- Editor Content (Tabs) -->
                             <TabControl x:Name="AdminTabControl" Grid.Row="1">
                                 <!-- Tab 1: Genel Bilgiler -->
-                                <TabItem x:Name="TabItemGenel" Header="GENEL BİLGİLER">
-                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                        <Border Style="{StaticResource SectionCard}">
+                                <TabItem x:Name="TabItemGenel" Header="Genel Bilgiler">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+                                        <Border Style="{StaticResource SectionCard}" CornerRadius="0">
                                             <StackPanel>
-                                                <Grid Margin="0,0,0,20">
-                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="200"/></Grid.ColumnDefinitions>
+                                                <!-- Row 1: Title & Price -->
+                                                <Grid Margin="0,0,0,16">
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/><ColumnDefinition Width="220"/></Grid.ColumnDefinitions>
                                                     <StackPanel Grid.Column="0">
                                                         <TextBlock Text="Oyun Adı" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                                                        <TextBox x:Name="txtTitle" Style="{StaticResource InputTextBox}" TextChanged="Input_Changed"/>
+                                                        <TextBox x:Name="txtTitle" Style="{StaticResource InputTextBox}" Tag="Rect" TextChanged="Input_Changed"/>
                                                         <TextBlock x:Name="txtTitleError" Text="* Oyun adı boş bırakılamaz" Foreground="#FF5555" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="2">
-                                                        <Grid Margin="0,0,0,8" VerticalAlignment="Center">
-                                                            <TextBlock Text="Fiyat" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0" VerticalAlignment="Center"/>
-                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                                                <TextBlock x:Name="lblIsFree" Text="Oynaması Ücretsiz" FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0">
-                                                                    <TextBlock.Style>
-                                                                        <Style TargetType="TextBlock">
-                                                                            <Setter Property="Foreground" Value="#7F8690"/>
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding IsChecked, ElementName=tglIsFree}" Value="True">
-                                                                                    <Setter Property="Foreground" Value="#2ECC71"/>
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </TextBlock.Style>
-                                                                </TextBlock>
-                                                                <ToggleButton x:Name="tglIsFree" Style="{StaticResource ModernSwitch}" VerticalAlignment="Center" Click="tglIsFree_Click"/>
-                                                            </StackPanel>
-                                                        </Grid>
+                                                        <TextBlock Text="Fiyatlandırma" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
                                                         <Grid x:Name="gridPriceInput">
-                                                            <Grid.Style>
-                                                                <Style TargetType="Grid">
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding IsChecked, ElementName=tglIsFree}" Value="True">
-                                                                            <Setter Property="Opacity" Value="0.4"/>
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Grid.Style>
                                                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                                            <TextBox x:Name="txtPrice" Style="{StaticResource InputTextBox}" PreviewTextInput="PriceTextBox_PreviewTextInput" LostFocus="PriceTextBox_LostFocus" TextChanged="Input_Changed"/>
-                                                            <Border Grid.Column="2" Background="#111114" BorderBrush="#1D1D22" BorderThickness="1" Padding="12,0" Height="44" CornerRadius="12"><TextBlock Text="&#x20BA;" Foreground="White" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/></Border>
+                                                            <TextBox x:Name="txtPrice" Style="{StaticResource InputTextBox}" PreviewTextInput="OnlyNumbers_PreviewTextInput" LostFocus="PriceTextBox_LostFocus" TextChanged="Input_Changed" MaxLength="4"/>
+                                                            <Border Grid.Column="2" Background="#111114" BorderBrush="#1D1D22" BorderThickness="1" Padding="12,0" Height="44" CornerRadius="0"><TextBlock Text="&#x20BA;" Foreground="White" FontSize="16" VerticalAlignment="Center"/></Border>
                                                         </Grid>
-                                                        <TextBlock x:Name="txtPriceError" Text="* Geçerli bir fiyat girin" Foreground="#FF5555" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed"/>
-                                                        <TextBlock x:Name="txtFreeWarning" Text="Oynaması ücretsiz oyunlara fiyat bilgisi girilemez" Foreground="#7F8690" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed">
-                                                            <TextBlock.Style>
-                                                                <Style TargetType="TextBlock">
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding IsChecked, ElementName=tglIsFree}" Value="True">
-                                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </TextBlock.Style>
-                                                        </TextBlock>
+                                                        <TextBlock x:Name="txtFreeHint" Text="Oyun ücretsiz olarak oynanabilir" Foreground="#2ECC71" FontSize="11" Margin="4,4,0,0" Visibility="Collapsed"/>
                                                     </StackPanel>
                                                 </Grid>
 
-                                                <StackPanel Margin="0,0,0,20">
-                                                    <TextBlock Text="Kategori" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                                                    <ListBox x:Name="lstCategory" Style="{StaticResource CategoryListBox}" ItemContainerStyle="{StaticResource CategoryListItemStyle}" SelectionMode="Single" SelectionChanged="Input_Changed"><ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel></ListBox>
-                                                    <TextBlock x:Name="txtCategoryError" Text="* Lütfen bir kategori seçin" Foreground="#FF5555" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed"/>
-                                                </StackPanel>
-
-                                                <Grid Margin="0,0,0,20">
+                                                <!-- Row 2: Developer & Publisher -->
+                                                <Grid Margin="0,0,0,16">
                                                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                                                     <StackPanel Grid.Column="0">
                                                         <TextBlock Text="Yapımcı" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
                                                         <TextBox x:Name="txtDeveloper" Style="{StaticResource InputTextBox}" TextChanged="Input_Changed"/>
-                                                        <TextBlock x:Name="txtDeveloperError" Text="* Yapımcı adı gerekli" Foreground="#FF5555" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="2">
                                                         <TextBlock Text="Yayıncı" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
                                                         <TextBox x:Name="txtPublisher" Style="{StaticResource InputTextBox}" TextChanged="Input_Changed"/>
-                                                        <TextBlock x:Name="txtPublisherError" Text="* Yayıncı adı gerekli" Foreground="#FF5555" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed"/>
                                                     </StackPanel>
                                                 </Grid>
 
-                                                <StackPanel Margin="0,0,0,20">
-                                                    <TextBlock Text="Çıkış Tarihi" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                                                    <TextBox x:Name="txtReleaseDate" Style="{StaticResource InputTextBox}" PreviewTextInput="ReleaseDateTextBox_PreviewTextInput" GotFocus="ReleaseDateTextBox_GotFocus" LostFocus="ReleaseDateTextBox_LostFocus" TextChanged="Input_Changed"/>
-                                                    <TextBlock x:Name="txtReleaseDateError" Text="* Geçerli bir tarih girin" Foreground="#FF5555" FontSize="10" Margin="4,4,0,0" Visibility="Collapsed"/>
-                                                </StackPanel>
+                                                <!-- Row 3: Categories & Date -->
+                                                <Grid Margin="0,0,0,16">
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/><ColumnDefinition Width="200"/></Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0">
+                                                        <TextBlock Text="Kategoriler" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                                        <WrapPanel x:Name="wpCategories" Margin="0,4,0,0"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="2">
+                                                        <TextBlock Text="Çıkış Tarihi" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                                        <DatePicker x:Name="dpReleaseDate" Style="{StaticResource ModernDatePicker}"/>
+                                                    </StackPanel>
+                                                </Grid>
 
-                                                <!-- İndirim Yönetimi -->
-                                                <Border x:Name="borderDiscount" BorderBrush="#1D1D22" BorderThickness="0,1,0,0" Margin="0,0,0,20" Padding="0,20,0,0">
+                                                <!-- Row 4: Discount -->
+                                                <Border x:Name="borderDiscount" BorderBrush="#1D1D22" BorderThickness="0,1,0,0" Margin="0,0,0,16" Padding="0,16,0,0">
                                                     <StackPanel>
-                                                        <TextBlock Text="İNDİRİM YÖNETİMİ" Foreground="White" FontSize="13" FontWeight="Bold" Margin="0,0,0,14"/>
+                                                        <TextBlock Text="İNDİRİM YÖNETİMİ" Foreground="#63A7FF" FontSize="12" FontWeight="Bold" Margin="0,0,0,12"/>
                                                         <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="130"/>
-                                                                <ColumnDefinition Width="20"/>
-                                                                <ColumnDefinition Width="*"/>
-                                                                <ColumnDefinition Width="20"/>
-                                                                <ColumnDefinition Width="*"/>
-                                                            </Grid.ColumnDefinitions>
-                                                            
-                                                            <StackPanel Grid.Column="0">
-                                                                <TextBlock Text="İndirim Oranı (%)" Foreground="#D6D9DE" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                                                                <TextBox x:Name="txtDiscountRate" Style="{StaticResource InputTextBox}" Text="0" MaxLength="3" PreviewTextInput="OnlyNumbers_PreviewTextInput" TextChanged="Input_Changed"/>
-                                                            </StackPanel>
-
-                                                            <StackPanel Grid.Column="2">
-                                                                <TextBlock Text="Başlangıç Tarihi" Foreground="#D6D9DE" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                                                                <TextBox x:Name="txtDiscountStart" Style="{StaticResource InputTextBox}" PreviewTextInput="ReleaseDateTextBox_PreviewTextInput" TextChanged="Input_Changed"/>
-                                                            </StackPanel>
-
-                                                            <StackPanel Grid.Column="4">
-                                                                <TextBlock Text="Bitiş Tarihi" Foreground="#D6D9DE" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                                                                <TextBox x:Name="txtDiscountEnd" Style="{StaticResource InputTextBox}" PreviewTextInput="ReleaseDateTextBox_PreviewTextInput" TextChanged="Input_Changed"/>
-                                                            </StackPanel>
+                                                            <Grid.ColumnDefinitions><ColumnDefinition Width="130"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <StackPanel Grid.Column="0"><TextBlock Text="Oran (%)" Foreground="#D6D9DE" FontSize="11" Margin="0,0,0,6"/><TextBox x:Name="txtDiscountRate" Style="{StaticResource InputTextBox}" MaxLength="3" PreviewTextInput="OnlyNumbers_PreviewTextInput"/></StackPanel>
+                                                            <StackPanel Grid.Column="2"><TextBlock Text="Başlangıç" Foreground="#D6D9DE" FontSize="11" Margin="0,0,0,6"/><DatePicker x:Name="dpDiscountStart" Style="{StaticResource ModernDatePicker}"/></StackPanel>
+                                                            <StackPanel Grid.Column="4"><TextBlock Text="Bitiş" Foreground="#D6D9DE" FontSize="11" Margin="0,0,0,6"/><DatePicker x:Name="dpDiscountEnd" Style="{StaticResource ModernDatePicker}"/></StackPanel>
                                                         </Grid>
                                                     </StackPanel>
                                                 </Border>
 
                                                 <StackPanel>
-                                                    <TextBlock Text="Açıklama" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                                                    <TextBox x:Name="txtDescription" Style="{StaticResource InputTextBox}" Height="240" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+                                                    <TextBlock Text="Oyun Açıklaması" Foreground="#D6D9DE" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                                    <TextBox x:Name="txtDescription" Style="{StaticResource InputTextBox}" Height="180" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>
                                     </ScrollViewer>
+
                                 </TabItem>
 
                                 <!-- Tab 2: Medya Yönetimi -->
-                                <TabItem x:Name="TabItemMedya" Header="MEDYA YÖNETİMİ" IsEnabled="False">
+                                <TabItem x:Name="TabItemMedya" Header="Medya Yönetimi" IsEnabled="False">
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="300"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
@@ -432,8 +512,8 @@
                                 </TabItem>
 
                                 <!-- Tab 3: Sistem & Platform -->
-                                <TabItem x:Name="TabItemSistem" Header="SİSTEM &amp; PLATFORM" IsEnabled="False">
-                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <TabItem x:Name="TabItemSistem" Header="Sistem &amp; Platform">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
                                         <StackPanel>
                                             <Border Style="{StaticResource SectionCard}">
                                                 <StackPanel>

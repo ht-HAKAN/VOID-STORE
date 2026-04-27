@@ -15,7 +15,7 @@ namespace VOID_STORE.Views
 {
     public partial class AdminEditGame : Window
     {
-        private static readonly Regex PriceInputRegex = new(@"^(?:|0|[1-9]\d{0,3})(?:[.,]\d{0,2})?$");
+        private static readonly Regex PriceInputRegex = new(@"^\d*$");
         private readonly AdminGameController _adminGameController;
         private List<AdminGameListItem> _games = new();
         private int _selectedGameId;
@@ -43,12 +43,52 @@ namespace VOID_STORE.Views
             }
 
             DataObject.AddPastingHandler(txtPrice, PriceTextBox_OnPaste);
-            DataObject.AddPastingHandler(txtReleaseDate, ReleaseDateTextBox_OnPaste);
-            lstCategory.ItemsSource = GameCategoryCatalog.All;
+            LoadCategoryToggles();
             lstFeatures.ItemsSource = GameFeatureCatalog.All;
 
             LoadGames();
             ShowEditor(false);
+        }
+
+        private void LoadCategoryToggles()
+        {
+            wpCategories.Children.Clear();
+            foreach (var category in GameCategoryCatalog.All)
+            {
+                var tgl = new System.Windows.Controls.Primitives.ToggleButton
+                {
+                    Content = category,
+                    Style = (Style)FindResource("CategoryToggleStyle")
+                };
+                tgl.Click += (s, e) => {
+                    var selectedCount = wpCategories.Children.OfType<System.Windows.Controls.Primitives.ToggleButton>().Count(x => x.IsChecked == true);
+                    if (selectedCount > 3)
+                    {
+                        ((System.Windows.Controls.Primitives.ToggleButton)s).IsChecked = false;
+                        CustomError.ShowDialog("En fazla 3 kategori seçebilirsiniz.", "BİLGİ");
+                    }
+                    UpdateNavigationState();
+                };
+                wpCategories.Children.Add(tgl);
+            }
+        }
+
+        private string GetSelectedCategories()
+        {
+            var selected = wpCategories.Children.OfType<System.Windows.Controls.Primitives.ToggleButton>()
+                .Where(x => x.IsChecked == true)
+                .Select(x => x.Content.ToString());
+            return string.Join(", ", selected);
+        }
+
+        private void SetSelectedCategories(string categoryString)
+        {
+            if (string.IsNullOrWhiteSpace(categoryString)) return;
+            var cats = categoryString.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var tgl in wpCategories.Children.OfType<System.Windows.Controls.Primitives.ToggleButton>())
+            {
+                tgl.IsChecked = cats.Contains(tgl.Content.ToString());
+            }
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -294,34 +334,17 @@ namespace VOID_STORE.Views
             }
         }
 
-        private void PriceTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            // fiyat girisini sinirla
-            string nextValue = GetNextText(txtPrice.Text, e.Text, txtPrice.SelectionStart, txtPrice.SelectionLength);
-            e.Handled = !PriceInputRegex.IsMatch(nextValue);
-        }
 
         private void Input_Changed(object sender, EventArgs e)
         {
-            UpdateNavigationState();
-        }
-
-        private void tglIsFree_Click(object sender, RoutedEventArgs e)
-        {
-            bool isFree = tglIsFree.IsChecked == true;
-            gridPriceInput.IsEnabled = !isFree;
-            borderDiscount.IsEnabled = !isFree;
-
-            if (isFree)
+            if (txtFreeHint != null && txtPrice != null)
             {
-                txtPrice.Text = "0";
-                txtDiscountRate.Text = "0";
-                txtDiscountStart.Clear();
-                txtDiscountEnd.Clear();
+                bool isFree = txtPrice.Text == "0" || string.IsNullOrWhiteSpace(txtPrice.Text);
+                txtFreeHint.Visibility = isFree ? Visibility.Visible : Visibility.Collapsed;
             }
-            
             UpdateNavigationState();
         }
+
 
         private void OnlyNumbers_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -333,13 +356,12 @@ namespace VOID_STORE.Views
             if (TabItemGenel == null || TabItemMedya == null || TabItemSistem == null) return;
 
             // Step 1 Validation (Temel Bilgiler)
-            bool isPriceValid = tglIsFree.IsChecked == true || !string.IsNullOrWhiteSpace(txtPrice.Text);
             bool isStep1Valid = !string.IsNullOrWhiteSpace(txtTitle.Text) &&
-                               isPriceValid &&
-                               lstCategory.SelectedItem != null &&
+                               !string.IsNullOrWhiteSpace(txtPrice.Text) &&
+                               wpCategories.Children.OfType<System.Windows.Controls.Primitives.ToggleButton>().Any(x => x.IsChecked == true) &&
                                !string.IsNullOrWhiteSpace(txtDeveloper.Text) &&
                                !string.IsNullOrWhiteSpace(txtPublisher.Text) &&
-                               !string.IsNullOrWhiteSpace(txtReleaseDate.Text);
+                               dpReleaseDate.SelectedDate != null;
 
             // Step 1 Validation
             TabItemMedya.IsEnabled = isStep1Valid;
@@ -370,73 +392,14 @@ namespace VOID_STORE.Views
 
         private void PriceTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-        // fiyat yazimini duzenle
             if (string.IsNullOrWhiteSpace(txtPrice.Text))
             {
-                return;
-            }
-
-            string normalized = txtPrice.Text.Trim().Replace(".", ",");
-
-            if (!decimal.TryParse(
-                normalized,
-                NumberStyles.Number,
-                CultureInfo.GetCultureInfo("tr-TR"),
-                out decimal price))
-            {
-                return;
-            }
-
-            txtPrice.Text = price % 1 == 0
-                ? price.ToString("0", CultureInfo.GetCultureInfo("tr-TR"))
-                : price.ToString("0.##", CultureInfo.GetCultureInfo("tr-TR"));
-        }
-
-        private void ReleaseDateTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-        // tarih girisini sinirla
-            string nextValue = GetNextText(txtReleaseDate.Text, e.Text, txtReleaseDate.SelectionStart, txtReleaseDate.SelectionLength);
-            e.Handled = !Regex.IsMatch(nextValue, @"^\d{0,2}(\.\d{0,2}(\.\d{0,4})?)?$");
-        }
-
-        private void ReleaseDateTextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (txtReleaseDate.Text == "GG.AA.YYYY")
-            {
-                txtReleaseDate.Text = "";
-                txtReleaseDate.Foreground = System.Windows.Media.Brushes.White;
-            }
-        }
-
-        private void ReleaseDateTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtReleaseDate.Text))
-            {
-                txtReleaseDate.Text = "GG.AA.YYYY";
-                txtReleaseDate.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(85, 85, 85));
-            }
-        }
-
-        private void ReleaseDateTextBox_OnPaste(object sender, DataObjectPastingEventArgs e)
-        {
-        // yapistirilan tarihi denetle
-            if (!e.DataObject.GetDataPresent(typeof(string)))
-            {
-                e.CancelCommand();
-                return;
-            }
-
-            string pastedText = (string)e.DataObject.GetData(typeof(string));
-
-            if (!Regex.IsMatch(pastedText, @"^\d{0,2}(\.\d{0,2}(\.\d{0,4})?)?$"))
-            {
-                e.CancelCommand();
+                txtPrice.Text = "0";
             }
         }
 
         private void ToggleWindowState()
         {
-        // pencere boyutunu degistir
             WindowState = WindowState == WindowState.Maximized
                 ? WindowState.Normal
                 : WindowState.Maximized;
@@ -477,23 +440,23 @@ namespace VOID_STORE.Views
         {
         // secilen oyunun alanlarini doldur
             txtTitle.Text = state.Title;
-            lstCategory.SelectedItem = GameCategoryCatalog.Normalize(state.Category);
+            SetSelectedCategories(state.Category);
             txtPrice.Text = state.PriceText;
             txtDescription.Text = state.Description;
             txtDeveloper.Text = state.Developer;
             txtPublisher.Text = state.Publisher;
-            txtReleaseDate.Text = state.ReleaseDateText;
-            txtMinimumRequirements.Text = state.MinimumRequirements;
-            txtRecommendedRequirements.Text = state.RecommendedRequirements;
+            dpReleaseDate.SelectedDate = DateTime.TryParseExact(state.ReleaseDateText, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var rd) ? rd : null;
             txtSupportedLanguages.Text = state.SupportedLanguages;
             
             // Yeni Alanlar
-            tglIsFree.IsChecked = state.IsFree;
-            gridPriceInput.IsEnabled = !state.IsFree;
-            borderDiscount.IsEnabled = !state.IsFree;
+            txtFreeHint.Visibility = state.IsFree ? Visibility.Visible : Visibility.Collapsed;
             txtDiscountRate.Text = state.DiscountRate.ToString();
-            txtDiscountStart.Text = state.DiscountStartDate?.ToString("dd.MM.yyyy") ?? string.Empty;
-            txtDiscountEnd.Text = state.DiscountEndDate?.ToString("dd.MM.yyyy") ?? string.Empty;
+            dpDiscountStart.SelectedDate = state.DiscountStartDate;
+            dpDiscountEnd.SelectedDate = state.DiscountEndDate;
+
+            // Sistem gereksinimleri
+            txtMinimumRequirements.Text = state.MinimumRequirements;
+            txtRecommendedRequirements.Text = state.RecommendedRequirements;
 
             lstFeatures.UnselectAll();
 
@@ -525,12 +488,10 @@ namespace VOID_STORE.Views
             UpdateTrailerState();
             UpdateGalleryState();
 
-            // Hataları temizle
-            txtTitleError.Visibility = Visibility.Collapsed;
-            txtPriceError.Visibility = Visibility.Collapsed;
-            txtDeveloperError.Visibility = Visibility.Collapsed;
-            txtPublisherError.Visibility = Visibility.Collapsed;
-            txtCategoryError.Visibility = Visibility.Collapsed;
+            UpdateCoverPreview();
+            UpdateTrailerState();
+            UpdateGalleryState();
+
             UpdateNavigationState();
         }
 
@@ -548,57 +509,30 @@ namespace VOID_STORE.Views
                 txtTitleError.Visibility = Visibility.Collapsed;
             }
 
-            // Fiyat
-            bool isPriceRequired = tglIsFree.IsChecked != true;
-            if (isPriceRequired && string.IsNullOrWhiteSpace(txtPrice.Text))
+            if (string.IsNullOrWhiteSpace(txtPrice.Text))
             {
-                txtPriceError.Visibility = Visibility.Visible;
                 isValid = false;
-            }
-            else
-            {
-                txtPriceError.Visibility = Visibility.Collapsed;
             }
 
-            if (lstCategory.SelectedItem == null)
+            if (!wpCategories.Children.OfType<System.Windows.Controls.Primitives.ToggleButton>().Any(x => x.IsChecked == true))
             {
-                txtCategoryError.Visibility = Visibility.Visible;
                 isValid = false;
-            }
-            else
-            {
-                txtCategoryError.Visibility = Visibility.Collapsed;
             }
 
             if (string.IsNullOrWhiteSpace(txtDeveloper.Text))
             {
-                txtDeveloperError.Visibility = Visibility.Visible;
                 isValid = false;
-            }
-            else
-            {
-                txtDeveloperError.Visibility = Visibility.Collapsed;
             }
 
             if (string.IsNullOrWhiteSpace(txtPublisher.Text))
             {
-                txtPublisherError.Visibility = Visibility.Visible;
                 isValid = false;
-            }
-            else
-            {
-                txtPublisherError.Visibility = Visibility.Collapsed;
             }
 
             // Çıkış Tarihi
-            if (string.IsNullOrWhiteSpace(txtReleaseDate.Text))
+            if (dpReleaseDate.SelectedDate == null)
             {
-                txtReleaseDateError.Visibility = Visibility.Visible;
                 isValid = false;
-            }
-            else
-            {
-                txtReleaseDateError.Visibility = Visibility.Collapsed;
             }
 
             if (!isValid)
@@ -658,17 +592,16 @@ namespace VOID_STORE.Views
 
         private GameDraftSaveRequest BuildRequest()
         {
-        // form verisini tek istekte topla
             return new GameDraftSaveRequest
             {
                 GameId = _selectedGameId,
                 Title = txtTitle.Text.Trim(),
-                Category = GameCategoryCatalog.Normalize(lstCategory.SelectedItem?.ToString()),
+                Category = GetSelectedCategories(),
                 PriceText = txtPrice.Text.Trim(),
                 Description = txtDescription.Text.Trim(),
                 Developer = txtDeveloper.Text.Trim(),
                 Publisher = txtPublisher.Text.Trim(),
-                ReleaseDateText = txtReleaseDate.Text.Trim(),
+                ReleaseDateText = dpReleaseDate.SelectedDate?.ToString("dd.MM.yyyy") ?? "",
                 TrailerVideoSourcePath = _selectedTrailerPath,
                 MinimumRequirements = txtMinimumRequirements.Text.Trim(),
                 RecommendedRequirements = txtRecommendedRequirements.Text.Trim(),
@@ -677,12 +610,11 @@ namespace VOID_STORE.Views
                 Platforms = GetSelectedPlatforms(),
                 Features = GetSelectedFeatures(),
                 GalleryImageSourcePaths = _selectedGalleryPaths.ToList(),
-
-                // Yeni Alanlar
-                IsFree = tglIsFree.IsChecked == true,
+                
+                IsFree = txtPrice.Text == "0",
                 DiscountRate = int.TryParse(txtDiscountRate.Text, out int rate) ? rate : 0,
-                DiscountStartDate = ParseOptionalDate(txtDiscountStart.Text),
-                DiscountEndDate = ParseOptionalDate(txtDiscountEnd.Text)
+                DiscountStartDate = dpDiscountStart.SelectedDate,
+                DiscountEndDate = dpDiscountEnd.SelectedDate
             };
         }
 

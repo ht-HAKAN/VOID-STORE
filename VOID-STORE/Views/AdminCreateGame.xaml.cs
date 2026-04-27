@@ -13,7 +13,7 @@ namespace VOID_STORE.Views
 {
     public partial class AdminCreateGame : Window
     {
-        private static readonly Regex PriceInputRegex = new(@"^(?:|0|[1-9]\d{0,3})(?:[.,]\d{0,2})?$");
+        private static readonly Regex PriceInputRegex = new(@"^\d*$");
         private readonly AdminGameController _adminGameController;
         private string _selectedCoverPath = string.Empty;
         private string _selectedTrailerPath = string.Empty;
@@ -39,11 +39,41 @@ namespace VOID_STORE.Views
             }
 
             DataObject.AddPastingHandler(txtPrice, PriceTextBox_OnPaste);
-            DataObject.AddPastingHandler(txtReleaseDate, ReleaseDateTextBox_OnPaste);
-            lstCategory.ItemsSource = GameCategoryCatalog.All;
+            LoadCategoryToggles();
             lstFeatures.ItemsSource = GameFeatureCatalog.All;
 
             ResetFormFields();
+        }
+
+        private void LoadCategoryToggles()
+        {
+            wpCategories.Children.Clear();
+            foreach (var category in GameCategoryCatalog.All)
+            {
+                var tgl = new System.Windows.Controls.Primitives.ToggleButton
+                {
+                    Content = category,
+                    Style = (Style)FindResource("CategoryToggleStyle")
+                };
+                tgl.Click += (s, e) => {
+                    var selectedCount = wpCategories.Children.OfType<System.Windows.Controls.Primitives.ToggleButton>().Count(x => x.IsChecked == true);
+                    if (selectedCount > 3)
+                    {
+                        ((System.Windows.Controls.Primitives.ToggleButton)s).IsChecked = false;
+                        CustomError.ShowDialog("En fazla 3 kategori seçebilirsiniz.", "BİLGİ");
+                    }
+                    UpdateNavigationState();
+                };
+                wpCategories.Children.Add(tgl);
+            }
+        }
+
+        private string GetSelectedCategories()
+        {
+            var selected = wpCategories.Children.OfType<System.Windows.Controls.Primitives.ToggleButton>()
+                .Where(x => x.IsChecked == true)
+                .Select(x => x.Content.ToString());
+            return string.Join(", ", selected);
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -217,25 +247,14 @@ namespace VOID_STORE.Views
 
         private void Input_Changed(object sender, EventArgs e)
         {
-            UpdateNavigationState();
-        }
-
-        private void tglIsFree_Click(object sender, RoutedEventArgs e)
-        {
-            bool isFree = tglIsFree.IsChecked == true;
-            gridPriceInput.IsEnabled = !isFree;
-            borderDiscount.IsEnabled = !isFree;
-
-            if (isFree)
+            if (txtFreeHint != null && txtPrice != null)
             {
-                txtPrice.Text = "0";
-                txtDiscountRate.Text = "0";
-                txtDiscountStart.Clear();
-                txtDiscountEnd.Clear();
+                bool isFree = txtPrice.Text == "0" || string.IsNullOrWhiteSpace(txtPrice.Text);
+                txtFreeHint.Visibility = isFree ? Visibility.Visible : Visibility.Collapsed;
             }
-            
             UpdateNavigationState();
         }
+
 
         private void OnlyNumbers_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -247,14 +266,12 @@ namespace VOID_STORE.Views
             if (TabItemGenel == null || TabItemMedya == null || TabItemSistem == null) return;
 
             // Step 1 Validation (Temel Bilgiler)
-            bool isPriceValid = tglIsFree.IsChecked == true || !string.IsNullOrWhiteSpace(txtPrice.Text);
             bool isStep1Valid = !string.IsNullOrWhiteSpace(txtTitle.Text) &&
-                               isPriceValid &&
-                               lstCategory.SelectedItem != null &&
+                               !string.IsNullOrWhiteSpace(txtPrice.Text) &&
+                               wpCategories.Children.OfType<System.Windows.Controls.Primitives.ToggleButton>().Any(x => x.IsChecked == true) &&
                                !string.IsNullOrWhiteSpace(txtDeveloper.Text) &&
-                               !string.IsNullOrWhiteSpace(txtPublisher.Text);
-
-            TabItemGenel.Tag = isStep1Valid ? "Valid" : null;
+                               !string.IsNullOrWhiteSpace(txtPublisher.Text) &&
+                               dpReleaseDate.SelectedDate != null;
             TabItemMedya.IsEnabled = isStep1Valid;
 
             // Step 2 Validation (Medya - En az kapak fotoğrafı zorunlu)
@@ -284,72 +301,14 @@ namespace VOID_STORE.Views
 
         private void PriceTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-        // fiyat yazimini duzenle
             if (string.IsNullOrWhiteSpace(txtPrice.Text))
             {
-                return;
-            }
-
-            string normalized = txtPrice.Text.Trim().Replace(".", ",");
-
-            if (!decimal.TryParse(
-                normalized,
-                NumberStyles.Number,
-                CultureInfo.GetCultureInfo("tr-TR"),
-                out decimal price))
-            {
-                return;
-            }
-
-            txtPrice.Text = price % 1 == 0
-                ? price.ToString("0", CultureInfo.GetCultureInfo("tr-TR"))
-                : price.ToString("0.##", CultureInfo.GetCultureInfo("tr-TR"));
-        }
-
-        private void ReleaseDateTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-        // tarih girisini sinirla
-            string nextValue = GetNextText(txtReleaseDate.Text, e.Text, txtReleaseDate.SelectionStart, txtReleaseDate.SelectionLength);
-            e.Handled = !Regex.IsMatch(nextValue, @"^\d{0,2}(\.\d{0,2}(\.\d{0,4})?)?$");
-        }
-
-        private void ReleaseDateTextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (txtReleaseDate.Text == "GG.AA.YYYY")
-            {
-                txtReleaseDate.Text = "";
-                txtReleaseDate.Foreground = System.Windows.Media.Brushes.White;
-            }
-        }
-
-        private void ReleaseDateTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtReleaseDate.Text))
-            {
-                txtReleaseDate.Text = "GG.AA.YYYY";
-                txtReleaseDate.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(85, 85, 85));
-            }
-        }
-
-        private void ReleaseDateTextBox_OnPaste(object sender, DataObjectPastingEventArgs e)
-        {
-        // yapistirilan tarihi denetle
-            if (!e.DataObject.GetDataPresent(typeof(string)))
-            {
-                e.CancelCommand();
-                return;
-            }
-
-            string pastedText = (string)e.DataObject.GetData(typeof(string));
-            if (!Regex.IsMatch(pastedText, @"^\d{0,2}(\.\d{0,2}(\.\d{0,4})?)?$"))
-            {
-                e.CancelCommand();
+                txtPrice.Text = "0";
             }
         }
 
         private void ToggleWindowState()
         {
-        // pencere boyutunu degistir
             WindowState = WindowState == WindowState.Maximized
                 ? WindowState.Normal
                 : WindowState.Maximized;
@@ -361,26 +320,25 @@ namespace VOID_STORE.Views
             return new GameCreateRequest
             {
                 Title = txtTitle.Text.Trim(),
-                Category = GameCategoryCatalog.Normalize(lstCategory.SelectedItem?.ToString()),
+                Category = GetSelectedCategories(),
                 PriceText = txtPrice.Text.Trim(),
                 Description = txtDescription.Text.Trim(),
                 Developer = txtDeveloper.Text.Trim(),
                 Publisher = txtPublisher.Text.Trim(),
-                ReleaseDateText = txtReleaseDate.Text.Trim(),
+                ReleaseDateText = dpReleaseDate.SelectedDate?.ToString("dd.MM.yyyy") ?? "",
                 TrailerVideoSourcePath = _selectedTrailerPath,
-                MinimumRequirements = txtMinimumRequirements.Text.Trim(),
-                RecommendedRequirements = txtRecommendedRequirements.Text.Trim(),
-                SupportedLanguages = txtSupportedLanguages.Text.Trim(),
+                MinimumRequirements = "", // Redesigned to be in Sistem tab
+                RecommendedRequirements = "",
+                SupportedLanguages = "",
                 CoverImageSourcePath = _selectedCoverPath,
                 Platforms = GetSelectedPlatforms(),
                 Features = GetSelectedFeatures(),
                 GalleryImageSourcePaths = _selectedGalleryPaths.ToList(),
                 
-                // Yeni Alanlar
-                IsFree = tglIsFree.IsChecked == true,
+                IsFree = txtPrice.Text == "0",
                 DiscountRate = int.TryParse(txtDiscountRate.Text, out int rate) ? rate : 0,
-                DiscountStartDate = ParseOptionalDate(txtDiscountStart.Text),
-                DiscountEndDate = ParseOptionalDate(txtDiscountEnd.Text)
+                DiscountStartDate = dpDiscountStart.SelectedDate,
+                DiscountEndDate = dpDiscountEnd.SelectedDate
             };
         }
 
@@ -433,18 +391,14 @@ namespace VOID_STORE.Views
             txtDescription.Clear();
             txtDeveloper.Clear();
             txtPublisher.Clear();
-            txtReleaseDate.Clear();
-            txtMinimumRequirements.Clear();
-            txtRecommendedRequirements.Clear();
-            txtSupportedLanguages.Clear();
-            lstCategory.SelectedItem = null;
+            dpReleaseDate.SelectedDate = null;
+            
+            foreach (var tgl in wpCategories.Children.OfType<System.Windows.Controls.Primitives.ToggleButton>())
+                tgl.IsChecked = false;
+            
             lstFeatures.UnselectAll();
 
             txtTitleError.Visibility = Visibility.Collapsed;
-            txtPriceError.Visibility = Visibility.Collapsed;
-            txtDeveloperError.Visibility = Visibility.Collapsed;
-            txtPublisherError.Visibility = Visibility.Collapsed;
-            txtCategoryError.Visibility = Visibility.Collapsed;
 
             tglWindows.IsChecked = false;
             tglMacOs.IsChecked = false;
@@ -453,12 +407,10 @@ namespace VOID_STORE.Views
             _selectedTrailerPath = string.Empty;
             _selectedGalleryPaths.Clear();
 
-            tglIsFree.IsChecked = false;
-            gridPriceInput.IsEnabled = true;
-            borderDiscount.IsEnabled = true;
+            txtPrice.Text = "0";
             txtDiscountRate.Text = "0";
-            txtDiscountStart.Clear();
-            txtDiscountEnd.Clear();
+            dpDiscountStart.SelectedDate = null;
+            dpDiscountEnd.SelectedDate = null;
 
             UpdateCoverPreview();
             UpdateTrailerState();
@@ -481,49 +433,29 @@ namespace VOID_STORE.Views
                 txtTitleError.Visibility = Visibility.Collapsed;
             }
 
-            // Fiyat
-            bool isPriceRequired = tglIsFree.IsChecked != true;
-            if (isPriceRequired && string.IsNullOrWhiteSpace(txtPrice.Text))
+            if (string.IsNullOrWhiteSpace(txtPrice.Text))
             {
-                txtPriceError.Visibility = Visibility.Visible;
                 isValid = false;
-            }
-            else
-            {
-                txtPriceError.Visibility = Visibility.Collapsed;
             }
 
             // Kategori
-            if (lstCategory.SelectedItem == null)
+            if (!wpCategories.Children.OfType<System.Windows.Controls.Primitives.ToggleButton>().Any(x => x.IsChecked == true))
             {
-                txtCategoryError.Visibility = Visibility.Visible;
                 isValid = false;
-            }
-            else
-            {
-                txtCategoryError.Visibility = Visibility.Collapsed;
             }
 
-            // Yapımcı
             if (string.IsNullOrWhiteSpace(txtDeveloper.Text))
             {
-                txtDeveloperError.Visibility = Visibility.Visible;
                 isValid = false;
             }
             else
             {
-                txtDeveloperError.Visibility = Visibility.Collapsed;
             }
 
             // Yayıncı
             if (string.IsNullOrWhiteSpace(txtPublisher.Text))
             {
-                txtPublisherError.Visibility = Visibility.Visible;
                 isValid = false;
-            }
-            else
-            {
-                txtPublisherError.Visibility = Visibility.Collapsed;
             }
 
             if (!isValid)

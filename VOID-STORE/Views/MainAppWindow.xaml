@@ -425,6 +425,14 @@
                                 </StackPanel>
                             </Button>
                         </StackPanel>
+
+                        <!-- Alt Kısım Butonları -->
+                        <Button x:Name="btnSettingsNav" Grid.Row="1" Style="{StaticResource SidebarButton}" VerticalAlignment="Bottom" Margin="0,0,0,10" MouseEnter="SidebarButton_MouseEnter" MouseLeave="SidebarButton_MouseLeave">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="#E2E8F0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Ayarlar" FontSize="17" FontWeight="Medium" Foreground="#E2E8F0" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
                     </Grid>
                 </Border>
                 <Grid Grid.Column="2" Margin="0,26,30,28">

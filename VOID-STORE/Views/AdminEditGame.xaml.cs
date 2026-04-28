@@ -378,6 +378,17 @@ namespace VOID_STORE.Views
             }
         }
 
+        // indirim orani 0-100 araliginda olmali
+        private void DiscountRate_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                if (!int.TryParse(tb.Text, out int val)) val = 0;
+                val = Math.Max(0, Math.Min(100, val));
+                tb.Text = val.ToString();
+            }
+        }
+
         private void UpdateNavigationState()
         {
             if (TabItemGenel == null || TabItemMedya == null || TabItemSistem == null) return;

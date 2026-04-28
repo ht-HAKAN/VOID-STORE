@@ -52,6 +52,8 @@ namespace VOID_STORE.Controllers
             EnsureSchema();
 
             decimal price = ParsePrice(request.PriceText);
+            // Indirim orani her halukarda 0-100 araliginda olmali (backend guvenlik)
+            request.DiscountRate = Math.Max(0, Math.Min(100, request.DiscountRate));
             // Hem saat-dakikali hem sadece tarihli formati kabul et
             DateTime releaseDate;
             if (!DateTime.TryParseExact(request.ReleaseDateText.Trim(),
@@ -509,6 +511,8 @@ namespace VOID_STORE.Controllers
             }
 
             decimal price = ParsePrice(request.PriceText);
+            // Indirim orani her halukarda 0-100 araliginda olmali (backend guvenlik)
+            request.DiscountRate = Math.Max(0, Math.Min(100, request.DiscountRate));
             // Hem saat-dakikali hem sadece tarihli formati kabul et
             DateTime releaseDate;
             if (!DateTime.TryParseExact(request.ReleaseDateText.Trim(),

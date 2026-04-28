@@ -461,7 +461,7 @@
                                                         <TextBlock Text="İNDİRİM YÖNETİMİ" Foreground="#63A7FF" FontSize="12" FontWeight="Bold" Margin="0,0,0,12"/>
                                                         <Grid>
                                                             <Grid.ColumnDefinitions><ColumnDefinition Width="100"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                                            <StackPanel Grid.Column="0"><TextBlock Text="Oran (%)" Foreground="#D6D9DE" FontSize="11" Margin="0,0,0,6"/><TextBox x:Name="txtDiscountRate" Style="{StaticResource InputTextBox}" MaxLength="3" PreviewTextInput="OnlyNumbers_PreviewTextInput"/></StackPanel>
+                                                            <StackPanel Grid.Column="0"><TextBlock Text="Oran (%)" Foreground="#D6D9DE" FontSize="11" Margin="0,0,0,6"/><TextBox x:Name="txtDiscountRate" Style="{StaticResource InputTextBox}" MaxLength="3" PreviewTextInput="OnlyNumbers_PreviewTextInput" LostFocus="DiscountRate_LostFocus"/></StackPanel>
                                                             <StackPanel Grid.Column="2">
                                                                 <TextBlock Text="Başlangıç Tarihi &amp; Saat" Foreground="#D6D9DE" FontSize="11" Margin="0,0,0,6"/>
                                                                 <StackPanel Orientation="Horizontal">

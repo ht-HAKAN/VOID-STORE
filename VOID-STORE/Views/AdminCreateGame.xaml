@@ -613,7 +613,7 @@
                                             
                                             <StackPanel Grid.Column="0">
                                                 <TextBlock Text="Oran (%)" Foreground="#D6D9DE" Style="{StaticResource InputLabel}"/>
-                                                <TextBox x:Name="txtDiscountRate" Style="{StaticResource InputTextBox}" Text="0" MaxLength="3" PreviewTextInput="OnlyNumbers_PreviewTextInput"/>
+                                                <TextBox x:Name="txtDiscountRate" Style="{StaticResource InputTextBox}" Text="0" MaxLength="3" PreviewTextInput="OnlyNumbers_PreviewTextInput" LostFocus="DiscountRate_LostFocus"/>
                                             </StackPanel>
 
                                             <StackPanel Grid.Column="2">

@@ -1,27 +1,29 @@
-Aktif olarak üniversite projesi kapsamında geliştirdiğim WPF tabanlı bir dijital oyun mağazası uygulaması.
-
-Geliştirirken referans olarak Epic Games Launcher’ı örnek alıyorum.
-
-## Mevcut Özellikler
-
-- Kayıt olma ve misafir olarak mağazaya devam etme seçeneği  
-- Şifremi unuttum / e-posta adresimi unuttum seçenekleri ile hesap kurtarma  
-- Kayıt sonrası SMTP ile e-posta doğrulama kodu gönderimi  
-- Admin panel (CRUD işlemleri)  
-- Oyun sayfasında video oynatımı, görseller ve oyun bilgileri
+<img width="514" height="582" alt="Screenshot_7" src="https://github.com/user-attachments/assets/5371c045-b0eb-443a-b505-05c63f6a104d" />
 
 
-## Ekran Görüntüleri
+**Üniversite Projesi kapsamında geliştirdiğim Dijital Oyun Satış Mağazası Uygulaması** 
 
-<img width="448" height="697" alt="login" src="https://github.com/user-attachments/assets/c39cf213-5b54-4b9d-9aea-1c05fa46a02c" />
-<img width="1491" height="887" alt="adminpanel" src="https://github.com/user-attachments/assets/9c257347-1257-4a0e-a083-f3ec39c1f92c" />
-<img width="1600" height="899" alt="image" src="https://github.com/user-attachments/assets/d4a1df65-f72a-4bef-afbc-4be679d5756e" />
-<img width="1600" height="899" alt="image" src="https://github.com/user-attachments/assets/f337bf47-e566-40dd-b9a2-4875b52ab773" />
-<img width="1571" height="951" alt="Screenshot_1" src="https://github.com/user-attachments/assets/e2b867f2-8e30-4c2a-bac0-2aeea82c8270" />
+Kullanıcı tarafı özellikler:
+- Kullanıcı kayıt , giriş işlemleri , misafir olarak devam etme
+- SMTP ile mail sistemi kullanılarak hesap doğrulama , şifremi unuttum - kullanıcı adımı unuttum işlemleri
+- Mağazayı görüntüleme , ilgili oyun detay sayfasında bilgi ve görsellerini - videolarını görüntüleyebilme , oyunları istek listesine alma , satın alabilme ( BAKİYE YÜKLEME ÖZELLİĞİ SİMÜLASYON OLARAK ÇALIŞIYOR )
+- Sahip olunan oyunları kütüphanede görüntüleme , indirme ( İNDİRME SADECE SİMÜLASYON OLARAK ÇALIŞIYOR )
+- Profil özelleştirme , son aktivitelerin profilde gözükmesi
+- Arkadaş ekleme , diğer kullanıcıların profillerini ve son aktivitelerini görüntüleyebilme
+
+Admin tarafı özellikler:
+- Veritabanından yetkilendirilmiş hesapla giriş yapıldığında CRUD yetkisine sahip panele erişebilme
+- Oyun ekleme , oyun güncelleme , oyun liste dışını alma veya oyunu kalıcı olarak silebilme
+- Yeni eklenmiş veya bilgileri güncellenmiş oyunların listelenmeden önce onay listesine düşmesi ve inceleyebilip onaylayarak mağazada oyunu listeleme
+- Oyunlar için indirim yönetimi sistemi
+
+## Uygulama İçinden Bazı Ekran Görüntüleri
+<img width="448" height="700" alt="Screenshot_1" src="https://github.com/user-attachments/assets/2aad1ba2-3ede-487f-845d-d92994a92c9e" />
+<img width="1577" height="958" alt="Screenshot_3" src="https://github.com/user-attachments/assets/5e65001a-dca4-45ce-9018-36509ad6e4d6" />
+<img width="1577" height="959" alt="Screenshot_6" src="https://github.com/user-attachments/assets/a7b8baaf-5714-4285-8087-4f0a875bbb16" />
+<img width="1496" height="898" alt="Screenshot_2" src="https://github.com/user-attachments/assets/fccfc7dd-6c36-4087-9e6e-634ffbf9d4a6" />
+<img width="1501" height="897" alt="Screenshot_9" src="https://github.com/user-attachments/assets/65260764-a669-4139-a267-77f5e6a17c60" />
 
 ## Not ⚠️
-
-Projeyi geliştirmeye devam ediyorum , özellikler ve tasarımlar değişebilir.
-
 Projede kullanılan oyun görselleri gerçek oyunlara aittir.  
-Sadece örnek amaçlı kullanılmıştır, ticari bir hedef bulunmamaktadır.
+Sadece örnek olarak gösterilmek amaçlı kullanılmıştır, ticari bir hedef bulunmamaktadır.
